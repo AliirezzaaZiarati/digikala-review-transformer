@@ -32,3 +32,5 @@ artifacts/*
 
 #DuckDB
 project.duckdb
+/project.duckdb
+/project.duckdb.wal

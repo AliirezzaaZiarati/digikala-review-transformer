@@ -28,3 +28,7 @@ data/*
 !data/.gitkeep
 artifacts/*
 !artifacts/.gitkeep
+
+
+#DuckDB
+project.duckdb

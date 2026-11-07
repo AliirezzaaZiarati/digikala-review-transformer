@@ -34,3 +34,6 @@ artifacts/*
 project.duckdb
 /project.duckdb
 /project.duckdb.wal
+
+# personal Note
+personal Note.txt

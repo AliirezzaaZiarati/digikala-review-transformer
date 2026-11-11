@@ -9,11 +9,15 @@ authors = [
 requires-python = ">=3.12"
 dependencies = [
     "duckdb>=2.0.0",
+    "huggingface-hub>=2.4.0",
     "matplotlib>=3.11.2",
     "pandas>=3.1.1",
+    "parsivar>=0.2.3.1",
+    "scikit-learn>=1.9.1",
     "scipy>=1.18.1",
     "torch>=2.15.0",
     "torchvision>=0.29.2",
+    "transformers>=5.22.2",
 ]
 
 [build-system]

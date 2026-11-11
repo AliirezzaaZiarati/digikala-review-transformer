@@ -22,6 +22,7 @@ wheels/
 # notebooks and misc
 .ipynb_checkpoints/
 .env
+notebooks/00_data_ingest_quality_gate_copy_for_report.ipynb
 
 # keep the folders, ignore their contents
 data/*
@@ -37,3 +38,8 @@ project.duckdb
 
 # personal Note
 Personal Note.txt
+
+
+# from results
+reports/latin_comments_for_translation/parts
+reports/latin_comments_for_translation/converted

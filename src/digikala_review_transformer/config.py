@@ -10,6 +10,10 @@ DATA_PROCESSED = ROOT / "data" / "processed"
 ARTIFACTS = ROOT / "artifacts"
 REPORTS = ROOT / "reports"
 
+# Cleaned data: DuckDB file lives directly in the project root
+DB_PATH = ROOT / "project.duckdb"
+CLEAN_TABLE = "clean_base"
+
 # Fixed by the project definition: same split and same mask for everyone
 SPLIT_SEED = 2026
 MASK_SEED = "digikala-semi-supervised-v1"

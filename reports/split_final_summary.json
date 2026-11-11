@@ -1,0 +1,62 @@
+{
+  "created_utc": "2026-11-11T00:30:35+00:00",
+  "split_seed": 2026,
+  "method": "product-level; sort by product_id, seeded numpy default_rng permutation, cut by cumulative row share at 0.70 / 0.85",
+  "total_products": 331584,
+  "total_rows": 6151947,
+  "product_split_sha256": "a8d2f87260ac9673cf560471406e31767019dae8c1b97c59921425ccc952a7b6",
+  "versions": {
+    "python": "3.12.16",
+    "numpy": "2.5.4",
+    "pandas": "3.1.1",
+    "duckdb": "2.0.0"
+  },
+  "per_split": {
+    "train": {
+      "products": 232397,
+      "rows": 4306348,
+      "recommendation_counts": {
+        "<missing>": 624762,
+        "not_recommended": 350759,
+        "no_idea": 415194,
+        "recommended": 2915633
+      },
+      "band_counts": {
+        "high": 2804107,
+        "medium": 740576,
+        "low": 761665
+      }
+    },
+    "validation": {
+      "products": 49911,
+      "rows": 922794,
+      "recommendation_counts": {
+        "not_recommended": 76529,
+        "recommended": 622717,
+        "<missing>": 134117,
+        "no_idea": 89431
+      },
+      "band_counts": {
+        "high": 599074,
+        "medium": 159055,
+        "low": 164665
+      }
+    },
+    "test": {
+      "products": 49276,
+      "rows": 922805,
+      "recommendation_counts": {
+        "no_idea": 88994,
+        "recommended": 621691,
+        "<missing>": 134960,
+        "not_recommended": 77160
+      },
+      "band_counts": {
+        "<missing>": 1,
+        "high": 598782,
+        "medium": 158723,
+        "low": 165299
+      }
+    }
+  }
+}

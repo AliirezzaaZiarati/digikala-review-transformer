@@ -1,0 +1,5 @@
+﻿threshold,groups,minority_rows,hedge_hint_groups,minority_rows_no_idea,minority_rows_not_recommended,minority_rows_recommended,groups_majority_no_idea,groups_majority_not_recommended,groups_majority_recommended
+0.94,138,1696,3,1544,136,16,1,8,129
+0.93,145,7259,4,6789,438,32,0,10,135
+0.92,130,3893,6,3633,242,18,0,7,123
+0.91,116,1653,6,1541,89,23,1,6,109

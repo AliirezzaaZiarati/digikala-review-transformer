@@ -1,5 +1,6 @@
 """Fixed class order, label columns per head/variant, encoding and class weights."""
 from __future__ import annotations
+
 import numpy as np
 import pandas as pd
 

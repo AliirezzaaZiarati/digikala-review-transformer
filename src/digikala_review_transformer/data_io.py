@@ -1,8 +1,11 @@
 """CSV reading with NA rules, sanity checks and per-head training data."""
 from __future__ import annotations
+
 from itertools import combinations
+
 import numpy as np
 import pandas as pd
+
 from . import labels
 from .utils import sha256_file
 

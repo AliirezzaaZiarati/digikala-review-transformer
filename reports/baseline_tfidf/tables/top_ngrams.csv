@@ -1,0 +1,301 @@
+model_id,filter,class,rank,feature,coef,df_train,is_bigram,has_zwnj
+tfidf12_rec_B,all,recommended,1,عالیه,10.94272232055664,156675,False,False
+tfidf12_rec_B,all,recommended,2,عالی,9.975680351257324,285818,False,False
+tfidf12_rec_B,all,recommended,3,بهترین,7.058319568634033,24627,False,False
+tfidf12_rec_B,all,recommended,4,خوبیه,6.7457661628723145,78236,False,False
+tfidf12_rec_B,all,recommended,5,خوبه,6.530358791351318,407842,False,False
+tfidf12_rec_B,all,recommended,6,بد نبود,6.120965957641602,11660,True,False
+tfidf12_rec_B,all,recommended,7,بد نیست,5.981411457061768,29180,True,False
+tfidf12_rec_B,all,recommended,8,راضیم,5.836170673370361,64790,False,False
+tfidf12_rec_B,all,recommended,9,خیلی خوبه,5.240302085876465,81769,True,False
+tfidf12_rec_B,all,recommended,10,عالین,4.673827171325684,3103,False,False
+tfidf12_rec_B,all,recommended,11,زیبا,4.571725845336914,60766,False,False
+tfidf12_rec_B,all,recommended,12,خوب,4.483588218688965,430314,False,False
+tfidf12_rec_B,all,recommended,13,عالیی,4.383949279785156,10154,False,False
+tfidf12_rec_B,all,recommended,14,خوبی,4.359034538269043,192936,False,False
+tfidf12_rec_B,all,recommended,15,اذیت نمیکنه,4.321722030639648,2327,True,False
+tfidf12_rec_B,all,recommended,16,خوش,4.273849010467529,50418,False,False
+tfidf12_rec_B,all,recommended,17,عاشقش,4.242692947387695,5676,False,False
+tfidf12_rec_B,all,recommended,18,قشنگه,4.093699932098389,39294,False,False
+tfidf12_rec_B,all,recommended,19,خیلی خوب,4.042083740234375,67339,True,False
+tfidf12_rec_B,all,recommended,20,حرف نداره,3.9740397930145264,7872,True,False
+tfidf12_rec_B,all,recommended,21,خوشگله,3.954709768295288,19994,False,False
+tfidf12_rec_B,all,recommended,22,عاالی,3.942882537841797,5523,False,False
+tfidf12_rec_B,all,recommended,23,عاالیه,3.9348554611206055,2582,False,False
+tfidf12_rec_B,all,recommended,24,بهترینه,3.9327971935272217,2097,False,False
+tfidf12_rec_B,all,recommended,25,حرف,3.863395929336548,11080,False,False
+tfidf12_rec_B,all,not_recommended,1,افتضاح,7.031256675720215,11080,False,False
+tfidf12_rec_B,all,not_recommended,2,افتضاحه,6.301333904266357,3020,False,False
+tfidf12_rec_B,all,not_recommended,3,اصلا,6.257362365722656,95973,False,False
+tfidf12_rec_B,all,not_recommended,4,بدترین,5.567756652832031,1122,False,False
+tfidf12_rec_B,all,not_recommended,5,متاسفم,5.316741466522217,4373,False,False
+tfidf12_rec_B,all,not_recommended,6,راضی نیستم,5.222884178161621,4181,True,False
+tfidf12_rec_B,all,not_recommended,7,نخرید,5.104806423187256,12816,False,False
+tfidf12_rec_B,all,not_recommended,8,آشغال,4.637998580932617,2717,False,False
+tfidf12_rec_B,all,not_recommended,9,مرجوع,4.129083633422852,40731,False,False
+tfidf12_rec_B,all,not_recommended,10,تقلبی,4.089535713195801,3679,False,False
+tfidf12_rec_B,all,not_recommended,11,خوب نیست,4.022368907928467,16532,True,False
+tfidf12_rec_B,all,not_recommended,12,افتضااح,4.005283832550049,439,False,False
+tfidf12_rec_B,all,not_recommended,13,آشغاله,3.999514102935791,715,False,False
+tfidf12_rec_B,all,not_recommended,14,پولتون,3.8600244522094727,1937,False,False
+tfidf12_rec_B,all,not_recommended,15,پشیمونم,3.8461265563964844,1647,False,False
+tfidf12_rec_B,all,not_recommended,16,اشغال,3.825408697128296,2170,False,False
+tfidf12_rec_B,all,not_recommended,17,بی کیفیت,3.8152637481689453,16549,True,False
+tfidf12_rec_B,all,not_recommended,18,خرید نداره,3.8128175735473633,4109,True,False
+tfidf12_rec_B,all,not_recommended,19,فاجعه,3.787367105484009,477,False,False
+tfidf12_rec_B,all,not_recommended,20,مزخرف,3.744948625564575,1348,False,False
+tfidf12_rec_B,all,not_recommended,21,خوبی نیست,3.695050001144409,991,True,False
+tfidf12_rec_B,all,not_recommended,22,نبود,3.658163070678711,74922,False,False
+tfidf12_rec_B,all,not_recommended,23,نمیکنم,3.642677068710327,14643,False,False
+tfidf12_rec_B,all,not_recommended,24,اشغاله,3.6408703327178955,470,False,False
+tfidf12_rec_B,all,not_recommended,25,نا,3.53180193901062,1598,False,False
+tfidf12_rec_B,all,no_idea,1,مطمئن نیستم,3.443344831466675,2157,True,False
+tfidf12_rec_B,all,no_idea,2,معمولی,3.4228804111480713,42624,False,False
+tfidf12_rec_B,all,no_idea,3,معمولیه,3.3611905574798584,14183,False,False
+tfidf12_rec_B,all,no_idea,4,نمیدونم,3.24851393699646,13998,False,False
+tfidf12_rec_B,all,no_idea,5,ولی,3.19215989112854,327377,False,False
+tfidf12_rec_B,all,no_idea,6,اما,3.0923163890838623,108832,False,False
+tfidf12_rec_B,all,no_idea,7,شک دارم,2.9156124591827393,333,True,False
+tfidf12_rec_B,all,no_idea,8,امیدوارم,2.714686393737793,13127,False,False
+tfidf12_rec_B,all,no_idea,9,نبود,2.5271809101104736,74922,False,False
+tfidf12_rec_B,all,no_idea,10,نیستم,2.509168863296509,9005,False,False
+tfidf12_rec_B,all,no_idea,11,بدک,2.382626533508301,7725,False,False
+tfidf12_rec_B,all,no_idea,12,نیست,2.3808841705322266,166206,False,False
+tfidf12_rec_B,all,no_idea,13,متوسط,2.348360300064087,11379,False,False
+tfidf12_rec_B,all,no_idea,14,و عالیی,2.301509380340576,330,True,False
+tfidf12_rec_B,all,no_idea,15,بستگی,2.2596044540405273,2503,False,False
+tfidf12_rec_B,all,no_idea,16,عالی نداره,2.2532923221588135,225,True,False
+tfidf12_rec_B,all,no_idea,17,عالی حرف,2.203226327896118,400,True,False
+tfidf12_rec_B,all,no_idea,18,قیمت بصرفه,2.1685287952423096,318,True,False
+tfidf12_rec_B,all,no_idea,19,کاملا معمولی,2.157006025314331,1511,True,False
+tfidf12_rec_B,all,no_idea,20,بدنبود,2.126887083053589,690,False,False
+tfidf12_rec_B,all,no_idea,21,نه بد,2.1268532276153564,812,True,False
+tfidf12_rec_B,all,no_idea,22,خوبه,2.110595703125,407842,False,False
+tfidf12_rec_B,all,no_idea,23,فعلا,2.106987237930298,10232,False,False
+tfidf12_rec_B,all,no_idea,24,احتمالا کتاب,2.0759239196777344,48,True,False
+tfidf12_rec_B,all,no_idea,25,یکم,2.043210983276367,48313,False,False
+tfidf12_rec_B,df>=100,recommended,1,عالیه,10.94272232055664,156675,False,False
+tfidf12_rec_B,df>=100,recommended,2,عالی,9.975680351257324,285818,False,False
+tfidf12_rec_B,df>=100,recommended,3,بهترین,7.058319568634033,24627,False,False
+tfidf12_rec_B,df>=100,recommended,4,خوبیه,6.7457661628723145,78236,False,False
+tfidf12_rec_B,df>=100,recommended,5,خوبه,6.530358791351318,407842,False,False
+tfidf12_rec_B,df>=100,recommended,6,بد نبود,6.120965957641602,11660,True,False
+tfidf12_rec_B,df>=100,recommended,7,بد نیست,5.981411457061768,29180,True,False
+tfidf12_rec_B,df>=100,recommended,8,راضیم,5.836170673370361,64790,False,False
+tfidf12_rec_B,df>=100,recommended,9,خیلی خوبه,5.240302085876465,81769,True,False
+tfidf12_rec_B,df>=100,recommended,10,عالین,4.673827171325684,3103,False,False
+tfidf12_rec_B,df>=100,recommended,11,زیبا,4.571725845336914,60766,False,False
+tfidf12_rec_B,df>=100,recommended,12,خوب,4.483588218688965,430314,False,False
+tfidf12_rec_B,df>=100,recommended,13,عالیی,4.383949279785156,10154,False,False
+tfidf12_rec_B,df>=100,recommended,14,خوبی,4.359034538269043,192936,False,False
+tfidf12_rec_B,df>=100,recommended,15,اذیت نمیکنه,4.321722030639648,2327,True,False
+tfidf12_rec_B,df>=100,recommended,16,خوش,4.273849010467529,50418,False,False
+tfidf12_rec_B,df>=100,recommended,17,عاشقش,4.242692947387695,5676,False,False
+tfidf12_rec_B,df>=100,recommended,18,قشنگه,4.093699932098389,39294,False,False
+tfidf12_rec_B,df>=100,recommended,19,خیلی خوب,4.042083740234375,67339,True,False
+tfidf12_rec_B,df>=100,recommended,20,حرف نداره,3.9740397930145264,7872,True,False
+tfidf12_rec_B,df>=100,recommended,21,خوشگله,3.954709768295288,19994,False,False
+tfidf12_rec_B,df>=100,recommended,22,عاالی,3.942882537841797,5523,False,False
+tfidf12_rec_B,df>=100,recommended,23,عاالیه,3.9348554611206055,2582,False,False
+tfidf12_rec_B,df>=100,recommended,24,بهترینه,3.9327971935272217,2097,False,False
+tfidf12_rec_B,df>=100,recommended,25,حرف,3.863395929336548,11080,False,False
+tfidf12_rec_B,df>=100,not_recommended,1,افتضاح,7.031256675720215,11080,False,False
+tfidf12_rec_B,df>=100,not_recommended,2,افتضاحه,6.301333904266357,3020,False,False
+tfidf12_rec_B,df>=100,not_recommended,3,اصلا,6.257362365722656,95973,False,False
+tfidf12_rec_B,df>=100,not_recommended,4,بدترین,5.567756652832031,1122,False,False
+tfidf12_rec_B,df>=100,not_recommended,5,متاسفم,5.316741466522217,4373,False,False
+tfidf12_rec_B,df>=100,not_recommended,6,راضی نیستم,5.222884178161621,4181,True,False
+tfidf12_rec_B,df>=100,not_recommended,7,نخرید,5.104806423187256,12816,False,False
+tfidf12_rec_B,df>=100,not_recommended,8,آشغال,4.637998580932617,2717,False,False
+tfidf12_rec_B,df>=100,not_recommended,9,مرجوع,4.129083633422852,40731,False,False
+tfidf12_rec_B,df>=100,not_recommended,10,تقلبی,4.089535713195801,3679,False,False
+tfidf12_rec_B,df>=100,not_recommended,11,خوب نیست,4.022368907928467,16532,True,False
+tfidf12_rec_B,df>=100,not_recommended,12,افتضااح,4.005283832550049,439,False,False
+tfidf12_rec_B,df>=100,not_recommended,13,آشغاله,3.999514102935791,715,False,False
+tfidf12_rec_B,df>=100,not_recommended,14,پولتون,3.8600244522094727,1937,False,False
+tfidf12_rec_B,df>=100,not_recommended,15,پشیمونم,3.8461265563964844,1647,False,False
+tfidf12_rec_B,df>=100,not_recommended,16,اشغال,3.825408697128296,2170,False,False
+tfidf12_rec_B,df>=100,not_recommended,17,بی کیفیت,3.8152637481689453,16549,True,False
+tfidf12_rec_B,df>=100,not_recommended,18,خرید نداره,3.8128175735473633,4109,True,False
+tfidf12_rec_B,df>=100,not_recommended,19,فاجعه,3.787367105484009,477,False,False
+tfidf12_rec_B,df>=100,not_recommended,20,مزخرف,3.744948625564575,1348,False,False
+tfidf12_rec_B,df>=100,not_recommended,21,خوبی نیست,3.695050001144409,991,True,False
+tfidf12_rec_B,df>=100,not_recommended,22,نبود,3.658163070678711,74922,False,False
+tfidf12_rec_B,df>=100,not_recommended,23,نمیکنم,3.642677068710327,14643,False,False
+tfidf12_rec_B,df>=100,not_recommended,24,اشغاله,3.6408703327178955,470,False,False
+tfidf12_rec_B,df>=100,not_recommended,25,نا,3.53180193901062,1598,False,False
+tfidf12_rec_B,df>=100,no_idea,1,مطمئن نیستم,3.443344831466675,2157,True,False
+tfidf12_rec_B,df>=100,no_idea,2,معمولی,3.4228804111480713,42624,False,False
+tfidf12_rec_B,df>=100,no_idea,3,معمولیه,3.3611905574798584,14183,False,False
+tfidf12_rec_B,df>=100,no_idea,4,نمیدونم,3.24851393699646,13998,False,False
+tfidf12_rec_B,df>=100,no_idea,5,ولی,3.19215989112854,327377,False,False
+tfidf12_rec_B,df>=100,no_idea,6,اما,3.0923163890838623,108832,False,False
+tfidf12_rec_B,df>=100,no_idea,7,شک دارم,2.9156124591827393,333,True,False
+tfidf12_rec_B,df>=100,no_idea,8,امیدوارم,2.714686393737793,13127,False,False
+tfidf12_rec_B,df>=100,no_idea,9,نبود,2.5271809101104736,74922,False,False
+tfidf12_rec_B,df>=100,no_idea,10,نیستم,2.509168863296509,9005,False,False
+tfidf12_rec_B,df>=100,no_idea,11,بدک,2.382626533508301,7725,False,False
+tfidf12_rec_B,df>=100,no_idea,12,نیست,2.3808841705322266,166206,False,False
+tfidf12_rec_B,df>=100,no_idea,13,متوسط,2.348360300064087,11379,False,False
+tfidf12_rec_B,df>=100,no_idea,14,و عالیی,2.301509380340576,330,True,False
+tfidf12_rec_B,df>=100,no_idea,15,بستگی,2.2596044540405273,2503,False,False
+tfidf12_rec_B,df>=100,no_idea,16,عالی نداره,2.2532923221588135,225,True,False
+tfidf12_rec_B,df>=100,no_idea,17,عالی حرف,2.203226327896118,400,True,False
+tfidf12_rec_B,df>=100,no_idea,18,قیمت بصرفه,2.1685287952423096,318,True,False
+tfidf12_rec_B,df>=100,no_idea,19,کاملا معمولی,2.157006025314331,1511,True,False
+tfidf12_rec_B,df>=100,no_idea,20,بدنبود,2.126887083053589,690,False,False
+tfidf12_rec_B,df>=100,no_idea,21,نه بد,2.1268532276153564,812,True,False
+tfidf12_rec_B,df>=100,no_idea,22,خوبه,2.110595703125,407842,False,False
+tfidf12_rec_B,df>=100,no_idea,23,فعلا,2.106987237930298,10232,False,False
+tfidf12_rec_B,df>=100,no_idea,24,یکم,2.043210983276367,48313,False,False
+tfidf12_rec_B,df>=100,no_idea,25,بسیار ممنونم,2.0114285945892334,136,True,False
+tfidf12_band_B,all,low,1,افتضاح,5.335982799530029,11080,False,False
+tfidf12_band_B,all,low,2,اصلا,4.923013210296631,95973,False,False
+tfidf12_band_B,all,low,3,نخرید,3.797267198562622,12816,False,False
+tfidf12_band_B,all,low,4,افتضاحه,3.756565570831299,3020,False,False
+tfidf12_band_B,all,low,5,متاسفم,3.4912123680114746,4373,False,False
+tfidf12_band_B,all,low,6,بی کیفیت,3.2902402877807617,16549,True,False
+tfidf12_band_B,all,low,7,بدترین,3.2900102138519287,1122,False,False
+tfidf12_band_B,all,low,8,آشغال,3.1699259281158447,2717,False,False
+tfidf12_band_B,all,low,9,مرجوع,3.019014596939087,40731,False,False
+tfidf12_band_B,all,low,10,آشغاله,2.908040761947632,715,False,False
+tfidf12_band_B,all,low,11,فرستادن,2.7345969676971436,22162,False,False
+tfidf12_band_B,all,low,12,مزخرف,2.7036666870117188,1348,False,False
+tfidf12_band_B,all,low,13,اشغال,2.67177677154541,2170,False,False
+tfidf12_band_B,all,low,14,تقلبی,2.5896434783935547,3679,False,False
+tfidf12_band_B,all,low,15,خیلی بد,2.562976598739624,7409,True,False
+tfidf12_band_B,all,low,16,راضی نیستم,2.4386088848114014,4181,True,False
+tfidf12_band_B,all,low,17,خرید نداره,2.408522129058838,4109,True,False
+tfidf12_band_B,all,low,18,پولتونو,2.3608627319335938,1278,False,False
+tfidf12_band_B,all,low,19,نامناسب,2.2934956550598145,3183,False,False
+tfidf12_band_B,all,low,20,افتضااح,2.286311149597168,439,False,False
+tfidf12_band_B,all,low,21,خیلی بده,2.2841529846191406,2865,True,False
+tfidf12_band_B,all,low,22,بدتر,2.283327102661133,1328,False,False
+tfidf12_band_B,all,low,23,فیک,2.2782790660858154,5253,False,False
+tfidf12_band_B,all,low,24,کتاب,2.2690038681030273,124796,False,False
+tfidf12_band_B,all,low,25,نخور,2.2683420181274414,3405,False,False
+tfidf12_band_B,all,medium,1,معمولی,3.9421987533569336,42624,False,False
+tfidf12_band_B,all,medium,2,معمولیه,3.545780897140503,14183,False,False
+tfidf12_band_B,all,medium,3,ولی,2.145723581314087,327377,False,False
+tfidf12_band_B,all,medium,4,نبود,2.0035078525543213,74922,False,False
+tfidf12_band_B,all,medium,5,نیست,2.0029783248901367,166206,False,False
+tfidf12_band_B,all,medium,6,اما,1.9743555784225464,108832,False,False
+tfidf12_band_B,all,medium,7,کاملا معمولی,1.6137032508850098,1511,True,False
+tfidf12_band_B,all,medium,8,متوسط,1.6134603023529053,11379,False,False
+tfidf12_band_B,all,medium,9,بدنیست,1.5870418548583984,2025,False,False
+tfidf12_band_B,all,medium,10,نمیدونم,1.5448271036148071,13998,False,False
+tfidf12_band_B,all,medium,11,خاصی,1.4902398586273193,13064,False,False
+tfidf12_band_B,all,medium,12,نیستم,1.4793964624404907,9005,False,False
+tfidf12_band_B,all,medium,13,متوسطه,1.4654810428619385,2687,False,False
+tfidf12_band_B,all,medium,14,چندان,1.4154006242752075,2778,False,False
+tfidf12_band_B,all,medium,15,زیاد,1.3670727014541626,49836,False,False
+tfidf12_band_B,all,medium,16,مطمئن نیستم,1.3590545654296875,2157,True,False
+tfidf12_band_B,all,medium,17,قیمت بصرفه,1.3227040767669678,318,True,False
+tfidf12_band_B,all,medium,18,نداره,1.3122464418411255,89497,False,False
+tfidf12_band_B,all,medium,19,متوسطی,1.3023064136505127,1821,False,False
+tfidf12_band_B,all,medium,20,نیومد,1.2856593132019043,7353,False,False
+tfidf12_band_B,all,medium,21,ندیدم,1.2849429845809937,7640,False,False
+tfidf12_band_B,all,medium,22,معمولیی,1.2768325805664062,107,False,False
+tfidf12_band_B,all,medium,23,۲۰ به,1.2666995525360107,110,True,False
+tfidf12_band_B,all,medium,24,تاثیری,1.2603884935379028,5023,False,False
+tfidf12_band_B,all,medium,25,نسبتا,1.2447197437286377,12568,False,False
+tfidf12_band_B,all,high,1,عالی,4.067671298980713,285818,False,False
+tfidf12_band_B,all,high,2,عالیه,3.9209237098693848,156675,False,False
+tfidf12_band_B,all,high,3,بهترین,2.9226229190826416,24627,False,False
+tfidf12_band_B,all,high,4,بد نبود,2.902597665786743,11660,True,False
+tfidf12_band_B,all,high,5,بد نیست,2.417236566543579,29180,True,False
+tfidf12_band_B,all,high,6,حرف,2.2319536209106445,11080,False,False
+tfidf12_band_B,all,high,7,عالیی,2.148820638656616,10154,False,False
+tfidf12_band_B,all,high,8,نازک نیست,2.1416518688201904,724,True,False
+tfidf12_band_B,all,high,9,خوبیه,2.1126623153686523,78236,False,False
+tfidf12_band_B,all,high,10,عالیهه,2.051405906677246,3206,False,False
+tfidf12_band_B,all,high,11,خیلی خوبه,2.043846845626831,81769,True,False
+tfidf12_band_B,all,high,12,فوق‌العاده,1.9907389879226685,3151,False,True
+tfidf12_band_B,all,high,13,اذیت نمیکنه,1.9426530599594116,2327,True,False
+tfidf12_band_B,all,high,14,مشکلی,1.903985619544983,12855,False,False
+tfidf12_band_B,all,high,15,خوبه,1.8147143125534058,407842,False,False
+tfidf12_band_B,all,high,16,پاره نمیشه,1.8126180171966553,696,True,False
+tfidf12_band_B,all,high,17,کیوت,1.7874757051467896,3499,False,False
+tfidf12_band_B,all,high,18,عالین,1.7531812191009521,3103,False,False
+tfidf12_band_B,all,high,19,راضیم,1.715391993522644,64790,False,False
+tfidf12_band_B,all,high,20,خوش,1.6923346519470215,50418,False,False
+tfidf12_band_B,all,high,21,چرب نیست,1.6893326044082642,1529,True,False
+tfidf12_band_B,all,high,22,همون چیزی,1.6892553567886353,3323,True,False
+tfidf12_band_B,all,high,23,عاالی,1.6878124475479126,5523,False,False
+tfidf12_band_B,all,high,24,خراب نمیشه,1.68649423122406,649,True,False
+tfidf12_band_B,all,high,25,عاشقش,1.6811460256576538,5676,False,False
+tfidf12_band_B,df>=100,low,1,افتضاح,5.335982799530029,11080,False,False
+tfidf12_band_B,df>=100,low,2,اصلا,4.923013210296631,95973,False,False
+tfidf12_band_B,df>=100,low,3,نخرید,3.797267198562622,12816,False,False
+tfidf12_band_B,df>=100,low,4,افتضاحه,3.756565570831299,3020,False,False
+tfidf12_band_B,df>=100,low,5,متاسفم,3.4912123680114746,4373,False,False
+tfidf12_band_B,df>=100,low,6,بی کیفیت,3.2902402877807617,16549,True,False
+tfidf12_band_B,df>=100,low,7,بدترین,3.2900102138519287,1122,False,False
+tfidf12_band_B,df>=100,low,8,آشغال,3.1699259281158447,2717,False,False
+tfidf12_band_B,df>=100,low,9,مرجوع,3.019014596939087,40731,False,False
+tfidf12_band_B,df>=100,low,10,آشغاله,2.908040761947632,715,False,False
+tfidf12_band_B,df>=100,low,11,فرستادن,2.7345969676971436,22162,False,False
+tfidf12_band_B,df>=100,low,12,مزخرف,2.7036666870117188,1348,False,False
+tfidf12_band_B,df>=100,low,13,اشغال,2.67177677154541,2170,False,False
+tfidf12_band_B,df>=100,low,14,تقلبی,2.5896434783935547,3679,False,False
+tfidf12_band_B,df>=100,low,15,خیلی بد,2.562976598739624,7409,True,False
+tfidf12_band_B,df>=100,low,16,راضی نیستم,2.4386088848114014,4181,True,False
+tfidf12_band_B,df>=100,low,17,خرید نداره,2.408522129058838,4109,True,False
+tfidf12_band_B,df>=100,low,18,پولتونو,2.3608627319335938,1278,False,False
+tfidf12_band_B,df>=100,low,19,نامناسب,2.2934956550598145,3183,False,False
+tfidf12_band_B,df>=100,low,20,افتضااح,2.286311149597168,439,False,False
+tfidf12_band_B,df>=100,low,21,خیلی بده,2.2841529846191406,2865,True,False
+tfidf12_band_B,df>=100,low,22,بدتر,2.283327102661133,1328,False,False
+tfidf12_band_B,df>=100,low,23,فیک,2.2782790660858154,5253,False,False
+tfidf12_band_B,df>=100,low,24,کتاب,2.2690038681030273,124796,False,False
+tfidf12_band_B,df>=100,low,25,نخور,2.2683420181274414,3405,False,False
+tfidf12_band_B,df>=100,medium,1,معمولی,3.9421987533569336,42624,False,False
+tfidf12_band_B,df>=100,medium,2,معمولیه,3.545780897140503,14183,False,False
+tfidf12_band_B,df>=100,medium,3,ولی,2.145723581314087,327377,False,False
+tfidf12_band_B,df>=100,medium,4,نبود,2.0035078525543213,74922,False,False
+tfidf12_band_B,df>=100,medium,5,نیست,2.0029783248901367,166206,False,False
+tfidf12_band_B,df>=100,medium,6,اما,1.9743555784225464,108832,False,False
+tfidf12_band_B,df>=100,medium,7,کاملا معمولی,1.6137032508850098,1511,True,False
+tfidf12_band_B,df>=100,medium,8,متوسط,1.6134603023529053,11379,False,False
+tfidf12_band_B,df>=100,medium,9,بدنیست,1.5870418548583984,2025,False,False
+tfidf12_band_B,df>=100,medium,10,نمیدونم,1.5448271036148071,13998,False,False
+tfidf12_band_B,df>=100,medium,11,خاصی,1.4902398586273193,13064,False,False
+tfidf12_band_B,df>=100,medium,12,نیستم,1.4793964624404907,9005,False,False
+tfidf12_band_B,df>=100,medium,13,متوسطه,1.4654810428619385,2687,False,False
+tfidf12_band_B,df>=100,medium,14,چندان,1.4154006242752075,2778,False,False
+tfidf12_band_B,df>=100,medium,15,زیاد,1.3670727014541626,49836,False,False
+tfidf12_band_B,df>=100,medium,16,مطمئن نیستم,1.3590545654296875,2157,True,False
+tfidf12_band_B,df>=100,medium,17,قیمت بصرفه,1.3227040767669678,318,True,False
+tfidf12_band_B,df>=100,medium,18,نداره,1.3122464418411255,89497,False,False
+tfidf12_band_B,df>=100,medium,19,متوسطی,1.3023064136505127,1821,False,False
+tfidf12_band_B,df>=100,medium,20,نیومد,1.2856593132019043,7353,False,False
+tfidf12_band_B,df>=100,medium,21,ندیدم,1.2849429845809937,7640,False,False
+tfidf12_band_B,df>=100,medium,22,معمولیی,1.2768325805664062,107,False,False
+tfidf12_band_B,df>=100,medium,23,۲۰ به,1.2666995525360107,110,True,False
+tfidf12_band_B,df>=100,medium,24,تاثیری,1.2603884935379028,5023,False,False
+tfidf12_band_B,df>=100,medium,25,نسبتا,1.2447197437286377,12568,False,False
+tfidf12_band_B,df>=100,high,1,عالی,4.067671298980713,285818,False,False
+tfidf12_band_B,df>=100,high,2,عالیه,3.9209237098693848,156675,False,False
+tfidf12_band_B,df>=100,high,3,بهترین,2.9226229190826416,24627,False,False
+tfidf12_band_B,df>=100,high,4,بد نبود,2.902597665786743,11660,True,False
+tfidf12_band_B,df>=100,high,5,بد نیست,2.417236566543579,29180,True,False
+tfidf12_band_B,df>=100,high,6,حرف,2.2319536209106445,11080,False,False
+tfidf12_band_B,df>=100,high,7,عالیی,2.148820638656616,10154,False,False
+tfidf12_band_B,df>=100,high,8,نازک نیست,2.1416518688201904,724,True,False
+tfidf12_band_B,df>=100,high,9,خوبیه,2.1126623153686523,78236,False,False
+tfidf12_band_B,df>=100,high,10,عالیهه,2.051405906677246,3206,False,False
+tfidf12_band_B,df>=100,high,11,خیلی خوبه,2.043846845626831,81769,True,False
+tfidf12_band_B,df>=100,high,12,فوق‌العاده,1.9907389879226685,3151,False,True
+tfidf12_band_B,df>=100,high,13,اذیت نمیکنه,1.9426530599594116,2327,True,False
+tfidf12_band_B,df>=100,high,14,مشکلی,1.903985619544983,12855,False,False
+tfidf12_band_B,df>=100,high,15,خوبه,1.8147143125534058,407842,False,False
+tfidf12_band_B,df>=100,high,16,پاره نمیشه,1.8126180171966553,696,True,False
+tfidf12_band_B,df>=100,high,17,کیوت,1.7874757051467896,3499,False,False
+tfidf12_band_B,df>=100,high,18,عالین,1.7531812191009521,3103,False,False
+tfidf12_band_B,df>=100,high,19,راضیم,1.715391993522644,64790,False,False
+tfidf12_band_B,df>=100,high,20,خوش,1.6923346519470215,50418,False,False
+tfidf12_band_B,df>=100,high,21,چرب نیست,1.6893326044082642,1529,True,False
+tfidf12_band_B,df>=100,high,22,همون چیزی,1.6892553567886353,3323,True,False
+tfidf12_band_B,df>=100,high,23,عاالی,1.6878124475479126,5523,False,False
+tfidf12_band_B,df>=100,high,24,خراب نمیشه,1.68649423122406,649,True,False
+tfidf12_band_B,df>=100,high,25,عاشقش,1.6811460256576538,5676,False,False

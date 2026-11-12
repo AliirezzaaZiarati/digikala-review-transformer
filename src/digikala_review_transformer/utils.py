@@ -1,6 +1,10 @@
 """Small shared helpers: sha256, JSON writing, timing."""
 from __future__ import annotations
-import csv, hashlib, json, time
+
+import csv
+import hashlib
+import json
+import time
 from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path

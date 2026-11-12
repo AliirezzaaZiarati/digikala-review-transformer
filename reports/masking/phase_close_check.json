@@ -1,0 +1,33 @@
+{
+  "checks": {
+    "row count unchanged": true,
+    "only train_role was added": true,
+    "original columns identical to backup": true,
+    "train roles sum == train rows": true,
+    "validation/test untouched (no role)": true,
+    "role fingerprint == last cap run": true,
+    "csv sha256 == manifest": true
+  },
+  "roles": {
+    "supervised": 2860236,
+    "cap_dropped_supervised": 709796,
+    "pseudo_unlabeled": 635824,
+    "cap_dropped_pseudo": 100492
+  },
+  "role_fingerprint": "1247779097789848829",
+  "columns_compared": [
+    "_row_idx",
+    "id",
+    "title",
+    "rate",
+    "recommendation_status",
+    "product_id",
+    "is_buyer",
+    "seller_code",
+    "rating_band",
+    "body",
+    "split",
+    "step1_rec_label",
+    "step1_rate_band_label"
+  ]
+}

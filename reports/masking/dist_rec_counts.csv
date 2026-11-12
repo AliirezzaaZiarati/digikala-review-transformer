@@ -1,0 +1,7 @@
+segment,NULL,no_idea,not_recommended,recommended
+supervised_before_cap,624762,324686,279647,2340937
+supervised_after_cap,468079,290995,266638,1834524
+pseudo_before_cap,0,81171,69911,585234
+pseudo_after_cap,0,75524,68558,491742
+validation,134117,87277,76275,625125
+test,134960,86757,76960,624128

@@ -1,0 +1,3648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#eae7df">
+
+<title>Phase 02 — Masking, Duplicate Cap & Artifacts</title>
+
+<style>
+
+/* =========================================================
+   00 — DESIGN SYSTEM
+========================================================= */
+
+:root {
+    --paper: #eae7df;
+    --paper-light: #f5f3ed;
+    --white: #fffefa;
+    --ink: #171b1d;
+    --muted: #777a77;
+    --line: #d1cec5;
+
+    --red: #df4937;
+    --red-soft: #f6e1dc;
+
+    --blue: #315d78;
+    --blue-soft: #e1eaf0;
+
+    --green: #357a58;
+    --green-soft: #e2eee6;
+
+    --yellow: #d4a43a;
+    --yellow-soft: #f5edd7;
+
+    --purple: #7259a1;
+    --purple-soft: #eee8f6;
+
+    --font: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
+    --shadow: 0 12px 35px rgba(28, 31, 29, .055);
+}
+
+/* =========================================================
+   01 — GLOBAL
+========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 90px;
+}
+
+body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: .13;
+    z-index: -1;
+
+    background-image:
+        linear-gradient(rgba(23,27,29,.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(23,27,29,.12) 1px, transparent 1px);
+
+    background-size: 48px 48px;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+button {
+    font: inherit;
+}
+
+.page {
+    width: min(1540px, calc(100% - 64px));
+    margin: 0 auto;
+}
+
+.mono {
+    font-family: var(--mono);
+}
+
+.red {
+    color: var(--red);
+}
+
+.blue {
+    color: var(--blue);
+}
+
+.green {
+    color: var(--green);
+}
+
+.muted {
+    color: var(--muted);
+}
+
+.small {
+    font-size: 12px;
+}
+
+.eyebrow {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+}
+
+.rule {
+    height: 1px;
+    background: var(--line);
+    margin: 18px 0;
+}
+
+.section {
+    margin-top: 64px;
+    scroll-margin-top: 90px;
+}
+
+.section-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 24px;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 12px;
+}
+
+.section-title {
+    margin: 4px 0 0;
+    font-size: clamp(25px, 3vw, 39px);
+    line-height: 1;
+    letter-spacing: -.065em;
+    font-weight: 850;
+}
+
+.section-index {
+    font-family: var(--mono);
+    font-size: 34px;
+    font-weight: 800;
+    color: var(--red);
+    line-height: 1;
+}
+
+.section-note {
+    max-width: 380px;
+    text-align: right;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.panel {
+    background: var(--paper-light);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+}
+
+.panel-dark {
+    color: var(--white);
+    background: var(--ink);
+    border-color: var(--ink);
+}
+
+.panel-red {
+    background: var(--red);
+    color: white;
+    border-color: var(--red);
+}
+
+.panel-blue {
+    background: var(--blue);
+    color: white;
+    border-color: var(--blue);
+}
+
+.panel-green {
+    background: var(--green);
+    color: white;
+    border-color: var(--green);
+}
+
+/* =========================================================
+   02 — HEADER
+========================================================= */
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--ink);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    font-weight: 900;
+    letter-spacing: -.04em;
+    font-size: 14px;
+}
+
+.brand-mark {
+    width: 27px;
+    height: 27px;
+    background: var(--red);
+    display: grid;
+    place-items: center;
+    color: white;
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.topbar-right {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+}
+
+.status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .1em;
+}
+
+.status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #58a774;
+}
+
+.nav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    padding: 10px 0;
+    background: rgba(234,231,223,.94);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+}
+
+.nav a {
+    padding: 6px 10px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .04em;
+    color: var(--muted);
+    transition: .2s;
+}
+
+.nav a:hover {
+    background: var(--ink);
+    color: white;
+}
+
+/* =========================================================
+   03 — HERO
+========================================================= */
+
+.hero {
+    display: grid;
+    grid-template-columns: 1.7fr .8fr;
+    gap: 18px;
+    padding: 42px 0 28px;
+}
+
+.hero-main {
+    position: relative;
+    min-height: 350px;
+    padding: 35px 38px;
+    background: var(--ink);
+    color: white;
+    overflow: hidden;
+}
+
+.hero-main::after {
+    content: "02";
+    position: absolute;
+    right: 12px;
+    bottom: -75px;
+    color: rgba(255,255,255,.055);
+    font-size: 320px;
+    font-weight: 900;
+    letter-spacing: -.12em;
+    line-height: 1;
+    pointer-events: none;
+}
+
+.hero-kicker {
+    color: #f17b6b;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: .23em;
+    text-transform: uppercase;
+}
+
+.hero h1 {
+    position: relative;
+    z-index: 1;
+    max-width: 850px;
+    margin: 30px 0 18px;
+    font-size: clamp(42px, 6.7vw, 88px);
+    line-height: .91;
+    letter-spacing: -.085em;
+    font-weight: 900;
+}
+
+.hero h1 span {
+    display: block;
+    color: #ec6958;
+}
+
+.hero-description {
+    position: relative;
+    z-index: 1;
+    max-width: 650px;
+    margin-top: 24px;
+    color: #c5c7c2;
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.hero-side {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.phase-box {
+    flex: 1;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.phase-box .big {
+    font-size: 64px;
+    font-weight: 900;
+    letter-spacing: -.09em;
+    line-height: 1;
+}
+
+.phase-box p {
+    margin: 8px 0 0;
+    font-size: 11px;
+    line-height: 1.7;
+}
+
+.phase-box.red-box {
+    background: var(--red);
+    color: white;
+}
+
+.phase-box.light-box {
+    background: var(--white);
+    border: 1px solid var(--line);
+}
+
+/* =========================================================
+   04 — KPI STRIP
+========================================================= */
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.kpi {
+    position: relative;
+    min-height: 140px;
+    padding: 20px;
+    background: var(--paper-light);
+    border: 1px solid var(--line);
+    transition: .2s;
+}
+
+.kpi:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+}
+
+.kpi-label {
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: .14em;
+    color: var(--muted);
+    text-transform: uppercase;
+}
+
+.kpi-number {
+    display: block;
+    margin: 15px 0 6px;
+    font-size: clamp(27px, 3vw, 39px);
+    line-height: 1;
+    font-weight: 900;
+    letter-spacing: -.07em;
+}
+
+.kpi-sub {
+    font-size: 10px;
+    color: var(--muted);
+}
+
+.kpi-accent {
+    position: absolute;
+    width: 4px;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background: var(--red);
+}
+
+/* =========================================================
+   05 — MAIN WORKFLOW
+========================================================= */
+
+.workflow-shell {
+    background: var(--white);
+    border: 1px solid var(--line);
+    padding: 28px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.workflow-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: flex-start;
+    margin-bottom: 25px;
+}
+
+.workflow-top h3 {
+    margin: 5px 0;
+    font-size: 22px;
+    letter-spacing: -.05em;
+}
+
+.workflow-top p {
+    max-width: 600px;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.workflow-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 9px;
+    font-weight: 800;
+}
+
+.legend-item {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.legend-dot {
+    height: 9px;
+    width: 9px;
+    border-radius: 2px;
+}
+
+.flow-row {
+    display: grid;
+    grid-template-columns: 1fr 35px 1fr 35px 1fr;
+    align-items: stretch;
+    gap: 5px;
+    margin-bottom: 13px;
+}
+
+.flow-node {
+    padding: 17px;
+    min-height: 105px;
+    border: 1px solid var(--line);
+    position: relative;
+    background: var(--paper-light);
+    transition: .2s;
+}
+
+.flow-node:hover {
+    border-color: var(--red);
+    transform: translateY(-2px);
+}
+
+.flow-node .tag {
+    display: block;
+    margin-bottom: 12px;
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.flow-node h4 {
+    margin: 0 0 6px;
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: -.035em;
+}
+
+.flow-node p {
+    margin: 0;
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.6;
+}
+
+.flow-node.dark {
+    color: white;
+    background: var(--ink);
+    border-color: var(--ink);
+}
+
+.flow-node.dark .tag,
+.flow-node.dark p {
+    color: #c5c7c2;
+}
+
+.flow-node.red-node {
+    background: var(--red-soft);
+    border-color: #e7b5ac;
+}
+
+.flow-node.blue-node {
+    background: var(--blue-soft);
+    border-color: #b9cdd9;
+}
+
+.flow-node.green-node {
+    background: var(--green-soft);
+    border-color: #b8d6c2;
+}
+
+.flow-node.yellow-node {
+    background: var(--yellow-soft);
+    border-color: #e6d39d;
+}
+
+.flow-arrow {
+    display: grid;
+    place-items: center;
+    font-size: 25px;
+    color: var(--red);
+    font-weight: 900;
+}
+
+.flow-down {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 32px;
+    color: var(--red);
+    font-size: 24px;
+    font-weight: 900;
+}
+
+.split-banner {
+    margin: 10px 0 15px;
+    padding: 12px 16px;
+    background: var(--ink);
+    color: white;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .07em;
+}
+
+.branch-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.branch {
+    border: 1px solid var(--line);
+    background: var(--paper-light);
+    padding: 19px;
+    min-width: 0;
+}
+
+.branch-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 12px;
+    margin-bottom: 14px;
+}
+
+.branch-head h4 {
+    margin: 0;
+    font-size: 15px;
+    letter-spacing: -.03em;
+}
+
+.branch-label {
+    font-size: 8px;
+    letter-spacing: .11em;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.branch-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.mini-stat {
+    background: var(--white);
+    border: 1px solid var(--line);
+    padding: 12px;
+}
+
+.mini-stat b {
+    display: block;
+    font-size: 19px;
+    letter-spacing: -.06em;
+}
+
+.mini-stat span {
+    font-size: 9px;
+    color: var(--muted);
+}
+
+.branch-cap {
+    margin-top: 12px;
+    text-align: center;
+    padding: 12px;
+    background: var(--blue-soft);
+    color: var(--blue);
+    font-size: 10px;
+    font-weight: 900;
+    border: 1px dashed var(--blue);
+}
+
+.output-node {
+    margin-top: 12px;
+    padding: 15px;
+    color: white;
+    background: var(--green);
+}
+
+.output-node strong {
+    display: block;
+    font-size: 22px;
+    letter-spacing: -.06em;
+}
+
+.output-node span {
+    font-size: 9px;
+    opacity: .85;
+}
+
+.drop-node {
+    margin-top: 8px;
+    padding: 10px 13px;
+    background: var(--red-soft);
+    color: #913b30;
+    border: 1px solid #e9c2bb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10px;
+}
+
+.drop-node strong {
+    font-size: 16px;
+}
+
+.bypass {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: 1fr 100px 1fr;
+    gap: 10px;
+    align-items: center;
+    padding: 15px;
+    border: 1px dashed var(--blue);
+    background: var(--blue-soft);
+}
+
+.bypass-box {
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.bypass-arrow {
+    text-align: center;
+    font-size: 22px;
+    color: var(--blue);
+}
+
+.bypass-note {
+    margin-top: 10px;
+    font-size: 9px;
+    color: var(--blue);
+}
+
+/* =========================================================
+   06 — MASKING / CAP LOGIC
+========================================================= */
+
+.algorithm-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.algorithm {
+    position: relative;
+    padding: 24px;
+    min-height: 260px;
+}
+
+.algorithm h3 {
+    margin: 8px 0 12px;
+    font-size: 23px;
+    letter-spacing: -.06em;
+}
+
+.algorithm p {
+    font-size: 11px;
+    line-height: 1.8;
+}
+
+.formula {
+    display: block;
+    margin: 17px 0;
+    padding: 15px;
+    background: rgba(255,255,255,.72);
+    border: 1px solid rgba(0,0,0,.1);
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+.algorithm-number {
+    position: absolute;
+    top: 10px;
+    right: 19px;
+    font-weight: 900;
+    font-size: 62px;
+    opacity: .08;
+}
+
+.class-table,
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10px;
+}
+
+.class-table th,
+.class-table td,
+.data-table th,
+.data-table td {
+    padding: 10px 9px;
+    text-align: right;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+}
+
+.class-table th,
+.data-table th {
+    background: var(--ink);
+    color: white;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .05em;
+}
+
+.class-table th:first-child,
+.class-table td:first-child,
+.data-table th:first-child,
+.data-table td:first-child {
+    text-align: left;
+}
+
+.class-table tbody tr:nth-child(even),
+.data-table tbody tr:nth-child(even) {
+    background: rgba(0,0,0,.025);
+}
+
+.table-wrap {
+    overflow-x: auto;
+    width: 100%;
+}
+
+/* =========================================================
+   07 — DISTRIBUTIONS
+========================================================= */
+
+.diagnostic-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.diagnostic-panel {
+    background: var(--white);
+    border: 1px solid var(--line);
+    padding: 22px;
+    min-width: 0;
+}
+
+.diagnostic-panel h3 {
+    margin: 0 0 6px;
+    font-size: 19px;
+    letter-spacing: -.055em;
+}
+
+.diagnostic-panel > p {
+    color: var(--muted);
+    font-size: 10px;
+    margin: 0 0 18px;
+}
+
+.data-table td:first-child {
+    font-weight: 800;
+}
+
+.data-table .highlight {
+    color: var(--red);
+    font-weight: 900;
+}
+
+.bar-list {
+    display: grid;
+    gap: 13px;
+    margin-top: 22px;
+}
+
+.bar-item {
+    display: grid;
+    grid-template-columns: 115px 1fr 50px;
+    align-items: center;
+    gap: 10px;
+    font-size: 10px;
+}
+
+.bar-track {
+    height: 10px;
+    background: #e7e4dc;
+    position: relative;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    background: var(--red);
+}
+
+.bar-fill.blue-fill {
+    background: var(--blue);
+}
+
+.bar-fill.green-fill {
+    background: var(--green);
+}
+
+.bar-value {
+    text-align: right;
+    font-family: var(--mono);
+    font-weight: 800;
+}
+
+/* =========================================================
+   08 — DECISIONS
+========================================================= */
+
+.decision-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.decision {
+    min-height: 175px;
+    padding: 18px;
+    border: 1px solid var(--line);
+    background: var(--paper-light);
+    position: relative;
+    transition: .2s;
+}
+
+.decision:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+}
+
+.decision .num {
+    font-family: var(--mono);
+    color: var(--red);
+    font-size: 11px;
+    font-weight: 900;
+}
+
+.decision h4 {
+    margin: 23px 0 7px;
+    font-size: 15px;
+    letter-spacing: -.04em;
+}
+
+.decision p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.7;
+}
+
+/* =========================================================
+   09 — OUTPUTS
+========================================================= */
+
+.outputs-layout {
+    display: grid;
+    grid-template-columns: 1.6fr .8fr;
+    gap: 15px;
+}
+
+.file-stack {
+    background: var(--white);
+    border: 1px solid var(--line);
+    padding: 20px;
+}
+
+.file-row {
+    display: grid;
+    grid-template-columns: 35px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.file-row:last-child {
+    border-bottom: 0;
+}
+
+.file-icon {
+    width: 32px;
+    height: 35px;
+    display: grid;
+    place-items: center;
+    color: white;
+    background: var(--green);
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 900;
+}
+
+.file-name {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.file-desc {
+    color: var(--muted);
+    font-size: 9px;
+    margin-top: 3px;
+}
+
+.file-size {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-align: right;
+    color: var(--muted);
+}
+
+.manifest-box {
+    background: var(--ink);
+    color: white;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.manifest-box h3 {
+    font-size: 24px;
+    letter-spacing: -.06em;
+}
+
+.manifest-box p {
+    font-size: 11px;
+    line-height: 1.8;
+    color: #c7c9c4;
+}
+
+.manifest-box .manifest-icon {
+    font-size: 52px;
+    color: #ed715f;
+    line-height: 1;
+}
+
+/* =========================================================
+   10 — ACCOUNTING & INTEGRITY
+========================================================= */
+
+.audit-grid {
+    display: grid;
+    grid-template-columns: 1.1fr .9fr;
+    gap: 15px;
+}
+
+.accounting {
+    padding: 25px;
+    background: var(--ink);
+    color: white;
+}
+
+.accounting h3 {
+    font-size: 21px;
+    margin: 6px 0;
+    letter-spacing: -.05em;
+}
+
+.accounting-total {
+    font-size: 43px;
+    font-weight: 900;
+    letter-spacing: -.08em;
+    margin: 25px 0 13px;
+}
+
+.accounting-bar {
+    display: flex;
+    width: 100%;
+    height: 18px;
+    overflow: hidden;
+    background: #444;
+    margin: 17px 0;
+}
+
+.accounting-exported {
+    width: 86.83%;
+    background: #5aa77c;
+}
+
+.accounting-dropped {
+    width: 13.17%;
+    background: #e56c5c;
+}
+
+.accounting-legend {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    font-size: 9px;
+    color: #d3d4d0;
+}
+
+.accounting-formula {
+    margin-top: 25px;
+    padding: 14px;
+    border: 1px solid #4b4d4c;
+    font-family: var(--mono);
+    font-size: 10px;
+    line-height: 1.9;
+    color: #e2e5df;
+    overflow-wrap: anywhere;
+}
+
+.integrity {
+    background: var(--white);
+    border: 1px solid var(--line);
+    padding: 23px;
+}
+
+.integrity h3 {
+    margin-top: 0;
+    font-size: 20px;
+    letter-spacing: -.05em;
+}
+
+.check-list {
+    list-style: none;
+    padding: 0;
+    margin: 15px 0 0;
+}
+
+.check-list li {
+    display: flex;
+    gap: 10px;
+    padding: 11px 0;
+    font-size: 10px;
+    border-bottom: 1px solid var(--line);
+}
+
+.check-list li:last-child {
+    border-bottom: 0;
+}
+
+.check {
+    color: var(--green);
+    font-size: 14px;
+    font-weight: 900;
+}
+
+/* =========================================================
+   11 — CAVEATS
+========================================================= */
+
+.caveat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.caveat {
+    padding: 18px;
+    border: 1px solid #e0cda1;
+    background: var(--yellow-soft);
+}
+
+.caveat strong {
+    display: block;
+    font-size: 12px;
+    margin-bottom: 7px;
+}
+
+.caveat p {
+    margin: 0;
+    font-size: 10px;
+    line-height: 1.8;
+    color: #66542a;
+}
+
+.caveat-number {
+    font-size: 9px;
+    font-weight: 900;
+    font-family: var(--mono);
+    color: #9d792b;
+}
+
+/* =========================================================
+   12 — FINAL NOTES
+========================================================= */
+
+.final-banner {
+    margin-top: 65px;
+    padding: 36px;
+    background: var(--red);
+    color: white;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 20px;
+    align-items: center;
+}
+
+.final-banner h2 {
+    font-size: clamp(26px, 4vw, 48px);
+    line-height: 1;
+    letter-spacing: -.07em;
+    margin: 10px 0;
+}
+
+.final-banner p {
+    font-size: 11px;
+    line-height: 1.8;
+    max-width: 650px;
+    color: rgba(255,255,255,.84);
+}
+
+.final-mark {
+    font-size: 100px;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -.12em;
+    opacity: .22;
+}
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 25px 0 35px;
+    border-top: 1px solid var(--ink);
+    margin-top: 20px;
+    font-size: 9px;
+    letter-spacing: .08em;
+    color: var(--muted);
+    text-transform: uppercase;
+}
+
+/* =========================================================
+   13 — INTERACTIONS
+========================================================= */
+
+.interactive-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.control-btn {
+    cursor: pointer;
+    padding: 8px 13px;
+    border: 1px solid var(--ink);
+    color: var(--ink);
+    background: transparent;
+    font-size: 10px;
+    font-weight: 900;
+    transition: .2s;
+}
+
+.control-btn:hover {
+    color: white;
+    background: var(--ink);
+}
+
+details {
+    border-top: 1px solid var(--line);
+    margin-top: 12px;
+    padding-top: 10px;
+}
+
+summary {
+    cursor: pointer;
+    font-weight: 800;
+    font-size: 10px;
+    color: var(--blue);
+}
+
+.details-content {
+    padding: 10px 0;
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.9;
+}
+
+/* =========================================================
+   14 — RESPONSIVE
+========================================================= */
+
+@media (max-width: 950px) {
+    .page {
+        width: min(100% - 30px, 760px);
+    }
+
+    .hero {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-side {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .kpi-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .decision-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .outputs-layout,
+    .audit-grid,
+    .diagnostic-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .flow-row {
+        grid-template-columns: 1fr;
+    }
+
+    .flow-arrow {
+        transform: rotate(90deg);
+        height: 25px;
+    }
+}
+
+@media (max-width: 620px) {
+    .page {
+        width: calc(100% - 22px);
+    }
+
+    .hero-main {
+        padding: 27px 22px;
+        min-height: 300px;
+    }
+
+    .hero h1 {
+        font-size: 48px;
+    }
+
+    .hero-main::after {
+        font-size: 200px;
+    }
+
+    .hero-side,
+    .branch-grid,
+    .algorithm-grid,
+    .caveat-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .section {
+        margin-top: 46px;
+    }
+
+    .section-note {
+        display: none;
+    }
+
+    .workflow-shell {
+        padding: 12px;
+    }
+
+    .workflow-top {
+        flex-direction: column;
+    }
+
+    .bypass {
+        grid-template-columns: 1fr;
+    }
+
+    .bypass-arrow {
+        transform: rotate(90deg);
+    }
+
+    .decision-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .final-banner {
+        grid-template-columns: 1fr;
+        padding: 24px;
+    }
+
+    .final-mark {
+        display: none;
+    }
+
+    .topbar-right span:nth-child(2) {
+        display: none;
+    }
+}
+
+/* =========================================================
+   15 — PRINT / PDF
+========================================================= */
+
+@page {
+    size: A3 landscape;
+    margin: 12mm;
+}
+
+@media print {
+    body {
+        background: white;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+
+    body::before {
+        display: none;
+    }
+
+    .page {
+        width: 100%;
+    }
+
+    .nav,
+    .interactive-controls {
+        display: none !important;
+    }
+
+    .panel,
+    .flow-node,
+    .decision,
+    .kpi,
+    .diagnostic-panel {
+        box-shadow: none !important;
+    }
+
+    .section {
+        break-inside: avoid;
+    }
+
+    .hero,
+    .workflow-shell,
+    .diagnostic-grid,
+    .outputs-layout,
+    .audit-grid {
+        break-inside: avoid;
+    }
+
+    .flow-node,
+    .panel,
+    .decision,
+    .kpi {
+        break-inside: avoid;
+    }
+
+    details > * {
+        display: block !important;
+    }
+
+    a {
+        text-decoration: none;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="page">
+
+<!-- =====================================================
+     HEADER
+====================================================== -->
+
+<header class="topbar">
+
+    <div class="brand">
+        <div class="brand-mark">P</div>
+        PROJECT / DATA ENGINEERING
+    </div>
+
+    <div class="topbar-right">
+        <span>TECHNICAL DOCUMENTATION</span>
+        <span>PHASE 02 / 08</span>
+        <span class="status">
+            <span class="status-dot"></span>
+            CLOSED
+        </span>
+    </div>
+
+</header>
+
+
+<!-- =====================================================
+     NAVIGATION
+====================================================== -->
+
+<nav class="nav">
+
+    <a href="#overview">00 / OVERVIEW</a>
+    <a href="#workflow">01 / WORKFLOW</a>
+    <a href="#algorithms">02 / ALGORITHMS</a>
+    <a href="#diagnostics">03 / DIAGNOSTICS</a>
+    <a href="#decisions">04 / DECISIONS</a>
+    <a href="#outputs">05 / OUTPUTS</a>
+    <a href="#integrity">06 / INTEGRITY</a>
+    <a href="#caveats">07 / CAVEATS</a>
+
+    <div style="flex:1"></div>
+
+    <div class="interactive-controls">
+        <button class="control-btn" onclick="window.print()">
+            PRINT / PDF ↗
+        </button>
+    </div>
+
+</nav>
+
+
+<!-- =====================================================
+     00 — OVERVIEW
+====================================================== -->
+
+<section id="overview" class="hero">
+
+    <div class="hero-main">
+
+        <div class="hero-kicker">
+            DATA PREPARATION / SEMI-SUPERVISED LEARNING
+        </div>
+
+        <h1>
+            MASKING,
+            <span>DUPLICATE CAP</span>
+            & ARTIFACTS
+        </h1>
+
+        <div class="hero-description">
+            Building a controlled artificial pseudo-unlabeled pool,
+            limiting duplicate-body influence, generating standardized
+            dataset artifacts, and validating complete data integrity.
+        </div>
+
+    </div>
+
+    <div class="hero-side">
+
+        <div class="phase-box red-box">
+
+            <div class="eyebrow">PHASE NUMBER</div>
+
+            <div class="big">02</div>
+
+            <p>
+                Masking & Dataset Construction
+                <br>
+                Notebook: <span class="mono">06_masking_and_artifacts.ipynb</span>
+            </p>
+
+        </div>
+
+        <div class="phase-box light-box">
+
+            <div class="eyebrow">EXECUTION STATUS</div>
+
+            <div class="big green">✓</div>
+
+            <p>
+                CLOSED — ALL CHECKS PASSED
+                <br>
+                Database integrity preserved.
+                Standard artifacts generated and verified.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- KPI STRIP -->
+
+<div class="kpi-grid">
+
+    <div class="kpi">
+        <div class="kpi-accent"></div>
+        <div class="kpi-label">Initial database</div>
+        <span class="kpi-number">6.15M</span>
+        <div class="kpi-sub">6,151,947 original rows</div>
+    </div>
+
+    <div class="kpi">
+        <div class="kpi-accent" style="background:#357a58"></div>
+        <div class="kpi-label">Supervised training</div>
+        <span class="kpi-number">2.86M</span>
+        <div class="kpi-sub">2,860,236 active rows</div>
+    </div>
+
+    <div class="kpi">
+        <div class="kpi-accent" style="background:#315d78"></div>
+        <div class="kpi-label">Pseudo-unlabeled</div>
+        <span class="kpi-number">635.8K</span>
+        <div class="kpi-sub">635,824 active rows</div>
+    </div>
+
+    <div class="kpi">
+        <div class="kpi-accent" style="background:#d4a43a"></div>
+        <div class="kpi-label">Cap-dropped</div>
+        <span class="kpi-number">810.3K</span>
+        <div class="kpi-sub">810,288 excluded rows</div>
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     01 — END TO END WORKFLOW
+====================================================== -->
+
+<section id="workflow" class="section">
+
+    <div class="section-head">
+
+        <div>
+            <div class="eyebrow">01 / PROCESS ARCHITECTURE</div>
+            <h2 class="section-title">End-to-End Workflow</h2>
+        </div>
+
+        <div class="section-note">
+            Follow the numbered sequence from source data
+            to verified dataset artifacts.
+        </div>
+
+        <div class="section-index">01</div>
+
+    </div>
+
+
+    <div class="workflow-shell">
+
+        <div class="workflow-top">
+
+            <div>
+                <div class="eyebrow red">THE DATA PIPELINE</div>
+
+                <h3>From raw database to model-ready datasets</h3>
+
+                <p>
+                    Corrected-label selection precedes stratified masking.
+                    Duplicate capping is then performed independently
+                    on the supervised and pseudo-unlabeled pools.
+                </p>
+            </div>
+
+            <div class="workflow-legend">
+
+                <div class="legend-item">
+                    <span class="legend-dot" style="background:#171b1d"></span>
+                    SOURCE / CONTROL
+                </div>
+
+                <div class="legend-item">
+                    <span class="legend-dot" style="background:#df4937"></span>
+                    TRANSFORMATION
+                </div>
+
+                <div class="legend-item">
+                    <span class="legend-dot" style="background:#357a58"></span>
+                    ACTIVE DATA
+                </div>
+
+                <div class="legend-item">
+                    <span class="legend-dot" style="background:#315d78"></span>
+                    VALIDATION
+                </div>
+
+                <div class="legend-item">
+                    <span class="legend-dot" style="background:#d4a43a"></span>
+                    EXCLUDED DATA
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- STEP 1 -->
+
+        <div class="flow-row">
+
+            <div class="flow-node dark">
+
+                <span class="tag">01 / Source</span>
+
+                <h4>clean_base</h4>
+
+                <p>
+                    Original database
+                    <br>
+                    6,151,947 rows
+                    <br>
+                    Unique VARCHAR IDs
+                </p>
+
+            </div>
+
+            <div class="flow-arrow">→</div>
+
+            <div class="flow-node">
+
+                <span class="tag">02 / Safety</span>
+
+                <h4>Setup & Backup</h4>
+
+                <p>
+                    Database compaction
+                    <br>
+                    Verified backup
+                    <br>
+                    DuckDB resource limits
+                </p>
+
+            </div>
+
+            <div class="flow-arrow">→</div>
+
+            <div class="flow-node">
+
+                <span class="tag">03 / Validation</span>
+
+                <h4>Prerequisite Checks</h4>
+
+                <p>
+                    Row counts and split sizes
+                    <br>
+                    ID format and uniqueness
+                    <br>
+                    Hash correctness
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="flow-down">↓</div>
+
+
+        <!-- STEP 2 -->
+
+        <div class="flow-row">
+
+            <div class="flow-node red-node">
+
+                <span class="tag">04 / Label Selection</span>
+
+                <h4>Corrected Labels</h4>
+
+                <p>
+                    <span class="mono">step1_rec_label</span>
+                    <br>
+                    <span class="mono">step1_rate_band_label</span>
+                    <br>
+                    Correct labels before masking
+                </p>
+
+            </div>
+
+            <div class="flow-arrow">→</div>
+
+            <div class="flow-node dark">
+
+                <span class="tag">05 / Training Split</span>
+
+                <h4>Training Dataset</h4>
+
+                <p>
+                    4,306,348 rows
+                    <br>
+                    3,681,586 labeled
+                    <br>
+                    624,762 NULL recommendation
+                </p>
+
+            </div>
+
+            <div class="flow-arrow">→</div>
+
+            <div class="flow-node">
+
+                <span class="tag">06 / Eligibility</span>
+
+                <h4>Separate by Label Status</h4>
+
+                <p>
+                    Labeled rows enter masking.
+                    <br>
+                    NULL recommendation rows
+                    bypass masking.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="split-banner">
+
+            07 / TRAINING DATA BRANCH
+            — LABELED ROWS ARE MASKED; NULL-LABEL ROWS ARE KEPT NATURAL
+
+        </div>
+
+
+        <!-- BRANCHES -->
+
+        <div class="branch-grid">
+
+
+            <!-- SUPERVISED -->
+
+            <div class="branch">
+
+                <div class="branch-head">
+
+                    <h4>SUPERVISED BRANCH</h4>
+
+                    <span class="branch-label green">
+                        ACTIVE TRAINING DATA
+                    </span>
+
+                </div>
+
+
+                <div class="flow-node">
+
+                    <span class="tag">08A / Remaining Labeled Data</span>
+
+                    <h4>2,945,270 rows</h4>
+
+                    <p>
+                        Labeled train rows remaining after 20% masking.
+                    </p>
+
+                </div>
+
+
+                <div class="flow-down">+</div>
+
+
+                <div class="flow-node blue-node">
+
+                    <span class="tag">08B / Natural NULL Rows</span>
+
+                    <h4>624,762 rows</h4>
+
+                    <p>
+                        Recommendation label is NULL.
+                        Never included in artificial masking.
+                    </p>
+
+                </div>
+
+
+                <div class="flow-down">↓</div>
+
+
+                <div class="flow-node">
+
+                    <span class="tag">09A / Combined Pool</span>
+
+                    <h4>3,570,032 rows</h4>
+
+                    <p>
+                        Supervised pool before duplicate capping.
+                    </p>
+
+                </div>
+
+
+                <div class="branch-cap">
+
+                    10A / DUPLICATE CAP
+                    <br>
+                    Maximum 50 copies per body
+                    <br>
+                    Keep smallest (hash, id)
+
+                </div>
+
+
+                <div class="output-node">
+
+                    <span>11A / FINAL ACTIVE OUTPUT</span>
+
+                    <strong>2,860,236</strong>
+
+                    <span>train_supervised.csv</span>
+
+                </div>
+
+
+                <div class="drop-node">
+
+                    <span>Cap-dropped supervised</span>
+                    <strong>709,796</strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- PSEUDO -->
+
+            <div class="branch">
+
+                <div class="branch-head">
+
+                    <h4>PSEUDO BRANCH</h4>
+
+                    <span class="branch-label" style="color:#315d78">
+                        ARTIFICIAL POOL
+                    </span>
+
+                </div>
+
+
+                <div class="flow-node red-node">
+
+                    <span class="tag">08C / Stratified Masking</span>
+
+                    <h4>20% per class</h4>
+
+                    <p>
+                        Masked from labeled train rows only.
+                        <br>
+                        NULL-label rows excluded.
+                    </p>
+
+                </div>
+
+
+                <div class="flow-down">↓</div>
+
+
+                <div class="flow-node">
+
+                    <span class="tag">09B / Pseudo Pool</span>
+
+                    <h4>736,316 rows</h4>
+
+                    <p>
+                        Artificial pseudo-unlabeled pool
+                        before duplicate capping.
+                    </p>
+
+                </div>
+
+
+                <div class="branch-cap">
+
+                    10B / DUPLICATE CAP
+                    <br>
+                    Maximum 50 copies per body
+                    <br>
+                    Keep smallest (hash, id)
+
+                </div>
+
+
+                <div class="output-node" style="background:#315d78">
+
+                    <span>11B / FINAL ACTIVE OUTPUT</span>
+
+                    <strong>635,824</strong>
+
+                    <span>train_pseudo_unlabeled.csv</span>
+
+                </div>
+
+
+                <div class="drop-node">
+
+                    <span>Cap-dropped pseudo</span>
+                    <strong>100,492</strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- VALIDATION TEST BYPASS -->
+
+        <div class="split-banner" style="margin-top:22px">
+
+            12 / VALIDATION & TEST — BYPASS MASKING AND DUPLICATE CAPPING
+
+        </div>
+
+
+        <div class="bypass">
+
+            <div class="bypass-box">
+
+                VALIDATION
+                <br>
+                <span class="mono">922,794 rows</span>
+
+            </div>
+
+            <div class="bypass-arrow">→</div>
+
+            <div class="bypass-box">
+
+                TEST
+                <br>
+                <span class="mono">922,805 rows</span>
+
+            </div>
+
+        </div>
+
+
+        <div class="bypass-note">
+
+            Both original splits are exported unchanged. Neither receives
+            a train_role assignment.
+
+        </div>
+
+
+        <!-- FINAL EXPORT -->
+
+        <div class="flow-down">↓</div>
+
+
+        <div class="flow-row" style="grid-template-columns:1fr 35px 1fr 35px 1fr">
+
+            <div class="flow-node green-node">
+
+                <span class="tag">13 / Export</span>
+
+                <h4>Standard CSV Files</h4>
+
+                <p>
+                    Five standardized CSV artifacts
+                    in data/processed/
+                </p>
+
+            </div>
+
+            <div class="flow-arrow">→</div>
+
+            <div class="flow-node">
+
+                <span class="tag">14 / Manifest</span>
+
+                <h4>split_manifest.json</h4>
+
+                <p>
+                    Seeds, protocol, deviations,
+                    counts and SHA-256 checksums.
+                </p>
+
+            </div>
+
+            <div class="flow-arrow">→</div>
+
+            <div class="flow-node dark">
+
+                <span class="tag">15 / Final Audit</span>
+
+                <h4>Integrity Verification</h4>
+
+                <p>
+                    DB / CSV comparison
+                    <br>
+                    Row accounting
+                    <br>
+                    Fingerprints
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="flow-down">↓</div>
+
+
+        <div class="panel-green" style="padding:22px;text-align:center">
+
+            <div class="eyebrow">PHASE 02 / FINAL STATE</div>
+
+            <div style="font-size:30px;font-weight:900;letter-spacing:-.06em">
+                DATASET ARTIFACTS VERIFIED
+            </div>
+
+            <div style="font-size:11px;margin-top:7px">
+                5,341,659 distinct exported IDs
+                &nbsp; · &nbsp;
+                810,288 cap-dropped rows
+                &nbsp; · &nbsp;
+                6,151,947 total accounted rows
+            </div>
+
+        </div>
+
+
+        <details>
+
+            <summary>
+                READ WORKFLOW NOTES / IMPORTANT DATA RELATIONSHIPS
+            </summary>
+
+            <div class="details-content">
+
+                • natural_unlabeled.csv contains 468,079 rows and is a
+                subset of train_supervised.csv.
+
+                <br>
+
+                • natural_unlabeled.csv must not be added again to
+                exported distinct-ID accounting.
+
+                <br>
+
+                • The artificial pseudo pool is created from labeled
+                train rows; it is not the same as the natural NULL pool.
+
+                <br>
+
+                • product_id is used for grouping only. rate is used
+                for analysis only. Neither is a model feature.
+
+            </div>
+
+        </details>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     02 — ALGORITHMS
+====================================================== -->
+
+<section id="algorithms" class="section">
+
+    <div class="section-head">
+
+        <div>
+            <div class="eyebrow">02 / CORE METHODS</div>
+            <h2 class="section-title">Masking & Capping Logic</h2>
+        </div>
+
+        <div class="section-note">
+            Two deterministic transformations define the core
+            data preparation strategy.
+        </div>
+
+        <div class="section-index">02</div>
+
+    </div>
+
+
+    <div class="algorithm-grid">
+
+        <div class="algorithm panel">
+
+            <div class="algorithm-number">A</div>
+
+            <div class="eyebrow red">STRATEGY A / MASKING</div>
+
+            <h3>Stratified 20% Masking</h3>
+
+            <p>
+                Each corrected recommendation class contributes
+                20% of its labeled train rows to the artificial
+                pseudo-unlabeled pool.
+            </p>
+
+            <div class="formula">
+
+                masked_count = floor(0.20 × class_count)
+
+                <br>
+
+                rounding = Decimal
+
+                <br>
+
+                selection = smallest (hash, id)
+
+            </div>
+
+            <p>
+                Rows with NULL <span class="mono">step1_rec_label</span>
+                never enter the pseudo pool.
+            </p>
+
+            <div class="small">
+
+                <strong>Why this order?</strong>
+
+                <br>
+
+                Corrected labels → mask → cap.
+                This follows the project author's documented decision.
+            </div>
+
+        </div>
+
+
+        <div class="algorithm panel">
+
+            <div class="algorithm-number">B</div>
+
+            <div class="eyebrow blue">STRATEGY B / CAPPING</div>
+
+            <h3>Per-Pool Duplicate Cap</h3>
+
+            <p>
+                Bodies exceeding the maximum frequency are ranked
+                independently within each pool.
+            </p>
+
+            <div class="formula">
+
+                MAX_COPIES_PER_BODY = 50
+
+                <br>
+
+                ORDER BY hash, id
+
+                <br>
+
+                rank > 50 → cap_dropped_*
+
+            </div>
+
+            <p>
+                Supervised and pseudo-unlabeled pools have separate
+                50-copy limits.
+            </p>
+
+            <div class="small">
+
+                <strong>Why cap after masking?</strong>
+
+                <br>
+
+                Capping first could retain rows that would later
+                be masked, disproportionately reducing the
+                supervised pool.
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- MASKING TABLE -->
+
+    <div style="margin-top:18px">
+
+        <div class="eyebrow">MASKING / CLASS-LEVEL ACCOUNTING</div>
+
+        <h3 style="font-size:20px;letter-spacing:-.05em;margin:7px 0 15px">
+            Class-wise Masking Results
+        </h3>
+
+        <div class="table-wrap panel">
+
+            <table class="class-table">
+
+                <thead>
+                    <tr>
+                        <th>Recommendation Class</th>
+                        <th>Labeled Train</th>
+                        <th>Masked / Pseudo</th>
+                        <th>Remaining Supervised</th>
+                        <th>Rounding Remainder</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>no_idea</td>
+                        <td>405,857</td>
+                        <td>81,171</td>
+                        <td>324,686</td>
+                        <td>0.4</td>
+                    </tr>
+
+                    <tr>
+                        <td>not_recommended</td>
+                        <td>349,558</td>
+                        <td>69,911</td>
+                        <td>279,647</td>
+                        <td>0.6</td>
+                    </tr>
+
+                    <tr>
+                        <td>recommended</td>
+                        <td>2,926,171</td>
+                        <td>585,234</td>
+                        <td>2,340,937</td>
+                        <td>0.2</td>
+                    </tr>
+
+                    <tr style="font-weight:900;background:#f6e1dc">
+
+                        <td>TOTAL LABELED</td>
+                        <td>3,681,586</td>
+                        <td>736,316</td>
+                        <td>2,945,270</td>
+                        <td>—</td>
+
+                    </tr>
+
+                    <tr>
+                        <td>NULL / Natural</td>
+                        <td>624,762</td>
+                        <td>0</td>
+                        <td>624,762</td>
+                        <td>—</td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- CAP RESULTS -->
+
+    <div style="margin-top:28px">
+
+        <div class="eyebrow">DUPLICATE CAP / POOL TRANSFORMATION</div>
+
+        <h3 style="font-size:20px;letter-spacing:-.05em;margin:7px 0 15px">
+            Before vs. After Capping
+        </h3>
+
+        <div class="table-wrap panel">
+
+            <table class="class-table">
+
+                <thead>
+                    <tr>
+                        <th>Pool</th>
+                        <th>Before Cap</th>
+                        <th>After Cap</th>
+                        <th>Dropped</th>
+                        <th>Dropped %</th>
+                        <th>Bodies Over Cap</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>Supervised</td>
+                        <td>3,570,032</td>
+                        <td>2,860,236</td>
+                        <td>709,796</td>
+                        <td>19.88%</td>
+                        <td>2,110</td>
+                    </tr>
+
+                    <tr>
+                        <td>Pseudo</td>
+                        <td>736,316</td>
+                        <td>635,824</td>
+                        <td>100,492</td>
+                        <td>13.65%</td>
+                        <td>442</td>
+                    </tr>
+
+                    <tr style="font-weight:900;background:#f6e1dc">
+                        <td>TOTAL</td>
+                        <td>4,306,348</td>
+                        <td>3,496,060</td>
+                        <td>810,288</td>
+                        <td>—</td>
+                        <td>2,552</td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     03 — DISTRIBUTION DIAGNOSTICS
+====================================================== -->
+
+<section id="diagnostics" class="section">
+
+    <div class="section-head">
+
+        <div>
+            <div class="eyebrow">03 / DATA QUALITY & DISTRIBUTION</div>
+            <h2 class="section-title">Distribution Diagnostics</h2>
+        </div>
+
+        <div class="section-note">
+            The cap changes frequency distribution;
+            masking preserves class representation before capping.
+        </div>
+
+        <div class="section-index">03</div>
+
+    </div>
+
+
+    <div class="diagnostic-grid">
+
+
+        <!-- RECOMMENDATION -->
+
+        <div class="diagnostic-panel">
+
+            <div class="eyebrow red">HEAD 01 / RECOMMENDATION</div>
+
+            <h3>Recommendation Class Shares</h3>
+
+            <p>Class shares among labeled rows (%) — NULL shown separately.</p>
+
+            <div class="table-wrap">
+
+                <table class="data-table">
+
+                    <thead>
+                        <tr>
+                            <th>Segment</th>
+                            <th>no_idea</th>
+                            <th>not_rec.</th>
+                            <th>recommended</th>
+                            <th>NULL</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>Supervised / Before</td>
+                            <td>11.02</td>
+                            <td>9.49</td>
+                            <td>79.48</td>
+                            <td>17.50</td>
+                        </tr>
+
+                        <tr>
+                            <td>Supervised / After</td>
+                            <td>12.16</td>
+                            <td>11.15</td>
+                            <td class="highlight">76.69</td>
+                            <td>16.37</td>
+                        </tr>
+
+                        <tr>
+                            <td>Pseudo / Before</td>
+                            <td>11.02</td>
+                            <td>9.49</td>
+                            <td>79.48</td>
+                            <td>0</td>
+                        </tr>
+
+                        <tr>
+                            <td>Pseudo / After</td>
+                            <td>11.88</td>
+                            <td>10.78</td>
+                            <td>77.34</td>
+                            <td>0</td>
+                        </tr>
+
+                        <tr>
+                            <td>Validation</td>
+                            <td>11.07</td>
+                            <td>9.67</td>
+                            <td>79.26</td>
+                            <td>14.53</td>
+                        </tr>
+
+                        <tr>
+                            <td>Test</td>
+                            <td>11.01</td>
+                            <td>9.77</td>
+                            <td>79.22</td>
+                            <td>14.62</td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <div class="bar-list">
+
+                <div class="bar-item">
+                    <span>Supervised / Before</span>
+                    <div class="bar-track">
+                        <div class="bar-fill" style="width:79.48%"></div>
+                    </div>
+                    <span class="bar-value">79.48%</span>
+                </div>
+
+                <div class="bar-item">
+                    <span>Supervised / After</span>
+                    <div class="bar-track">
+                        <div class="bar-fill blue-fill" style="width:76.69%"></div>
+                    </div>
+                    <span class="bar-value">76.69%</span>
+                </div>
+
+                <div class="bar-item">
+                    <span>Validation</span>
+                    <div class="bar-track">
+                        <div class="bar-fill green-fill" style="width:79.26%"></div>
+                    </div>
+                    <span class="bar-value">79.26%</span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- RATING BAND -->
+
+        <div class="diagnostic-panel">
+
+            <div class="eyebrow blue">HEAD 02 / RATING BAND</div>
+
+            <h3>Rating Band Class Shares</h3>
+
+            <p>Distribution of high, low, and medium rating bands (%).</p>
+
+            <div class="table-wrap">
+
+                <table class="data-table">
+
+                    <thead>
+                        <tr>
+                            <th>Segment</th>
+                            <th>High</th>
+                            <th>Low</th>
+                            <th>Medium</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>Supervised / Before</td>
+                            <td>66.37</td>
+                            <td>16.99</td>
+                            <td>16.63</td>
+                        </tr>
+
+                        <tr>
+                            <td>Supervised / After</td>
+                            <td class="highlight">63.26</td>
+                            <td>19.22</td>
+                            <td>17.51</td>
+                        </tr>
+
+                        <tr>
+                            <td>Pseudo / Before</td>
+                            <td>64.08</td>
+                            <td>18.32</td>
+                            <td>17.61</td>
+                        </tr>
+
+                        <tr>
+                            <td>Pseudo / After</td>
+                            <td>61.90</td>
+                            <td>19.95</td>
+                            <td>18.15</td>
+                        </tr>
+
+                        <tr>
+                            <td>Validation</td>
+                            <td>65.85</td>
+                            <td>17.34</td>
+                            <td>16.82</td>
+                        </tr>
+
+                        <tr>
+                            <td>Test</td>
+                            <td>65.81</td>
+                            <td>17.42</td>
+                            <td>16.78</td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <div class="bar-list">
+
+                <div class="bar-item">
+                    <span>Supervised / Before</span>
+                    <div class="bar-track">
+                        <div class="bar-fill" style="width:66.37%"></div>
+                    </div>
+                    <span class="bar-value">66.37%</span>
+                </div>
+
+                <div class="bar-item">
+                    <span>Supervised / After</span>
+                    <div class="bar-track">
+                        <div class="bar-fill blue-fill" style="width:63.26%"></div>
+                    </div>
+                    <span class="bar-value">63.26%</span>
+                </div>
+
+                <div class="bar-item">
+                    <span>Validation</span>
+                    <div class="bar-track">
+                        <div class="bar-fill green-fill" style="width:65.85%"></div>
+                    </div>
+                    <span class="bar-value">65.85%</span>
+                </div>
+
+            </div>
+
+            <div class="small muted" style="margin-top:15px">
+                Note: Only one test row has a missing rating band.
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- KEY FINDINGS -->
+
+    <div class="eyebrow red" style="margin-top:30px">
+        03B / KEY FINDINGS
+    </div>
+
+    <div class="decision-grid" style="margin-top:12px">
+
+        <div class="decision">
+
+            <div class="num">01 / REPRESENTATIVENESS</div>
+
+            <h4>Mask is representative</h4>
+
+            <p>
+                Maximum absolute pseudo vs. supervised class-share
+                difference before cap:
+                <strong>0.0002 percentage points.</strong>
+            </p>
+
+        </div>
+
+
+        <div class="decision">
+
+            <div class="num">02 / CLASS SHIFT</div>
+
+            <h4>Cap shifts class balance</h4>
+
+            <p>
+                Recommended share in supervised:
+                79.48% → 76.69%.
+                Approximately −2.57 pp vs. validation.
+            </p>
+
+        </div>
+
+
+        <div class="decision">
+
+            <div class="num">03 / LABEL CORRECTIONS</div>
+
+            <h4>Step 1 corrections</h4>
+
+            <p>
+                2,148 pseudo rows before cap (0.29%) and 1,026
+                after cap (0.16%) were corrected;
+                almost all no_idea → recommended.
+            </p>
+
+        </div>
+
+
+        <div class="decision">
+
+            <div class="num">04 / NATURAL POOL</div>
+
+            <h4>Different data distribution</h4>
+
+            <p>
+                High-band share:
+                natural NULL = 76.85%,
+                labeled = 64.15%,
+                pseudo = 64.08%.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- BODY OVERLAP -->
+
+    <div class="panel" style="margin-top:16px;padding:24px">
+
+        <div class="eyebrow blue">03C / BODY OVERLAP</div>
+
+        <h3 style="font-size:22px;letter-spacing:-.055em;margin:7px 0">
+            Pseudo Bodies Also Present in Supervised
+        </h3>
+
+        <p class="muted small">
+            The masking operation is based on ID, not body.
+            Duplicate bodies can therefore appear in both pools.
+        </p>
+
+
+        <div class="table-wrap">
+
+            <table class="data-table">
+
+                <thead>
+                    <tr>
+                        <th>Recommendation Class</th>
+                        <th>Before Cap</th>
+                        <th>After Cap</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>no_idea</td>
+                        <td>22.98%</td>
+                        <td>17.22%</td>
+                    </tr>
+
+                    <tr>
+                        <td>not_recommended</td>
+                        <td>15.08%</td>
+                        <td>13.41%</td>
+                    </tr>
+
+                    <tr>
+                        <td>recommended</td>
+                        <td>39.69%</td>
+                        <td>28.22%</td>
+                    </tr>
+
+                    <tr style="font-weight:900;background:#e1eaf0">
+                        <td>ALL</td>
+                        <td>35.51%</td>
+                        <td>25.32%</td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <div style="margin-top:18px;padding:14px;background:var(--blue-soft);font-size:11px;color:var(--blue)">
+
+            <strong>Next-phase evaluation requirement:</strong>
+
+            Report pseudo-label accuracy and acceptance rate on:
+
+            <br>
+
+            1. The whole pseudo pool.
+
+            <br>
+
+            2. Non-duplicated bodies only.
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     04 — DECISIONS
+====================================================== -->
+
+<section id="decisions" class="section">
+
+    <div class="section-head">
+
+        <div>
+            <div class="eyebrow">04 / PROJECT PROTOCOL</div>
+            <h2 class="section-title">Key Design Decisions</h2>
+        </div>
+
+        <div class="section-note">
+            These decisions govern reproducibility,
+            dataset construction, and data integrity.
+        </div>
+
+        <div class="section-index">04</div>
+
+    </div>
+
+
+    <div class="decision-grid">
+
+        <div class="decision">
+            <div class="num">D / 01</div>
+
+            <h4>Correct Before Mask</h4>
+
+            <p>
+                Use corrected labels:
+                <span class="mono">step1_rec_label</span> and
+                <span class="mono">step1_rate_band_label</span>.
+                Raw labels are retained for comparison.
+            </p>
+        </div>
+
+
+        <div class="decision">
+            <div class="num">D / 02</div>
+
+            <h4>Mask Labeled Train Only</h4>
+
+            <p>
+                Rows with NULL recommendation labels never enter
+                the artificial pseudo pool.
+            </p>
+        </div>
+
+
+        <div class="decision">
+            <div class="num">D / 03</div>
+
+            <h4>Mask Before Cap</h4>
+
+            <p>
+                The order is deliberate:
+                correct labels → mask → cap.
+            </p>
+        </div>
+
+
+        <div class="decision">
+            <div class="num">D / 04</div>
+
+            <h4>50 Copies Per Body</h4>
+
+            <p>
+                The maximum is applied separately
+                to supervised and pseudo pools.
+            </p>
+        </div>
+
+
+        <div class="decision">
+            <div class="num">D / 05</div>
+
+            <h4>Single Database Table</h4>
+
+            <p>
+                Roles are stored in a new
+                <span class="mono">clean_base.train_role</span>
+                column. No new tables are created.
+            </p>
+        </div>
+
+
+        <div class="decision">
+            <div class="num">D / 06</div>
+
+            <h4>Validation & Test Isolation</h4>
+
+            <p>
+                Neither split is masked, capped,
+                or assigned a train_role value.
+            </p>
+        </div>
+
+
+        <div class="decision">
+            <div class="num">D / 07</div>
+
+            <h4>Transparent Decisions</h4>
+
+            <p>
+                Instructor confirmation was not requested.
+                The manifest documents the author's decision.
+            </p>
+        </div>
+
+
+        <div class="decision">
+            <div class="num">D / 08</div>
+
+            <h4>Repository Numbering</h4>
+
+            <p>
+                Notebooks retain repository numbering.
+                README maps them to required project names.
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="panel" style="margin-top:16px;padding:20px">
+
+        <div class="eyebrow red">DETERMINISTIC SELECTION</div>
+
+        <h3 style="margin:8px 0;font-size:18px;letter-spacing:-.05em">
+            Hash-based row selection
+        </h3>
+
+        <div class="formula">
+
+            SQL_HASH =
+            substr(sha256('<MASK_SEED>|' || id), 1, 16)
+
+        </div>
+
+        <p class="small muted">
+            Fixed-width lowercase hexadecimal strings are compared
+            lexicographically. The order matches numeric order and
+            avoids signed BIGINT overflow. ID is the tie-breaker.
+        </p>
+
+        <div class="rule"></div>
+
+        <div class="eyebrow">HASH VERIFICATION</div>
+
+        <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
+
+            <div class="mini-stat">
+                <b class="green">1000 / 1000</b>
+                <span>SQL vs. Python stable_hash matches</span>
+            </div>
+
+            <div class="mini-stat">
+                <b>0</b>
+                <span>IDs with bad format</span>
+            </div>
+
+            <div class="mini-stat">
+                <b>16</b>
+                <span>IDs differing from raw-label mask</span>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     05 — OUTPUT ARTIFACTS
+====================================================== -->
+
+<section id="outputs" class="section">
+
+    <div class="section-head">
+
+        <div>
+            <div class="eyebrow">05 / DELIVERABLES</div>
+            <h2 class="section-title">Standard Artifacts</h2>
+        </div>
+
+        <div class="section-note">
+            Five CSV files plus a machine-readable manifest
+            are generated in data/processed/.
+        </div>
+
+        <div class="section-index">05</div>
+
+    </div>
+
+
+    <div class="outputs-layout">
+
+        <div class="file-stack">
+
+            <div class="eyebrow">DATA / PROCESSED</div>
+
+            <div class="file-row">
+
+                <div class="file-icon">CSV</div>
+
+                <div>
+                    <div class="file-name">train_supervised.csv</div>
+                    <div class="file-desc">
+                        Active supervised training data, including
+                        NULL recommendation rows for the band head only.
+                    </div>
+                </div>
+
+                <div class="file-size">
+                    2,860,236 rows
+                    <br>
+                    447.7 MB
+                </div>
+
+            </div>
+
+
+            <div class="file-row">
+
+                <div class="file-icon">CSV</div>
+
+                <div>
+                    <div class="file-name">train_pseudo_unlabeled.csv</div>
+                    <div class="file-desc">
+                        Artificial pseudo-unlabeled pool after capping.
+                        Columns: id, body.
+                    </div>
+                </div>
+
+                <div class="file-size">
+                    635,824 rows
+                    <br>
+                    68.6 MB
+                </div>
+
+            </div>
+
+
+            <div class="file-row">
+
+                <div class="file-icon">CSV</div>
+
+                <div>
+                    <div class="file-name">natural_unlabeled.csv</div>
+                    <div class="file-desc">
+                        NULL recommendation subset of train_supervised.
+                        Columns: id, body.
+                    </div>
+                </div>
+
+                <div class="file-size">
+                    468,079 rows
+                    <br>
+                    54.2 MB
+                </div>
+
+            </div>
+
+
+            <div class="file-row">
+
+                <div class="file-icon">CSV</div>
+
+                <div>
+                    <div class="file-name">validation.csv</div>
+                    <div class="file-desc">
+                        Full validation split. No masking or capping.
+                    </div>
+                </div>
+
+                <div class="file-size">
+                    922,794 rows
+                    <br>
+                    129.5 MB
+                </div>
+
+            </div>
+
+
+            <div class="file-row">
+
+                <div class="file-icon">CSV</div>
+
+                <div>
+                    <div class="file-name">test.csv</div>
+                    <div class="file-desc">
+                        Full test split. No masking or capping.
+                    </div>
+                </div>
+
+                <div class="file-size">
+                    922,805 rows
+                    <br>
+                    129.3 MB
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="manifest-box">
+
+            <div>
+
+                <div class="eyebrow" style="color:#ee796a">
+                    MACHINE-READABLE CONTROL
+                </div>
+
+                <div class="manifest-icon">{ }</div>
+
+                <h3>split_manifest.json</h3>
+
+                <p>
+                    The manifest stores the random seeds, protocol,
+                    documented deviations, masking plan, cap settings,
+                    row counts, and SHA-256 checksums of every CSV file.
+                </p>
+
+            </div>
+
+            <div class="eyebrow" style="color:#a7aaa5">
+                MANIFEST SIZE / 17 KB
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- COLUMN SCHEMA -->
+
+    <div class="panel" style="margin-top:15px;padding:22px">
+
+        <div class="eyebrow">STANDARD 8-COLUMN SCHEMA</div>
+
+        <h3 style="font-size:19px;margin:7px 0">
+            Dataset Field Structure
+        </h3>
+
+        <div style="
+            display:flex;
+            flex-wrap:wrap;
+            gap:7px;
+            margin:15px 0
+        ">
+
+            <span class="formula" style="margin:0">id</span>
+            <span class="formula" style="margin:0">body</span>
+            <span class="formula" style="margin:0">product_id</span>
+            <span class="formula" style="margin:0">recommendation_status</span>
+            <span class="formula" style="margin:0">step1_rec_label</span>
+            <span class="formula" style="margin:0">rating_band</span>
+            <span class="formula" style="margin:0">step1_rate_band_label</span>
+            <span class="formula" style="margin:0">rate</span>
+
+        </div>
+
+        <div class="rule"></div>
+
+        <div class="eyebrow">FEATURE USAGE POLICY</div>
+
+        <div class="decision-grid" style="margin-top:12px;grid-template-columns:1fr 1fr">
+
+            <div style="padding:14px;background:var(--blue-soft)">
+                <strong class="blue">product_id</strong>
+                <p class="small">
+                    Grouping only — used for splits and
+                    StratifiedGroupKFold.
+                </p>
+            </div>
+
+            <div style="padding:14px;background:var(--red-soft)">
+                <strong class="red">rate</strong>
+                <p class="small">
+                    Analysis only — never a model feature.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     06 — INTEGRITY
+====================================================== -->
+
+<section id="integrity" class="section">
+
+    <div class="section-head">
+
+        <div>
+            <div class="eyebrow">06 / VERIFICATION</div>
+            <h2 class="section-title">Integrity & Row Accounting</h2>
+        </div>
+
+        <div class="section-note">
+            The database, output files, and manifest
+            are checked against the final execution state.
+        </div>
+
+        <div class="section-index">06</div>
+
+    </div>
+
+
+    <div class="audit-grid">
+
+
+        <!-- ACCOUNTING -->
+
+        <div class="accounting">
+
+            <div class="eyebrow" style="color:#ed7868">
+                COMPLETE ROW ACCOUNTING
+            </div>
+
+            <h3>Every original row is accounted for.</h3>
+
+            <div class="accounting-total">
+                6,151,947
+            </div>
+
+            <div class="small" style="color:#c5c7c2">
+                Original database rows
+            </div>
+
+
+            <div class="accounting-bar">
+
+                <div class="accounting-exported"></div>
+                <div class="accounting-dropped"></div>
+
+            </div>
+
+
+            <div class="accounting-legend">
+
+                <span>
+                    <span style="color:#72c293">●</span>
+                    5,341,659 EXPORTED
+                </span>
+
+                <span>
+                    <span style="color:#ed7868">●</span>
+                    810,288 DROPPED
+                </span>
+
+            </div>
+
+
+            <div class="accounting-formula">
+
+                2,860,236  supervised
+
+                <br>
+
+                635,824   pseudo
+
+                <br>
+
+                922,794   validation
+
+                <br>
+
+                922,805   test
+
+                <br>
+
+                ----------------------
+
+                <br>
+
+                5,341,659 distinct exported IDs
+
+                <br><br>
+
+                + 810,288 cap-dropped rows
+
+                <br>
+
+                = 6,151,947 original rows
+
+            </div>
+
+        </div>
+
+
+        <!-- INTEGRITY CHECKS -->
+
+        <div class="integrity">
+
+            <div class="eyebrow green">FINAL CHECK / STEP 08</div>
+
+            <h3>All integrity checks passed</h3>
+
+            <ul class="check-list">
+
+                <li>
+                    <span class="check">✓</span>
+                    <span>Original row count unchanged: 6,151,947.</span>
+                </li>
+
+                <li>
+                    <span class="check">✓</span>
+                    <span>Only train_role was added; no type changes.</span>
+                </li>
+
+                <li>
+                    <span class="check">✓</span>
+                    <span>All original columns match the pre-mask backup using per-column fingerprints.</span>
+                </li>
+
+                <li>
+                    <span class="check">✓</span>
+                    <span>Train roles sum to 4,306,348.</span>
+                </li>
+
+                <li>
+                    <span class="check">✓</span>
+                    <span>Validation and test have no train_role.</span>
+                </li>
+
+                <li>
+                    <span class="check">✓</span>
+                    <span>Role fingerprint equals the last cap run.</span>
+                </li>
+
+                <li>
+                    <span class="check">✓</span>
+                    <span>CSV SHA-256 values match the manifest.</span>
+                </li>
+
+                <li>
+                    <span class="check">✓</span>
+                    <span>CSV parser checks, column counts, row counts and id|body fingerprints pass.</span>
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+
+    <!-- DATABASE STATE -->
+
+    <div class="panel" style="margin-top:16px;padding:22px">
+
+        <div class="eyebrow">DATABASE STATE / BEFORE VS. AFTER</div>
+
+        <div class="decision-grid" style="grid-template-columns:1fr 1fr;margin-top:15px">
+
+            <div>
+
+                <div class="eyebrow muted">BEFORE</div>
+
+                <h3 style="font-size:21px;margin:8px 0">
+                    clean_base
+                </h3>
+
+                <p class="small muted">
+                    Original columns and types.
+                    Pre-mask backup stored at:
+                </p>
+
+                <div class="formula">
+                    data/interim/clean_base_backup.duckdb
+                </div>
+
+            </div>
+
+
+            <div>
+
+                <div class="eyebrow green">AFTER</div>
+
+                <h3 style="font-size:21px;margin:8px 0">
+                    clean_base + train_role
+                </h3>
+
+                <p class="small muted">
+                    Original columns remain identical.
+                    One additional VARCHAR column:
+                </p>
+
+                <div class="formula">
+                    clean_base.train_role
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     07 — CAVEATS
+====================================================== -->
+
+<section id="caveats" class="section">
+
+    <div class="section-head">
+
+        <div>
+            <div class="eyebrow">07 / LIMITATIONS & TRANSPARENCY</div>
+            <h2 class="section-title">Caveats & Next-Phase Implications</h2>
+        </div>
+
+        <div class="section-note">
+            These findings should remain visible
+            when reporting or evaluating the next phase.
+        </div>
+
+        <div class="section-index">07</div>
+
+    </div>
+
+
+    <div class="caveat-grid">
+
+
+        <div class="caveat">
+
+            <div class="caveat-number">CAVEAT / 01</div>
+
+            <strong>Deviation from the shared protocol</strong>
+
+            <p>
+                Corrected labels were used before masking.
+                This differs from the shared protocol.
+                The resulting mask differs from the raw-label mask
+                by only 16 IDs out of 736,316.
+            </p>
+
+        </div>
+
+
+        <div class="caveat">
+
+            <div class="caveat-number">CAVEAT / 02</div>
+
+            <strong>Mild Step 1 label leakage</strong>
+
+            <p>
+                The Step 1 majority table was built using all labeled
+                train rows, including rows later moved into the
+                pseudo pool. Approximately 0.3% of rows are affected.
+            </p>
+
+        </div>
+
+
+        <div class="caveat">
+
+            <div class="caveat-number">CAVEAT / 03</div>
+
+            <strong>Class distribution shift</strong>
+
+            <p>
+                The cap reduces the recommended class share in the
+                supervised pool from 79.48% to 76.69%.
+                Compute class weights on supervised data after capping.
+                Macro F1 is the main metric.
+            </p>
+
+        </div>
+
+
+        <div class="caveat">
+
+            <div class="caveat-number">CAVEAT / 04</div>
+
+            <strong>Natural and artificial pools differ</strong>
+
+            <p>
+                Natural unlabeled data is not distributed like labeled
+                or artificial pseudo-unlabeled data.
+                Report statistics for the two pools separately.
+            </p>
+
+        </div>
+
+
+        <div class="caveat">
+
+            <div class="caveat-number">CAVEAT / 05</div>
+
+            <strong>Duplicated bodies can inflate pseudo accuracy</strong>
+
+            <p>
+                After capping, 25.32% of pseudo rows share a body with
+                supervised rows. Report accuracy and acceptance rate
+                both on the whole pool and on non-duplicated bodies.
+            </p>
+
+        </div>
+
+
+        <div class="caveat">
+
+            <div class="caveat-number">CAVEAT / 06</div>
+
+            <strong>Instructor confirmation not requested</strong>
+
+            <p>
+                The order of operations and the duplicate cap were
+                decided by the project author. The manifest records
+                this explicitly.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     FINAL SUMMARY
+====================================================== -->
+
+<div class="final-banner">
+
+    <div>
+
+        <div class="eyebrow">
+            PHASE 02 / COMPLETION SUMMARY
+        </div>
+
+        <h2>
+            READY FOR THE
+            NEXT LEARNING PHASE.
+        </h2>
+
+        <p>
+            The corrected-label masking strategy has been executed.
+            Artificial and natural unlabeled data have been distinguished.
+            Duplicate frequency has been controlled independently
+            across training pools. Standard artifacts have been exported,
+            and database integrity has been verified.
+        </p>
+
+    </div>
+
+    <div class="final-mark">
+        02
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     FOOTER
+====================================================== -->
+
+<footer class="footer">
+
+    <div>
+        PROJECT DOCUMENTATION / PHASE 02
+    </div>
+
+    <div>
+        NOTEBOOK: 06_MASKING_AND_ARTIFACTS.IPYNB
+    </div>
+
+    <div>
+        STATUS: CLOSED / VERIFIED
+    </div>
+
+</footer>
+
+
+</div>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+====================================================== -->
+
+<script>
+
+// Smooth navigation
+document.querySelectorAll('.nav a').forEach(link => {
+
+    link.addEventListener('click', event => {
+
+        const target = document.querySelector(
+            link.getAttribute('href')
+        );
+
+        if (target) {
+            event.preventDefault();
+
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+
+    });
+
+});
+
+
+// Optional: highlight current navigation section
+const sections = document.querySelectorAll('section[id]');
+
+const observer = new IntersectionObserver(entries => {
+
+    entries.forEach(entry => {
+
+        if (entry.isIntersecting) {
+
+            document.querySelectorAll('.nav a').forEach(link => {
+
+                link.style.background = '';
+                link.style.color = '';
+
+                if (
+                    link.getAttribute('href') ===
+                    '#' + entry.target.id
+                ) {
+
+                    link.style.background = '#171b1d';
+                    link.style.color = '#ffffff';
+
+                }
+
+            });
+
+        }
+
+    });
+
+}, {
+    rootMargin: '-20% 0px -65% 0px'
+});
+
+sections.forEach(section => {
+    observer.observe(section);
+});
+
+</script>
+
+</body>
+</html>

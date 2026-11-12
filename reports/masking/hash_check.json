@@ -1,0 +1,9 @@
+{
+  "duckdb_version": "2.0.0",
+  "id_bad_format_rows": 0,
+  "sample_size": 1000,
+  "sample_matches": 1000,
+  "ordering_identical": true,
+  "hash_prefix_collisions_all_rows": 0,
+  "hash_sql": "substr(sha256('digikala-semi-supervised-v1|' || id), 1, 16)"
+}

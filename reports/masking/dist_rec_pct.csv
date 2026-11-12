@@ -1,0 +1,7 @@
+segment,no_idea,not_recommended,recommended,null_pct
+supervised_before_cap,11.024,9.4948,79.4812,17.5
+supervised_after_cap,12.1645,11.1463,76.6891,16.37
+pseudo_before_cap,11.0239,9.4947,79.4814,0.0
+pseudo_after_cap,11.8781,10.7825,77.3393,0.0
+validation,11.0663,9.6713,79.2625,14.53
+test,11.0119,9.7684,79.2196,14.62

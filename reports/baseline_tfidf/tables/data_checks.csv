@@ -1,0 +1,36 @@
+check,got,expected,ok
+train: rows,2860236,2860236,True
+train: duplicate ids,0,0,True
+train: missing corrected band,0,0,True
+train: raw vs corrected band missing differ,0,0,True
+train: raw vs corrected rec missing differ,0,0,True
+train: NULL body,0,0,True
+validation: rows,922794,922794,True
+validation: duplicate ids,0,0,True
+validation: missing corrected band,0,0,True
+validation: raw vs corrected band missing differ,0,0,True
+validation: raw vs corrected rec missing differ,0,0,True
+validation: NULL body,0,0,True
+test: rows,922805,922805,True
+test: duplicate ids,0,0,True
+test: missing corrected band,1,1,True
+test: raw vs corrected band missing differ,0,0,True
+test: raw vs corrected rec missing differ,0,0,True
+test: NULL body,0,0,True
+shared ids train/validation,0,0,True
+shared product_id train/validation,0,0,True
+shared ids train/test,0,0,True
+shared product_id train/test,0,0,True
+shared ids validation/test,0,0,True
+shared product_id validation/test,0,0,True
+train rec labeled (corrected),2392157,2392157,True
+train rec labeled (raw),2392157,2392157,True
+pseudo ids present in train/val/test files,0,0,True
+natural ids not in train_supervised,0,0,True
+natural ids that have a rec label,0,0,True
+natural count == train rows without rec label,468079,468079,True
+sha256 train_supervised.csv,06d47a717a9b50b9e347df8625753302ea6bb73e57388ff164e93ee46af6ec32,06d47a717a9b50b9e347df8625753302ea6bb73e57388ff164e93ee46af6ec32,True
+sha256 validation.csv,97c48bfeee2f738e96972bd77a7fc217fcf42fdab2dbb9bae9f7df63e2c82872,97c48bfeee2f738e96972bd77a7fc217fcf42fdab2dbb9bae9f7df63e2c82872,True
+sha256 test.csv,658da59babad05dd8c52b2e1bb40ba7f572f104ad2abe94807f9fa5217bdf5a8,658da59babad05dd8c52b2e1bb40ba7f572f104ad2abe94807f9fa5217bdf5a8,True
+sha256 train_pseudo_unlabeled.csv,c6224b1016058d2b3af419927f845ec7e113c96ed2f3e48be95ab2bbf97bad36,c6224b1016058d2b3af419927f845ec7e113c96ed2f3e48be95ab2bbf97bad36,True
+sha256 natural_unlabeled.csv,e1096eb1fa0655c0853086c58a41bca5bbb2151f4e07b4fb479bd8356757729f,e1096eb1fa0655c0853086c58a41bca5bbb2151f4e07b4fb479bd8356757729f,True

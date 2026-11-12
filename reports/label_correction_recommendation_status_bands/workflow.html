@@ -1,0 +1,691 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Body-Group Thresholding & Majority Mapping</title>
+
+<style>
+:root {
+  --bg: #f4f7fb;
+  --ink: #172033;
+  --muted: #627087;
+  --line: #d9e1ec;
+
+  --blue: #eaf2ff;
+  --blue-border: #8db5f4;
+  --blue-strong: #2864c5;
+
+  --violet: #f2edff;
+  --violet-border: #b6a0f2;
+  --violet-strong: #7350c8;
+
+  --teal: #e8f7f3;
+  --teal-border: #83cdb9;
+  --teal-strong: #16866d;
+
+  --amber: #fff5df;
+  --amber-border: #edc46e;
+  --amber-strong: #a96b00;
+
+  --green: #eaf7e9;
+  --green-border: #9bcf96;
+  --green-strong: #347d38;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 34px 18px 48px;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.canvas {
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+/* Header */
+
+.header {
+  text-align: center;
+  margin-bottom: 26px;
+}
+
+.eyebrow {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  color: #71809a;
+}
+
+h1 {
+  font-size: clamp(23px, 3vw, 32px);
+  line-height: 1.2;
+  margin: 9px 0 8px;
+  letter-spacing: -.035em;
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Phase containers */
+
+.phase {
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: rgba(255,255,255,.72);
+  padding: 21px 22px 22px;
+  margin: 18px 0;
+  box-shadow: 0 8px 22px rgba(31,48,77,.07);
+}
+
+.phase-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 17px;
+}
+
+.phase-number {
+  width: 35px;
+  height: 35px;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  font-weight: 850;
+  font-size: 15px;
+  flex: none;
+  background: var(--blue);
+  color: var(--blue-strong);
+}
+
+.phase-two .phase-number {
+  background: var(--teal);
+  color: var(--teal-strong);
+}
+
+.phase h2 {
+  font-size: 17px;
+  margin: 0;
+  letter-spacing: -.02em;
+}
+
+.phase-note {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+/* Flow */
+
+.flow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+/* Nodes */
+
+.node {
+  width: min(100%, 690px);
+  border: 1.5px solid;
+  border-radius: 15px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(31,48,77,.045);
+}
+
+.node .num {
+  width: 31px;
+  height: 31px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 850;
+  flex: none;
+  background: #d6e6ff;
+  color: var(--blue-strong);
+}
+
+.node .icon {
+  font-size: 22px;
+  line-height: 1;
+  flex: none;
+  width: 30px;
+  text-align: center;
+}
+
+.node .copy {
+  min-width: 0;
+}
+
+.node .title {
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.node .desc {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+/* Node color variations */
+
+.blue {
+  background: var(--blue);
+  border-color: var(--blue-border);
+}
+
+.violet {
+  background: var(--violet);
+  border-color: var(--violet-border);
+}
+
+.violet .num {
+  background: #e4d9ff;
+  color: var(--violet-strong);
+}
+
+.amber {
+  background: var(--amber);
+  border-color: var(--amber-border);
+}
+
+.amber .num {
+  background: #ffebbd;
+  color: var(--amber-strong);
+}
+
+.teal {
+  background: var(--teal);
+  border-color: var(--teal-border);
+}
+
+.teal .num {
+  background: #d1f0e7;
+  color: var(--teal-strong);
+}
+
+.green {
+  background: var(--green);
+  border-color: var(--green-border);
+}
+
+.green .num {
+  background: #d8efd5;
+  color: var(--green-strong);
+}
+
+/* Arrows */
+
+.arrow {
+  height: 29px;
+  width: 2px;
+  background: #aebbd0;
+  position: relative;
+  flex: none;
+}
+
+.arrow::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid #8797ae;
+  border-bottom: 2px solid #8797ae;
+}
+
+/* Manual inspection step */
+
+.decision {
+  width: min(100%, 690px);
+  border: 1.5px dashed var(--amber-border);
+  background: #fffaf0;
+  border-radius: 15px;
+  padding: 13px 17px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.decision .icon {
+  font-size: 22px;
+}
+
+.decision strong {
+  font-size: 13px;
+}
+
+.decision small {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 3px;
+  line-height: 1.45;
+}
+
+/* Phase transition */
+
+.bridge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #53647d;
+  font-size: 12px;
+  font-weight: 750;
+  margin: 4px auto 16px;
+}
+
+.bridge::before,
+.bridge::after {
+  content: "";
+  height: 1px;
+  background: var(--line);
+  flex: 1;
+  max-width: 180px;
+}
+
+/* Output files */
+
+.output-grid {
+  width: min(100%, 690px);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.output {
+  border: 1px solid var(--teal-border);
+  background: #f4fcf9;
+  border-radius: 13px;
+  padding: 13px 9px;
+  text-align: center;
+  min-width: 0;
+}
+
+.output .ico {
+  font-size: 22px;
+}
+
+.output b {
+  display: block;
+  font-size: 12px;
+  margin-top: 6px;
+  overflow-wrap: anywhere;
+}
+
+.output span {
+  font-size: 10px;
+  color: var(--muted);
+}
+
+/* Leakage control */
+
+.principle {
+  margin: 20px auto 0;
+  max-width: 800px;
+  border: 1px solid #c9d9ef;
+  background: #f0f6ff;
+  border-radius: 14px;
+  padding: 14px 17px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.principle .icon {
+  font-size: 20px;
+}
+
+.principle b {
+  font-size: 13px;
+}
+
+.principle p {
+  font-size: 12px;
+  color: #53647d;
+  line-height: 1.55;
+  margin: 4px 0 0;
+}
+
+.footer {
+  text-align: center;
+  color: #8793a6;
+  font-size: 11px;
+  margin-top: 22px;
+}
+
+/* Responsive */
+
+@media (max-width: 600px) {
+  body {
+    padding: 22px 11px 34px;
+  }
+
+  .phase {
+    padding: 16px 12px;
+    border-radius: 17px;
+  }
+
+  .node {
+    padding: 12px 11px;
+    gap: 9px;
+  }
+
+  .node .icon {
+    width: 24px;
+    font-size: 19px;
+  }
+
+  .node .title {
+    font-size: 13px;
+  }
+
+  .node .desc {
+    font-size: 11px;
+  }
+
+  .output-grid {
+    gap: 6px;
+  }
+
+  .output {
+    padding: 10px 5px;
+  }
+
+  .output b {
+    font-size: 10px;
+  }
+}
+
+/* Print */
+
+@media print {
+  body {
+    background: #fff;
+    padding: 0;
+  }
+
+  .phase {
+    box-shadow: none;
+    break-inside: avoid;
+  }
+
+  .node,
+  .output,
+  .principle {
+    box-shadow: none;
+  }
+}
+</style>
+</head>
+
+<body>
+<main class="canvas">
+
+  <header class="header">
+    <div class="eyebrow">
+      Data preparation · Label harmonization
+    </div>
+
+    <h1>
+      Body-Group Thresholding &amp; Majority Mapping
+    </h1>
+
+    <div class="subtitle">
+      A train-derived threshold is selected first, then the resulting
+      majority mapping is applied consistently across all splits.
+    </div>
+  </header>
+
+  <!-- PHASE 1 -->
+
+  <section class="phase">
+
+    <div class="phase-head">
+      <div class="phase-number">01</div>
+
+      <div>
+        <h2>Threshold Discovery</h2>
+        <div class="phase-note">
+          Discover and select the body-group threshold using training data only
+        </div>
+      </div>
+    </div>
+
+    <div class="flow">
+
+      <div class="node blue">
+        <div class="num">1</div>
+        <div class="icon">🗂️</div>
+
+        <div class="copy">
+          <div class="title">
+            Input: <code>clean_base</code> + <code>product_split</code>
+          </div>
+          <div class="desc">
+            Start from the cleaned review table and the product-level split assignments.
+          </div>
+        </div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node blue">
+        <div class="num">2</div>
+        <div class="icon">🏷️</div>
+
+        <div class="copy">
+          <div class="title">Add split column</div>
+          <div class="desc">
+            Attach each review’s Train, Validation, or Test assignment.
+          </div>
+        </div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node violet">
+        <div class="num">3</div>
+        <div class="icon">📋</div>
+
+        <div class="copy">
+          <div class="title">Build Body-Group Table</div>
+          <div class="desc">
+            Use Train only · labeled rows only · retain groups with <code>n ≥ 20</code>.
+          </div>
+        </div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node violet">
+        <div class="num">4</div>
+        <div class="icon">📈</div>
+
+        <div class="copy">
+          <div class="title">Threshold Sweep + Kneedle</div>
+          <div class="desc">
+            Evaluate candidate thresholds and use the Kneedle method
+            to identify a useful bend point.
+          </div>
+        </div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="decision">
+        <div class="icon">🔎</div>
+
+        <div>
+          <strong>
+            5 · Manual inspection of newly added groups per band
+          </strong>
+
+          <small>
+            Review which additional body groups enter at each candidate threshold.
+          </small>
+        </div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node amber">
+        <div class="num">6</div>
+        <div class="icon">🎯</div>
+
+        <div class="copy">
+          <div class="title">Select final threshold</div>
+          <div class="desc">
+            Choose the threshold after combining the sweep results with manual review.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- PHASE TRANSITION -->
+
+  <div class="bridge">
+    <span>Selected threshold &amp; train-derived group statistics</span>
+  </div>
+
+  <!-- PHASE 2 -->
+
+  <section class="phase phase-two">
+
+    <div class="phase-head">
+      <div class="phase-number">02</div>
+
+      <div>
+        <h2>Majority Mapping &amp; Application</h2>
+        <div class="phase-note">
+          Construct the mapping from Train, then reuse it unchanged for every split
+        </div>
+      </div>
+    </div>
+
+    <div class="flow">
+
+      <div class="node teal">
+        <div class="num">7</div>
+        <div class="icon">🧮</div>
+
+        <div class="copy">
+          <div class="title">Build final majority table</div>
+          <div class="desc">
+            Apply the selected threshold to the Train-derived body-group
+            information to determine the majority label for each eligible group.
+          </div>
+        </div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node teal">
+        <div class="num">8</div>
+        <div class="icon">🔁</div>
+
+        <div class="copy">
+          <div class="title">
+            Apply the same mapping to Train, Validation &amp; Test
+          </div>
+          <div class="desc">
+            Reuse one fixed, Train-derived lookup table across all three splits;
+            do not recalculate group labels separately per split.
+          </div>
+        </div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <div class="node green">
+        <div class="num">9</div>
+        <div class="icon">✅</div>
+
+        <div class="copy">
+          <div class="title">Write new column + verify</div>
+          <div class="desc">
+            Add the mapped result as a new column and run consistency checks.
+          </div>
+        </div>
+      </div>
+
+      <div class="arrow"></div>
+
+      <!-- OUTPUTS -->
+
+      <div class="output-grid">
+
+        <div class="output">
+          <div class="ico">🔀</div>
+          <b>Transition Matrix</b>
+          <span>Before / after labels</span>
+        </div>
+
+        <div class="output">
+          <div class="ico">📄</div>
+          <b>Group CSV</b>
+          <span>Group-level mapping</span>
+        </div>
+
+        <div class="output">
+          <div class="ico">⚙️</div>
+          <b>Params JSON</b>
+          <span>Selected parameters</span>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- LEAKAGE CONTROL -->
+
+  <aside class="principle">
+
+    <div class="icon">🛡️</div>
+
+    <div>
+      <b>Leakage-control principle</b>
+
+      <p>
+        The threshold and majority-label mapping are derived from Train data only.
+        Validation and Test receive the already-established mapping, preserving
+        their role as held-out splits.
+      </p>
+    </div>
+
+  </aside>
+
+  <div class="footer">
+    Process overview · Body-group threshold selection and majority-label propagation
+  </div>
+
+</main>
+</body>
+</html>

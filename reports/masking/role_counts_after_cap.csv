@@ -1,0 +1,15 @@
+cls,role,n
+no_idea,cap_dropped_pseudo,5647
+not_recommended,cap_dropped_pseudo,1353
+recommended,cap_dropped_pseudo,93492
+no_idea,cap_dropped_supervised,33691
+not_recommended,cap_dropped_supervised,13009
+recommended,cap_dropped_supervised,506413
+,cap_dropped_supervised,156683
+no_idea,pseudo_unlabeled,75524
+not_recommended,pseudo_unlabeled,68558
+recommended,pseudo_unlabeled,491742
+no_idea,supervised,290995
+not_recommended,supervised,266638
+recommended,supervised,1834524
+,supervised,468079

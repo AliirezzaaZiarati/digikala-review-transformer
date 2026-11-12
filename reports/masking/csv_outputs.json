@@ -1,0 +1,73 @@
+{
+  "files": {
+    "train_supervised.csv": {
+      "rows": 2860236,
+      "columns": [
+        "id",
+        "body",
+        "product_id",
+        "recommendation_status",
+        "step1_rec_label",
+        "rating_band",
+        "step1_rate_band_label",
+        "rate"
+      ],
+      "size_mb": 447.7,
+      "bad_column_count_rows": 0,
+      "roundtrip_ok": true
+    },
+    "train_pseudo_unlabeled.csv": {
+      "rows": 635824,
+      "columns": [
+        "id",
+        "body"
+      ],
+      "size_mb": 68.6,
+      "bad_column_count_rows": 0,
+      "roundtrip_ok": true
+    },
+    "natural_unlabeled.csv": {
+      "rows": 468079,
+      "columns": [
+        "id",
+        "body"
+      ],
+      "size_mb": 54.2,
+      "bad_column_count_rows": 0,
+      "roundtrip_ok": true
+    },
+    "validation.csv": {
+      "rows": 922794,
+      "columns": [
+        "id",
+        "body",
+        "product_id",
+        "recommendation_status",
+        "step1_rec_label",
+        "rating_band",
+        "step1_rate_band_label",
+        "rate"
+      ],
+      "size_mb": 129.5,
+      "bad_column_count_rows": 0,
+      "roundtrip_ok": true
+    },
+    "test.csv": {
+      "rows": 922805,
+      "columns": [
+        "id",
+        "body",
+        "product_id",
+        "recommendation_status",
+        "step1_rec_label",
+        "rating_band",
+        "step1_rate_band_label",
+        "rate"
+      ],
+      "size_mb": 129.3,
+      "bad_column_count_rows": 0,
+      "roundtrip_ok": true
+    }
+  },
+  "cap_dropped_rows_not_exported": 810288
+}

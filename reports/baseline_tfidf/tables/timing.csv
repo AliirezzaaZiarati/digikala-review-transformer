@@ -1,0 +1,3 @@
+time,step,seconds,extra
+2026-11-12T07:47:32,step1_read_csvs,6.06,{}
+2026-11-12T07:48:06,step1_checks,34.73,{}

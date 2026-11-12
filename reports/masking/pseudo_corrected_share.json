@@ -1,0 +1,12 @@
+{
+  "pseudo_before_cap": {
+    "rows": 736316,
+    "corrected_rows": 2148,
+    "corrected_pct": 0.2917
+  },
+  "pseudo_after_cap": {
+    "rows": 635824,
+    "corrected_rows": 1026,
+    "corrected_pct": 0.1614
+  }
+}

@@ -1,0 +1,101 @@
+﻿term,log_odds,count_pos,count_neg,unit,side
+من راضیم,5.38,1032,0,bigram,recommended
+خوبه راضی,5.21,870,0,bigram,recommended
+عالیه خیلی,4.757,553,0,bigram,recommended
+خیلی مناسبه,4.692,518,0,bigram,recommended
+خیلی راضیم,4.663,1007,1,bigram,recommended
+دوسش دارم,4.624,969,1,bigram,recommended
+میکنم بخرید,4.583,1396,2,bigram,recommended
+عالی قیمت,4.558,453,0,bigram,recommended
+عالیه حتما,4.547,448,0,bigram,recommended
+عالی من,4.478,418,0,bigram,recommended
+عالیه برای,4.406,389,0,bigram,recommended
+ازش راضیم,4.388,382,0,bigram,recommended
+خریدش شک,4.385,381,0,bigram,recommended
+راضیم از,4.383,380,0,bigram,recommended
+عالیه فقط,4.38,379,0,bigram,recommended
+حتما پیشنهاد,4.376,756,1,bigram,recommended
+حتما بخونید,4.354,369,0,bigram,recommended
+عالی زیبا,4.318,356,0,bigram,recommended
+قیمتش عالیه,4.286,691,1,bigram,recommended
+خوب عالی,4.209,960,2,bigram,recommended
+راضی هستم,4.2,5078,15,bigram,recommended
+دوستش دارم,4.157,303,0,bigram,recommended
+عالیه واقعا,4.137,297,0,bigram,recommended
+خوب زیبا,4.134,296,0,bigram,recommended
+دوسش داره,4.134,296,0,bigram,recommended
+حیف پول,-6.124,1,191,bigram,not_recommended
+اصلا پیشنهاد,-5.84,3,288,bigram,not_recommended
+انداختمش دور,-5.603,0,56,bigram,not_recommended
+دور ریختنه,-5.549,0,53,bigram,not_recommended
+افتضاح اصلا,-5.549,0,53,bigram,not_recommended
+جنس افتضاح,-5.452,0,48,bigram,not_recommended
+کاملا تقلبی,-5.298,0,41,bigram,not_recommended
+پولتونو دور,-5.261,1,80,bigram,not_recommended
+تقلبی هست,-5.249,0,39,bigram,not_recommended
+اصلا اونی,-5.143,0,35,bigram,not_recommended
+اصلا جنسش,-5.143,0,35,bigram,not_recommended
+عنوان نخرید,-5.115,0,34,bigram,not_recommended
+حیف پولی,-5.086,0,33,bigram,not_recommended
+پول دور,-5.036,2,96,bigram,not_recommended
+سطل اشغال,-5.026,0,31,bigram,not_recommended
+اصلا نخرید,-4.994,9,309,bigram,not_recommended
+حتما مرجوع,-4.994,0,30,bigram,not_recommended
+نخور بود,-4.944,1,58,bigram,not_recommended
+خیلی افتضاح,-4.927,1,57,bigram,not_recommended
+اصلا ارزش,-4.879,7,220,bigram,not_recommended
+بسیار بی,-4.839,10,291,bigram,not_recommended
+دور ریختن,-4.837,1,52,bigram,not_recommended
+کیفیت افتضاح,-4.779,2,74,bigram,not_recommended
+اصلا توصیه,-4.766,12,320,bigram,not_recommended
+دور نریزید,-4.738,4,119,bigram,not_recommended
+راضیم,4.278,9007,24,word,recommended
+عالیی,4.158,2237,6,word,recommended
+عاشقش,4.145,630,1,word,recommended
+وعالی,4.064,290,0,word,recommended
+بادوام,3.944,257,0,word,recommended
+گوگولیه,3.863,237,0,word,recommended
+خوشگلن,3.674,196,0,word,recommended
+راضیه,3.625,562,2,word,recommended
+عالیه,3.56,21437,121,word,recommended
+کاربردیه,3.54,1033,5,word,recommended
+بخونیدش,3.538,171,0,word,recommended
+وزیبا,3.515,167,0,word,recommended
+عاشقشم,3.515,167,0,word,recommended
+عالیهه,3.505,498,2,word,recommended
+نوستالژی,3.503,165,0,word,recommended
+عالیست,3.434,154,0,word,recommended
+بخوانید,3.401,149,0,word,recommended
+راحته,3.396,1491,9,word,recommended
+عاالی,3.387,886,5,word,recommended
+وکاربردی,3.381,146,0,word,recommended
+گوگولی,3.364,288,1,word,recommended
+بینظیر,3.325,138,0,word,recommended
+عالی,3.321,52206,376,word,recommended
+نازه,3.308,409,2,word,recommended
+نظیر,3.266,523,3,word,recommended
+ریختنه,-5.704,0,59,word,not_recommended
+پولتونو,-5.193,4,179,word,not_recommended
+پولتو,-5.193,0,35,word,not_recommended
+افتضااح,-4.905,1,53,word,not_recommended
+افتضاحه,-4.623,18,386,word,not_recommended
+پولمو,-4.58,3,77,word,not_recommended
+مزخرفه,-4.571,2,57,word,not_recommended
+افتضاح,-4.513,82,1513,word,not_recommended
+آشغاله,-4.466,4,86,word,not_recommended
+متاسفم,-4.435,30,522,word,not_recommended
+مزخرف,-4.429,8,150,word,not_recommended
+فاجعه,-4.334,3,60,word,not_recommended
+انداختمش,-4.2,5,79,word,not_recommended
+پولتون,-4.123,19,246,word,not_recommended
+نریزید,-4.109,10,133,word,not_recommended
+نخور,-4.099,36,445,word,not_recommended
+اشغاله,-4.077,4,58,word,not_recommended
+شباهتی,-4.007,7,87,word,not_recommended
+پولم,-3.836,10,101,word,not_recommended
+بدردنخور,-3.806,3,35,word,not_recommended
+نخرید,-3.803,165,1488,word,not_recommended
+جوب,-3.778,3,34,word,not_recommended
+تقلبیه,-3.719,7,65,word,not_recommended
+گند,-3.646,5,45,word,not_recommended
+زباله,-3.624,11,89,word,not_recommended

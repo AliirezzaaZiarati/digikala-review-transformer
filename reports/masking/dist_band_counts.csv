@@ -1,0 +1,7 @@
+segment,NULL,high,low,medium
+supervised_before_cap,0,2369542,606625,593865
+supervised_after_cap,0,1809515,549788,500933
+pseudo_before_cap,0,471796,134886,129634
+pseudo_after_cap,0,393580,126834,115410
+validation,0,607654,159969,155171
+test,1,607269,160731,154804

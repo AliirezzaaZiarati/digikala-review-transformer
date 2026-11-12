@@ -1,0 +1,8 @@
+﻿threshold,groups,minority_rows,hedge_hint_groups,minority_rows_high,minority_rows_low,minority_rows_medium,groups_majority_high,groups_majority_low,groups_majority_medium
+0.86,265,4069,3,14,2120,1935,250,14,1
+0.85,267,6447,3,83,3426,2938,247,16,4
+0.84,207,5826,4,67,2928,2831,193,10,4
+0.83,199,5822,2,30,2704,3088,189,8,2
+0.82,211,7541,6,95,4063,3383,202,5,4
+0.81,196,7812,6,54,3717,4041,183,8,5
+0.8,299,27551,12,90,7790,19671,281,13,5

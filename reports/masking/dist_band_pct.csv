@@ -1,0 +1,7 @@
+segment,high,low,medium,null_pct
+supervised_before_cap,66.3731,16.9921,16.6347,0.0
+supervised_after_cap,63.2645,19.2218,17.5137,0.0
+pseudo_before_cap,64.0752,18.319,17.6058,0.0
+pseudo_after_cap,61.9008,19.948,18.1512,0.0
+validation,65.8494,17.3353,16.8153,0.0
+test,65.8069,17.4177,16.7754,0.0

@@ -1,5 +1,5 @@
 model_id,family,head,variant,train_label_col,ngram,C,class_weight,n_train_rows,artifact_path,created_at
-tfidf12_rec_A,tfidf_lr,rec,A,recommendation_status,"(1, 2)",0.3,balanced,2392157,artifacts/baseline_tfidf/tfidf12_rec_A.joblib,2026-11-12T10:12:59+03:30
-tfidf12_rec_B,tfidf_lr,rec,B,step1_rec_label,"(1, 2)",0.3,balanced,2392157,artifacts/baseline_tfidf/tfidf12_rec_B.joblib,2026-11-12T10:13:00+03:30
-tfidf12_band_A,tfidf_lr,band,A,rating_band,"(1, 2)",0.1,balanced,2860236,artifacts/baseline_tfidf/tfidf12_band_A.joblib,2026-11-12T10:13:01+03:30
-tfidf12_band_B,tfidf_lr,band,B,step1_rate_band_label,"(1, 2)",0.1,balanced,2860236,artifacts/baseline_tfidf/tfidf12_band_B.joblib,2026-11-12T10:13:03+03:30
+tfidf12_rec_A,tfidf_lr,rec,A,recommendation_status,"(1, 2)",0.3,balanced,2392157,artifacts/baseline_tfidf/tfidf12_rec_A.joblib,2026-11-13T02:55:54+03:30
+tfidf12_rec_B,tfidf_lr,rec,B,step1_rec_label,"(1, 2)",0.3,balanced,2392157,artifacts/baseline_tfidf/tfidf12_rec_B.joblib,2026-11-13T02:55:56+03:30
+tfidf12_band_A,tfidf_lr,band,A,rating_band,"(1, 2)",0.1,balanced,2860236,artifacts/baseline_tfidf/tfidf12_band_A.joblib,2026-11-13T02:55:57+03:30
+tfidf12_band_B,tfidf_lr,band,B,step1_rate_band_label,"(1, 2)",0.1,balanced,2860236,artifacts/baseline_tfidf/tfidf12_band_B.joblib,2026-11-13T02:55:58+03:30

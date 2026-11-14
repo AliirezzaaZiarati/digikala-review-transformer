@@ -288,3 +288,20 @@ def term_ranks(model, names, classes, terms):
             row[f"coef_{c}"] = round(float(coef[j, i]), 3)
         rows.append(row)
     return pd.DataFrame(rows)
+
+def explain_rows(model, X, names, target, k=5):
+    """Top-k features pushing each row toward its `target` class (centered coef * tf-idf value).
+    X: sparse rows; target: int class code per row. Returns one string per row."""
+    coef = _centered_coef(model)
+    X = X.tocsr()
+    out = []
+    for i in range(X.shape[0]):
+        s, e = X.indptr[i], X.indptr[i + 1]
+        idx, val = X.indices[s:e], X.data[s:e]
+        if len(idx) == 0:
+            out.append("")
+            continue
+        contrib = val * coef[target[i], idx]
+        top = np.argsort(-contrib)[:k]
+        out.append(" | ".join(f"{names[idx[j]]} ({contrib[j]:+.2f})" for j in top))
+    return out

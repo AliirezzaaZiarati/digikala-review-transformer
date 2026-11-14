@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__PAGE_TITLE__</title>
+<style>
+__FONT_CSS__
+:root{
+  --bg:#0B1020; --text:#E6E9F5; --muted:#9AA4C7;
+  --turq:#2DD4BF; --violet:#8B5CF6; --pink:#F472B6; --amber:#FBBF24; --coral:#FB7185;
+  --glass:rgba(255,255,255,.08); --border:rgba(255,255,255,.28); --border-soft:rgba(255,255,255,.12);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0}
+body{
+  font-family:"Vazirmatn","Segoe UI",Tahoma,system-ui,sans-serif; font-size:14px; color:var(--text);
+  display:flex; flex-direction:column; overflow:hidden;
+  /* aurora blobs on the dark base */
+  background:
+    radial-gradient(900px 600px at 10% 6%, rgba(45,212,191,.22), transparent 60%),
+    radial-gradient(800px 600px at 92% 10%, rgba(139,92,246,.26), transparent 60%),
+    radial-gradient(900px 700px at 82% 96%, rgba(244,114,182,.18), transparent 60%),
+    radial-gradient(700px 500px at 6% 92%, rgba(251,191,36,.12), transparent 60%),
+    var(--bg);
+  background-attachment:fixed;
+}
+.glass{background:var(--glass);border:1px solid var(--border);border-radius:16px;
+       -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+.muted{color:var(--muted)}
+
+/* header */
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;padding:16px 28px 6px}
+h1{font-family:"Poppins","Segoe UI",system-ui,sans-serif;font-size:30px;font-weight:700;margin:0;letter-spacing:-.01em}
+.subtitle{margin:4px 0 0;color:var(--muted);font-size:16px}
+.top-actions{display:flex;gap:8px}
+.btn{background:var(--glass);color:var(--text);border:1px solid var(--border-soft);border-radius:10px;
+     padding:7px 14px;font:inherit;cursor:pointer}
+.btn:hover{border-color:var(--violet);background:rgba(139,92,246,.2)}
+.warn{margin:4px 28px;padding:8px 14px;border-radius:10px;border:1px solid var(--amber);
+      background:rgba(251,191,36,.12);color:var(--amber)}
+
+/* tabs */
+.tabs{display:flex;gap:8px;padding:6px 28px}
+.tab{background:var(--glass);color:var(--text);border:1px solid var(--border-soft);border-radius:999px;
+     padding:6px 16px;font:inherit;cursor:pointer}
+.tab.active{border-color:var(--violet);background:rgba(139,92,246,.28);font-weight:700}
+
+/* main grid: filters | list | detail */
+.grid{flex:1;min-height:0;display:grid;grid-template-columns:300px minmax(360px,1fr) 450px;gap:14px;padding:8px 28px 10px}
+.panel{min-height:0;overflow:auto;padding:14px}
+.panel h3{margin:0 0 8px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.field{display:block;margin:0 0 10px}
+.field>span{display:block;color:var(--muted);font-size:12px;margin-bottom:3px}
+select,input[type=text],input[type=number],textarea{
+  width:100%;background:rgba(11,16,32,.55);color:var(--text);border:1px solid var(--border-soft);
+  border-radius:10px;padding:6px 8px;font:inherit}
+select option{background:#0B1020;color:var(--text)}
+textarea{min-height:70px;resize:vertical}
+.range{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.note{font-size:12px;color:var(--muted);line-height:1.6;border-top:1px solid var(--border-soft);padding-top:10px;margin-top:6px}
+
+/* list (virtual scroll) */
+.listpanel{display:flex;flex-direction:column;padding:0;overflow:hidden}
+.list-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;
+           border-bottom:1px solid var(--border-soft)}
+.list-head select{width:auto}
+#list{flex:1;min-height:0;overflow-y:auto;position:relative}
+#spacer{position:relative;width:100%}
+#rows{position:absolute;top:0;left:0;right:0;will-change:transform}
+.row{padding:8px 14px;border-bottom:1px solid var(--border-soft);cursor:pointer;overflow:hidden}
+.row:hover{background:rgba(255,255,255,.06)}
+.row.sel{background:rgba(139,92,246,.22);box-shadow:inset 3px 0 0 var(--violet)}
+.row-top{display:flex;align-items:center;gap:6px;height:22px;white-space:nowrap;overflow:hidden}
+.row-body{margin-top:5px;line-height:21px;max-height:42px;overflow:hidden;
+          display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.chip{display:inline-block;padding:0 9px;border-radius:999px;font-size:12px;line-height:20px;
+      border:1px solid var(--border-soft);font-weight:500}
+.c-pos{color:var(--turq);border-color:rgba(45,212,191,.6);background:rgba(45,212,191,.12)}
+.c-neg{color:var(--coral);border-color:rgba(251,113,133,.6);background:rgba(251,113,133,.12)}
+.c-mid{color:var(--amber);border-color:rgba(251,191,36,.6);background:rgba(251,191,36,.12)}
+.chip.tagchip{color:var(--violet);border-color:var(--violet);background:rgba(139,92,246,.18);color:#C9B6FF}
+.status{font-size:12px;color:var(--muted)}
+.why{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis}
+.grow{flex:1}
+
+/* detail */
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13px;margin:8px 0 12px}
+.kv dt{color:var(--muted)} .kv dd{margin:0}
+.body-full{font-size:17px;line-height:1.9;white-space:pre-wrap;word-break:break-word;padding:10px 12px;
+           border-radius:12px;background:rgba(11,16,32,.45);border:1px solid var(--border-soft);margin:8px 0 12px}
+.bar{display:grid;grid-template-columns:130px 1fr 52px;gap:8px;align-items:center;margin:4px 0;font-size:12px}
+.bar-track{height:9px;border-radius:999px;background:rgba(255,255,255,.1);overflow:hidden}
+.bar-fill{height:100%;border-radius:999px}
+.f-pos{background:var(--turq)} .f-neg{background:var(--coral)} .f-mid{background:var(--amber)}
+.bar-val{text-align:right;direction:ltr;color:var(--muted)}
+.feat{display:inline-flex;gap:6px;align-items:baseline;margin:3px 4px 3px 0;padding:2px 10px;border-radius:999px;
+      border:1px solid var(--border-soft);background:rgba(255,255,255,.06)}
+.feat .w{direction:ltr;font-size:12px;color:var(--muted)}
+.tagopt{display:flex;gap:8px;align-items:flex-start;margin:6px 0;cursor:pointer}
+.kbd{display:inline-block;min-width:18px;text-align:center;font-size:11px;padding:0 5px;border-radius:6px;
+     border:1px solid var(--border-soft);color:var(--muted)}
+footer{padding:4px 28px 10px;color:var(--muted);font-size:11px}
+@media (max-width:1250px){
+  body{overflow:auto}
+  .grid{grid-template-columns:1fr;grid-auto-rows:minmax(420px,auto)}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div>
+    <h1>__PAGE_TITLE__</h1>
+    <p class="subtitle">__PAGE_SUBTITLE__</p>
+  </div>
+  <div class="top-actions">
+    <button class="btn" id="btn-export" hidden>Export tagged rows (CSV)</button>
+    <button class="btn" id="btn-clear" hidden>Clear tags of this tab</button>
+  </div>
+</header>
+<div class="warn" id="storage-warning" hidden>
+  Browser storage is unavailable or full: tags are kept only until this page is closed. Use the CSV export.
+</div>
+<nav class="tabs" id="tabs"></nav>
+
+<main class="grid">
+  <aside class="panel glass" id="filters">
+    <h3>Filters</h3>
+    <label class="field"><span>Candidate reason</span><select id="f-reason"></select></label>
+    <label class="field"><span>True label (corrected, step 1)</span><select id="f-true"></select></label>
+    <label class="field"><span>Predicted label</span><select id="f-pred"></select></label>
+    <div class="field"><span>Confidence of prediction</span>
+      <div class="range">
+        <input type="number" id="f-confmin" min="0" max="1" step="0.05" placeholder="min">
+        <input type="number" id="f-confmax" min="0" max="1" step="0.05" placeholder="max">
+      </div>
+    </div>
+    <div id="flags-box"></div>
+    <label class="field"><span>Text contains</span><input type="text" id="f-text" placeholder="search in body"></label>
+    <label class="field" id="f-tag-wrap" hidden><span>Tag</span><select id="f-tag"></select></label>
+    <button class="btn" id="btn-reset" style="width:100%">Reset filters</button>
+    <p class="note">
+      Candidates are a <b>rule-based quota sample</b>, not a random sample. Counts and percentages in this page are
+      <b>not</b> population error rates. "True" = step-1 corrected label; the raw label is shown in the detail panel.<br>
+      Keys: ↑ ↓ move, 1–9 tag, 0 clear tag.
+    </p>
+    <p class="note" id="tag-summary"></p>
+  </aside>
+
+  <section class="panel glass listpanel">
+    <div class="list-head">
+      <span id="count" class="muted"></span>
+      <label class="muted">Sort
+        <select id="sort">
+          <option value="conf_desc">confidence high→low</option>
+          <option value="conf_asc">confidence low→high</option>
+          <option value="pos_asc">file order</option>
+        </select>
+      </label>
+    </div>
+    <div id="list"><div id="spacer"><div id="rows"></div></div></div>
+  </section>
+
+  <section class="panel glass" id="detail"></section>
+</main>
+<footer id="footer"></footer>
+
+<script id="explorer-data" type="application/json">__EXPLORER_DATA_JSON__</script>
+<script>
+(function () {
+"use strict";
+
+/* ---------- data ----------
+   row keys: id, pos, t=true(corrected), p=pred, r=raw, c=conf, e=is_error, lc=label_changed,
+   sh=is_short, ng=has_negation, bt=body_in_train, rz=rate_is_zero, nw=n_words, rate,
+   why=cand_reason, tf=top features string, b=body, pr=probabilities (order = model.classes) */
+const PAYLOAD = JSON.parse(document.getElementById("explorer-data").textContent);
+const MODELS = PAYLOAD.models;
+const ERROR_TAGS = PAYLOAD.error_tags;            // [{key, label}]
+const ROW_H = 88;                                 // fixed row height (px) required by virtual scroll
+const BUFFER = 8;                                 // extra rows rendered above/below the viewport
+const STORAGE_PREFIX = "digikala_explorer_baseline_v1::";
+const FLAG_DEFS = [
+  ["e", "Is error"], ["lc", "Label changed (step 1)"], ["sh", "Short body"],
+  ["ng", "Has negation word"], ["bt", "Body seen in train"], ["rz", "rate = 0"]
+];
+
+const $ = (id) => document.getElementById(id);
+const listEl = $("list"), spacerEl = $("spacer"), rowsEl = $("rows"), detailEl = $("detail");
+const tabsEl = $("tabs"), countEl = $("count"), sortEl = $("sort"), filtersEl = $("filters");
+const warnEl = $("storage-warning"), tagSummaryEl = $("tag-summary");
+const TAGGING = ERROR_TAGS.length > 0;
+
+/* ---------- helpers ---------- */
+function esc(value) {
+  return String(value).replace(/[&<>"']/g, (ch) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+}
+// class colour key: color is never the only signal (the class name is always printed too)
+function classKey(name) {
+  if (name === "recommended" || name === "high") return "pos";
+  if (name === "not_recommended" || name === "low") return "neg";
+  return "mid";
+}
+function tagLabel(key) {
+  const found = ERROR_TAGS.find((t) => t.key === key);
+  return found ? found.label : key;
+}
+function parseFeatures(text) {
+  if (!text) return [];
+  return text.split(" | ").map((part) => {
+    const m = part.match(/^(.*) \(([+-]\d+(?:\.\d+)?)\)$/);
+    return m ? { term: m[1], weight: m[2] } : { term: part, weight: "" };
+  });
+}
+
+/* ---------- tag storage (localStorage inside try/catch) ---------- */
+const TAGS = {};                                  // TAGS[model_id][row_id] = {tag, note, ts}
+let storageProblem = false;
+function storageKey(modelId) { return STORAGE_PREFIX + modelId; }
+function loadTagsFromStorage(modelId) {
+  try {
+    const raw = window.localStorage.getItem(storageKey(modelId));
+    const parsed = raw ? JSON.parse(raw) : {};
+    return (parsed && typeof parsed === "object") ? parsed : {};
+  } catch (err) { storageProblem = true; return {}; }
+}
+function saveTagsToStorage(modelId) {
+  try { window.localStorage.setItem(storageKey(modelId), JSON.stringify(TAGS[modelId])); }
+  catch (err) { storageProblem = true; }
+  warnEl.hidden = !storageProblem;
+}
+MODELS.forEach((m) => { TAGS[m.model_id] = loadTagsFromStorage(m.model_id); });
+warnEl.hidden = !storageProblem;
+
+/* ---------- state ---------- */
+function defaultFilters() {
+  const flags = {};
+  FLAG_DEFS.forEach(([key]) => { flags[key] = ""; });
+  return { reason: "", trueLabel: "", predLabel: "", confMin: "", confMax: "", text: "", tag: "", flags };
+}
+const filterState = MODELS.map(defaultFilters);
+const selectedByTab = MODELS.map(() => null);     // index into model.rows
+let activeTab = 0;
+let viewRows = [];                                // indices into model.rows after filter + sort
+
+/* ---------- controls ---------- */
+function fillSelect(selectEl, options) {
+  selectEl.innerHTML = "";
+  options.forEach(([value, label]) => {
+    const option = document.createElement("option");
+    option.value = value; option.textContent = label;
+    selectEl.appendChild(option);
+  });
+}
+function buildFlagControls() {
+  const box = $("flags-box");
+  FLAG_DEFS.forEach(([key, label]) => {
+    const wrap = document.createElement("label");
+    wrap.className = "field";
+    wrap.innerHTML = `<span>${esc(label)}</span><select id="f-flag-${key}">` +
+      `<option value="">Any</option><option value="yes">Yes</option><option value="no">No</option></select>`;
+    box.appendChild(wrap);
+  });
+}
+function populateOptions() {
+  const model = MODELS[activeTab];
+  fillSelect($("f-reason"), [["", "All reasons"], ...model.reasons.map(([k, n]) => [k, `${k} (${n})`])]);
+  fillSelect($("f-true"), [["", "Any"], ...model.classes.map((c) => [c, c])]);
+  fillSelect($("f-pred"), [["", "Any"], ...model.classes.map((c) => [c, c])]);
+  if (TAGGING) {
+    fillSelect($("f-tag"), [["", "Any"], ["__tagged__", "Tagged (any tag)"], ["__untagged__", "Untagged"],
+      ...ERROR_TAGS.map((t) => [t.key, t.label])]);
+  }
+}
+function syncControlsFromState() {
+  const f = filterState[activeTab];
+  $("f-reason").value = f.reason; $("f-true").value = f.trueLabel; $("f-pred").value = f.predLabel;
+  $("f-confmin").value = f.confMin; $("f-confmax").value = f.confMax; $("f-text").value = f.text;
+  if (TAGGING) $("f-tag").value = f.tag;
+  FLAG_DEFS.forEach(([key]) => { $("f-flag-" + key).value = f.flags[key]; });
+}
+function readControlsIntoState() {
+  const f = filterState[activeTab];
+  f.reason = $("f-reason").value; f.trueLabel = $("f-true").value; f.predLabel = $("f-pred").value;
+  f.confMin = $("f-confmin").value; f.confMax = $("f-confmax").value; f.text = $("f-text").value;
+  if (TAGGING) f.tag = $("f-tag").value;
+  FLAG_DEFS.forEach(([key]) => { f.flags[key] = $("f-flag-" + key).value; });
+}
+
+/* ---------- filtering + sorting ---------- */
+function applyFilters() {
+  const model = MODELS[activeTab];
+  const f = filterState[activeTab];
+  const tagMap = TAGS[model.model_id];
+  const rows = model.rows;
+  const needle = f.text.trim().toLowerCase();
+  const confMin = f.confMin === "" ? -Infinity : Number(f.confMin);
+  const confMax = f.confMax === "" ? Infinity : Number(f.confMax);
+  const activeFlags = FLAG_DEFS.filter(([key]) => f.flags[key] !== "");
+
+  const out = [];
+  for (let i = 0; i < rows.length; i++) {
+    const r = rows[i];
+    if (f.reason && r.why !== f.reason) continue;
+    if (f.trueLabel && r.t !== f.trueLabel) continue;
+    if (f.predLabel && r.p !== f.predLabel) continue;
+    if (r.c < confMin || r.c > confMax) continue;
+    let flagsOk = true;
+    for (const [key] of activeFlags) {
+      if (Boolean(r[key]) !== (f.flags[key] === "yes")) { flagsOk = false; break; }
+    }
+    if (!flagsOk) continue;
+    if (needle && !r.b.toLowerCase().includes(needle)) continue;
+    if (TAGGING && f.tag) {
+      const entry = tagMap[r.id];
+      const tag = entry ? entry.tag : "";
+      if (f.tag === "__tagged__") { if (!tag) continue; }
+      else if (f.tag === "__untagged__") { if (tag) continue; }
+      else if (tag !== f.tag) continue;
+    }
+    out.push(i);
+  }
+  const mode = sortEl.value;
+  if (mode === "conf_desc") out.sort((a, b) => rows[b].c - rows[a].c);
+  else if (mode === "conf_asc") out.sort((a, b) => rows[a].c - rows[b].c);
+  else out.sort((a, b) => rows[a].pos - rows[b].pos);
+
+  viewRows = out;
+  spacerEl.style.height = (out.length * ROW_H) + "px";
+  listEl.scrollTop = 0;
+  renderWindow();
+  updateCount();
+}
+function updateCount() {
+  const model = MODELS[activeTab];
+  let errors = 0;
+  viewRows.forEach((i) => { errors += model.rows[i].e; });
+  countEl.textContent = `Showing ${viewRows.length} of ${model.rows.length} candidates | errors in view: ${errors}`;
+}
+
+/* ---------- virtual list ---------- */
+function rowHtml(viewIndex) {
+  const model = MODELS[activeTab];
+  const r = model.rows[viewRows[viewIndex]];
+  const entry = TAGS[model.model_id][r.id];
+  const selected = viewRows[viewIndex] === selectedByTab[activeTab];
+  const status = r.e ? "✕ error" : "✓ correct";
+  const tagChip = (entry && entry.tag) ? `<span class="chip tagchip">${esc(tagLabel(entry.tag))}</span>` : "";
+  const noteMark = (entry && entry.note) ? '<span class="status" title="has note">✎</span>' : "";
+  return `<div class="row${selected ? " sel" : ""}" data-vi="${viewIndex}" style="height:${ROW_H}px">` +
+    `<div class="row-top">` +
+      `<span class="chip c-${classKey(r.t)}" title="true label">${esc(r.t)}</span>` +
+      `<span class="status">→</span>` +
+      `<span class="chip c-${classKey(r.p)}" title="prediction">${esc(r.p)}</span>` +
+      `<span class="status">${status} · ${r.c.toFixed(2)}</span>` +
+      `<span class="why grow">${esc(r.why)}</span>${noteMark}${tagChip}` +
+    `</div>` +
+    `<div class="row-body" dir="auto">${esc(r.b)}</div></div>`;
+}
+function renderWindow() {
+  const top = listEl.scrollTop, height = listEl.clientHeight;
+  const start = Math.max(0, Math.floor(top / ROW_H) - BUFFER);
+  const end = Math.min(viewRows.length, Math.ceil((top + height) / ROW_H) + BUFFER);
+  let htmlParts = "";
+  for (let vi = start; vi < end; vi++) htmlParts += rowHtml(vi);
+  rowsEl.innerHTML = htmlParts;
+  rowsEl.style.transform = `translateY(${start * ROW_H}px)`;
+}
+let scrollTicking = false;
+listEl.addEventListener("scroll", () => {
+  if (scrollTicking) return;
+  scrollTicking = true;
+  requestAnimationFrame(() => { scrollTicking = false; renderWindow(); });
+});
+window.addEventListener("resize", renderWindow);
+rowsEl.addEventListener("click", (event) => {
+  const rowEl = event.target.closest(".row");
+  if (!rowEl) return;
+  selectView(Number(rowEl.dataset.vi), false);
+});
+function ensureVisible(viewIndex) {
+  const rowTop = viewIndex * ROW_H;
+  if (rowTop < listEl.scrollTop) listEl.scrollTop = rowTop;
+  else if (rowTop + ROW_H > listEl.scrollTop + listEl.clientHeight)
+    listEl.scrollTop = rowTop + ROW_H - listEl.clientHeight;
+}
+function selectView(viewIndex, scrollIntoView) {
+  if (viewIndex < 0 || viewIndex >= viewRows.length) return;
+  selectedByTab[activeTab] = viewRows[viewIndex];
+  if (scrollIntoView) ensureVisible(viewIndex);
+  renderWindow();
+  renderDetail();
+}
+
+/* ---------- tagging ---------- */
+function updateEntry(modelId, rowId, changes) {
+  const map = TAGS[modelId];
+  const current = map[rowId] || { tag: "", note: "", ts: "" };
+  const next = Object.assign({}, current, changes, { ts: new Date().toISOString() });
+  if (!next.tag && !next.note) delete map[rowId]; else map[rowId] = next;
+  saveTagsToStorage(modelId);
+  updateTagSummary();
+  renderWindow();                  // refresh tag chips in rows (list is not re-filtered on purpose)
+}
+function updateTagSummary() {
+  if (!TAGGING) { tagSummaryEl.textContent = ""; return; }
+  const countTagged = (id) => Object.values(TAGS[id]).filter((e) => e.tag).length;
+  const here = countTagged(MODELS[activeTab].model_id);
+  const total = MODELS.reduce((sum, m) => sum + countTagged(m.model_id), 0);
+  tagSummaryEl.textContent = `Tagged rows: ${here} in this tab, ${total} in all tabs.`;
+}
+
+/* ---------- detail panel ---------- */
+function renderDetail() {
+  const model = MODELS[activeTab];
+  const rowIndex = selectedByTab[activeTab];
+  if (rowIndex === null) {
+    detailEl.innerHTML = '<p class="muted">Select a row from the list.</p>';
+    return;
+  }
+  const r = model.rows[rowIndex];
+  const entry = TAGS[model.model_id][r.id] || { tag: "", note: "" };
+
+  const bars = model.classes.map((name, k) => {
+    const marks = (name === r.t ? " (true)" : "") + (name === r.p ? " (pred)" : "");
+    const width = Math.max(0, Math.min(100, r.pr[k] * 100));
+    return `<div class="bar"><span>${esc(name)}${marks}</span>` +
+      `<div class="bar-track"><div class="bar-fill f-${classKey(name)}" style="width:${width.toFixed(1)}%"></div></div>` +
+      `<span class="bar-val">${r.pr[k].toFixed(3)}</span></div>`;
+  }).join("");
+
+  const features = parseFeatures(r.tf).map((f) =>
+    `<span class="feat"><span dir="auto">${esc(f.term)}</span><span class="w">${esc(f.weight)}</span></span>`).join("");
+
+  const flagRows = FLAG_DEFS.map(([key, label]) =>
+    `<dt>${esc(label)}</dt><dd>${r[key] ? "yes" : "no"}</dd>`).join("");
+
+  let tagHtml = "";
+  if (TAGGING) {
+    const options = ERROR_TAGS.map((t, i) =>
+      `<label class="tagopt"><input type="radio" name="errtag" value="${esc(t.key)}"` +
+      `${entry.tag === t.key ? " checked" : ""}><span class="kbd">${i + 1}</span><span>${esc(t.label)}</span></label>`).join("");
+    tagHtml = `<h3>Your tag</h3>${options}` +
+      `<label class="tagopt"><input type="radio" name="errtag" value=""${entry.tag ? "" : " checked"}>` +
+      `<span class="kbd">0</span><span>no tag</span></label>` +
+      `<label class="field"><span>Note</span><textarea id="note-input" dir="auto">${esc(entry.note || "")}</textarea></label>`;
+  }
+
+  detailEl.innerHTML =
+    `<h3>Row</h3>` +
+    `<dl class="kv">` +
+      `<dt>id</dt><dd>${esc(r.id)} (file position ${r.pos})</dd>` +
+      `<dt>candidate reason</dt><dd>${esc(r.why)}</dd>` +
+      `<dt>true (corrected)</dt><dd><span class="chip c-${classKey(r.t)}">${esc(r.t)}</span></dd>` +
+      `<dt>raw label</dt><dd>${r.r ? esc(r.r) : "—"}${r.lc ? " · changed in step 1" : ""}</dd>` +
+      `<dt>prediction</dt><dd><span class="chip c-${classKey(r.p)}">${esc(r.p)}</span> · confidence ${r.c.toFixed(3)} · ${r.e ? "✕ error" : "✓ correct"}</dd>` +
+      `<dt>rate</dt><dd>${r.rate === null ? "—" : esc(r.rate)}</dd>` +
+      `<dt>words</dt><dd>${r.nw}</dd>${flagRows}` +
+    `</dl>` +
+    `<h3>Body</h3><div class="body-full" dir="auto">${esc(r.b)}</div>` +
+    `<h3>Probabilities</h3>${bars}` +
+    `<h3 style="margin-top:12px">Top features for the predicted class</h3>` +
+    `<div>${features || '<span class="muted">none (no known token)</span>'}</div>` +
+    `<p class="note">Weight = centered coefficient × tf-idf. A minus sign pushes against the predicted class.</p>` +
+    tagHtml;
+
+  if (TAGGING) {
+    detailEl.querySelectorAll('input[name="errtag"]').forEach((radio) => {
+      radio.addEventListener("change", (event) => {
+        updateEntry(model.model_id, r.id, { tag: event.target.value });
+        event.target.blur();       // so keyboard shortcuts keep working
+      });
+    });
+    $("note-input").addEventListener("input", (event) => {
+      updateEntry(model.model_id, r.id, { note: event.target.value });
+    });
+  }
+}
+
+/* ---------- tabs ---------- */
+function renderTabs() {
+  tabsEl.innerHTML = "";
+  MODELS.forEach((m, i) => {
+    const button = document.createElement("button");
+    button.className = "tab" + (i === activeTab ? " active" : "");
+    button.textContent = `${m.model_id} (${m.rows.length})`;
+    button.addEventListener("click", () => switchTab(i));
+    tabsEl.appendChild(button);
+  });
+}
+function switchTab(index) {
+  activeTab = index;
+  renderTabs();
+  populateOptions();
+  syncControlsFromState();
+  applyFilters();
+  renderDetail();
+  updateTagSummary();
+}
+
+/* ---------- CSV export ---------- */
+function csvCell(value) { return '"' + String(value === null || value === undefined ? "" : value).replace(/"/g, '""') + '"'; }
+function exportCsv() {
+  const header = ["model_id", "id", "pos", "tag", "tag_label", "note", "saved_at",
+                  "true_label_corrected", "raw_label", "pred_label", "conf", "cand_reason", "body"];
+  const lines = [header.map(csvCell).join(",")];
+  MODELS.forEach((m) => {
+    m.rows.forEach((r) => {
+      const e = TAGS[m.model_id][r.id];
+      if (!e || !(e.tag || e.note)) return;
+      lines.push([m.model_id, r.id, r.pos, e.tag, e.tag ? tagLabel(e.tag) : "", e.note, e.ts,
+                  r.t, r.r, r.p, r.c, r.why, r.b].map(csvCell).join(","));
+    });
+  });
+  if (lines.length === 1) { alert("No tagged rows to export."); return; }
+  const blob = new Blob(["\ufeff" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });   // BOM: Excel reads Persian
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url; link.download = "explorer_tags_baseline.csv";
+  document.body.appendChild(link); link.click(); link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+function clearTabTags() {
+  const model = MODELS[activeTab];
+  if (!confirm(`Delete all tags and notes of ${model.model_id}?`)) return;
+  TAGS[model.model_id] = {};
+  saveTagsToStorage(model.model_id);
+  updateTagSummary(); applyFilters(); renderDetail();
+}
+
+/* ---------- events ---------- */
+let debounceTimer = null;
+function onFilterEvent() {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => { readControlsIntoState(); applyFilters(); }, 120);
+}
+filtersEl.addEventListener("input", onFilterEvent);
+filtersEl.addEventListener("change", onFilterEvent);
+sortEl.addEventListener("change", applyFilters);
+$("btn-reset").addEventListener("click", () => {
+  filterState[activeTab] = defaultFilters();
+  syncControlsFromState();
+  applyFilters();
+});
+$("btn-export").addEventListener("click", exportCsv);
+$("btn-clear").addEventListener("click", clearTabTags);
+
+document.addEventListener("keydown", (event) => {
+  const tag = event.target && event.target.tagName;
+  if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+  if (event.ctrlKey || event.metaKey || event.altKey) return;
+  const current = viewRows.indexOf(selectedByTab[activeTab]);
+  if (event.key === "ArrowDown") { event.preventDefault(); selectView(current < 0 ? 0 : current + 1, true); }
+  else if (event.key === "ArrowUp") { event.preventDefault(); selectView(current < 0 ? 0 : current - 1, true); }
+  else if (TAGGING && /^[0-9]$/.test(event.key) && selectedByTab[activeTab] !== null) {
+    const number = Number(event.key);
+    if (number > ERROR_TAGS.length) return;
+    const model = MODELS[activeTab];
+    const r = model.rows[selectedByTab[activeTab]];
+    updateEntry(model.model_id, r.id, { tag: number === 0 ? "" : ERROR_TAGS[number - 1].key });
+    renderDetail();
+  }
+});
+
+/* ---------- init ---------- */
+if (TAGGING) {
+  $("f-tag-wrap").hidden = false;
+  $("btn-export").hidden = false;
+  $("btn-clear").hidden = false;
+}
+$("footer").textContent = `Generated at ${PAYLOAD.generated_at}. Candidate sets: ` +
+  MODELS.map((m) => `${m.model_id}: ${m.rows.length} rows`).join(" | ");
+buildFlagControls();
+switchTab(0);
+})();
+</script>
+</body>
+</html>

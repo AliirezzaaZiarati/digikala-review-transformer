@@ -42,3 +42,12 @@ def timer(name, csv_path=None, **extra):
             if new:
                 w.writerow(["time", "step", "seconds", "extra"])
             w.writerow([datetime.now().isoformat(timespec="seconds"), name, round(sec, 2), json.dumps(extra)])
+
+
+def update_json(path, updates):
+    """Merge `updates` into the JSON file at `path` (created if missing). Returns the merged dict."""
+    path = Path(path)
+    cur = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+    cur.update(updates)
+    write_json(cur, path)
+    return cur            

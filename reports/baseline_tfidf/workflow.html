@@ -1,0 +1,462 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Text Classification Pipeline</title>
+
+<style>
+:root {
+    --bg: #f8fafc;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 42px 20px;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+}
+
+.container {
+    max-width: 760px;
+    margin: auto;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.eyebrow {
+    display: inline-block;
+    padding: 6px 13px;
+    border-radius: 20px;
+    background: #dbeafe;
+    color: #2563eb;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    margin-bottom: 12px;
+}
+
+.header h1 {
+    font-size: 27px;
+    margin: 0 0 8px;
+    font-weight: 800;
+    letter-spacing: -0.7px;
+}
+
+.subtitle {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.workflow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+}
+
+.step {
+    width: 100%;
+    padding: 19px 22px;
+    border-radius: 13px;
+    border: 1px solid var(--border);
+    transition: transform .2s, box-shadow .2s;
+    animation: appear .5s ease both;
+}
+
+.step:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(15,23,42,.07);
+}
+
+.step-header {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-bottom: 12px;
+}
+
+.number {
+    min-width: 29px;
+    height: 29px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.step h2 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: .3px;
+}
+
+.description {
+    font-size: 14px;
+    font-weight: 650;
+    margin-bottom: 7px;
+}
+
+.details {
+    color: var(--muted);
+    font-size: 12.5px;
+    line-height: 1.7;
+}
+
+.connector {
+    height: 39px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    font-size: 24px;
+    font-weight: 300;
+}
+
+/* Step color themes */
+
+.blue {
+    background: #eff6ff;
+    border-color: #dbeafe;
+}
+.blue .number {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.purple {
+    background: #f5f3ff;
+    border-color: #e9d5ff;
+}
+.purple .number {
+    background: #ede9fe;
+    color: #7c3aed;
+}
+
+.cyan {
+    background: #ecfeff;
+    border-color: #cffafe;
+}
+.cyan .number {
+    background: #cffafe;
+    color: #0891b2;
+}
+
+.orange {
+    background: #fffbeb;
+    border-color: #fde68a;
+}
+.orange .number {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.green {
+    background: #ecfdf5;
+    border-color: #a7f3d0;
+}
+.green .number {
+    background: #d1fae5;
+    color: #059669;
+}
+
+/* Final models */
+
+.models {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 9px;
+    margin: 15px 0 12px;
+}
+
+.model {
+    background: rgba(255,255,255,.85);
+    border: 1px solid #d1fae5;
+    padding: 12px;
+    border-radius: 9px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 750;
+    color: #065f46;
+}
+
+/* Final status */
+
+.completion {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 9px;
+    margin-top: 17px;
+    padding-top: 14px;
+    border-top: 1px solid #a7f3d0;
+    color: #059669;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: .5px;
+}
+
+.check {
+    font-size: 20px;
+}
+
+.footer {
+    text-align: center;
+    margin-top: 28px;
+    color: #94a3b8;
+    font-size: 11px;
+}
+
+@keyframes appear {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.step:nth-child(1) { animation-delay: .05s; }
+.step:nth-child(3) { animation-delay: .10s; }
+.step:nth-child(5) { animation-delay: .15s; }
+.step:nth-child(7) { animation-delay: .20s; }
+.step:nth-child(9) { animation-delay: .25s; }
+.step:nth-child(11) { animation-delay: .30s; }
+.step:nth-child(13) { animation-delay: .35s; }
+.step:nth-child(15) { animation-delay: .40s; }
+.step:nth-child(17) { animation-delay: .45s; }
+
+@media (max-width: 520px) {
+    body {
+        padding: 25px 13px;
+    }
+
+    .header h1 {
+        font-size: 22px;
+    }
+
+    .step {
+        padding: 16px;
+    }
+
+    .description {
+        font-size: 13px;
+    }
+
+    .details {
+        font-size: 12px;
+    }
+}
+
+@media print {
+    body {
+        background: white;
+        padding: 15px;
+    }
+
+    .step {
+        break-inside: avoid;
+        animation: none;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<main class="container">
+
+    <header class="header">
+        <div class="eyebrow">PROJECT WORKFLOW</div>
+        <h1>Text Classification Pipeline</h1>
+        <div class="subtitle">
+            End-to-end experimental workflow · 9 stages
+        </div>
+    </header>
+
+    <section class="workflow">
+
+        <!-- 01: DATA AND LABELS -->
+        <article class="step blue">
+            <div class="step-header">
+                <span class="number">01</span>
+                <h2>DATA & LABELS</h2>
+            </div>
+            <div class="description">
+                Read data splits
+            </div>
+            <div class="details">
+                Integrity checks · Raw labels (A) ·
+                Corrected labels (B)
+            </div>
+        </article>
+
+        <div class="connector">↓</div>
+
+        <!-- 02: BASELINE -->
+        <article class="step purple">
+            <div class="step-header">
+                <span class="number">02</span>
+                <h2>BASELINE</h2>
+            </div>
+            <div class="description">
+                Dummy classifier
+            </div>
+            <div class="details">
+                Majority-class prediction · Class weights
+            </div>
+        </article>
+
+        <div class="connector">↓</div>
+
+        <!-- 03: REPRESENTATION -->
+        <article class="step cyan">
+            <div class="step-header">
+                <span class="number">03</span>
+                <h2>TEXT REPRESENTATION</h2>
+            </div>
+            <div class="description">
+                Tokenization → Word-level TF-IDF
+            </div>
+            <div class="details">
+                Preserve ZWNJ and negation · N-grams (1, 2) ·
+                Fit on train only
+            </div>
+        </article>
+
+        <div class="connector">↓</div>
+
+        <!-- 04: TUNING -->
+        <article class="step orange">
+            <div class="step-header">
+                <span class="number">04</span>
+                <h2>HYPERPARAMETER TUNING</h2>
+            </div>
+            <div class="description">
+                Logistic Regression
+            </div>
+            <div class="details">
+                Tune C on validation only · Macro F1
+            </div>
+        </article>
+
+        <div class="connector">↓</div>
+
+        <!-- 05: FINAL TRAINING -->
+        <article class="step green">
+            <div class="step-header">
+                <span class="number">05</span>
+                <h2>FINAL TRAINING</h2>
+            </div>
+
+            <div class="description">
+                4 Final Models
+            </div>
+
+            <div class="models">
+                <div class="model">rec_A</div>
+                <div class="model">rec_B</div>
+                <div class="model">band_A</div>
+                <div class="model">band_B</div>
+            </div>
+
+            <div class="details">
+                All labeled rows · max_iter = 1000
+            </div>
+        </article>
+
+        <div class="connector">↓</div>
+
+        <!-- 06: PREDICTIONS -->
+        <article class="step blue">
+            <div class="step-header">
+                <span class="number">06</span>
+                <h2>PREDICTIONS & METRICS</h2>
+            </div>
+            <div class="description">
+                Validation and test evaluation
+            </div>
+            <div class="details">
+                Two label views · Raw / Corrected
+            </div>
+        </article>
+
+        <div class="connector">↓</div>
+
+        <!-- 07: INTERPRETATION -->
+        <article class="step purple">
+            <div class="step-header">
+                <span class="number">07</span>
+                <h2>INTERPRETATION</h2>
+            </div>
+            <div class="description">
+                Class-indicative n-grams
+            </div>
+            <div class="details">
+                Identify discriminative textual features
+            </div>
+        </article>
+
+        <div class="connector">↓</div>
+
+        <!-- 08: ERROR ANALYSIS -->
+        <article class="step orange">
+            <div class="step-header">
+                <span class="number">08</span>
+                <h2>ERROR ANALYSIS</h2>
+            </div>
+            <div class="description">
+                Confidence analysis
+            </div>
+            <div class="details">
+                High-confidence errors · Step 1 correction
+                review · Explorer
+            </div>
+        </article>
+
+        <div class="connector">↓</div>
+
+        <!-- 09: CLOSEOUT -->
+        <article class="step green">
+            <div class="step-header">
+                <span class="number">09</span>
+                <h2>REPRODUCIBILITY & CLOSEOUT</h2>
+            </div>
+            <div class="details">
+                Fresh-process verification · Artifacts +
+                SHA-256 · Checklist · Charts · Final report
+            </div>
+
+            <div class="completion">
+                <span class="check">✓</span>
+                PROJECT COMPLETE
+            </div>
+        </article>
+
+    </section>
+
+    <footer class="footer">
+        TEXT CLASSIFICATION PROJECT · WORKFLOW OVERVIEW
+    </footer>
+
+</main>
+
+</body>
+</html>

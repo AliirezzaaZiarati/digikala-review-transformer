@@ -1,0 +1,1118 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Q & C — Interactive Learning Lab</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg:#080d19;
+  --panel:#111b2e;
+  --panel2:#0b1425;
+  --border:rgba(148,163,184,.16);
+  --text:#edf4ff;
+  --muted:#94a5bd;
+  --blue:#60a5fa;
+  --cyan:#22d3ee;
+  --green:#34d399;
+  --orange:#fbbf24;
+  --pink:#f472b6;
+  --red:#fb7185;
+}
+
+* { box-sizing:border-box; }
+
+body {
+  margin:0;
+  background:
+    radial-gradient(ellipse at 10% 0%,#17315a 0%,transparent 38%),
+    radial-gradient(ellipse at 90% 15%,#26204d 0%,transparent 34%),
+    var(--bg);
+  color:var(--text);
+  font-family:Inter,sans-serif;
+  line-height:1.65;
+}
+
+.container {
+  width:min(1080px,94%);
+  margin:auto;
+  padding:48px 0 80px;
+}
+
+.hero { text-align:center;margin-bottom:38px; }
+.eyebrow {
+  color:var(--cyan);
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:3px;
+}
+h1 {
+  font-size:clamp(32px,5vw,52px);
+  line-height:1.15;
+  letter-spacing:-2px;
+  margin:15px 0;
+}
+.gradient {
+  background:linear-gradient(100deg,var(--cyan),var(--blue),var(--pink));
+  color:transparent;
+  background-clip:text;
+}
+.subtitle {
+  color:var(--muted);
+  max-width:700px;
+  margin:auto;
+  font-size:14px;
+}
+
+.panel {
+  background:linear-gradient(145deg,rgba(23,34,56,.97),rgba(13,21,37,.97));
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:25px;
+  margin:22px 0;
+  box-shadow:0 18px 55px rgba(0,0,0,.2);
+}
+
+.section-head {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:17px;
+}
+.number {
+  width:36px;height:36px;
+  display:grid;place-items:center;
+  border-radius:11px;
+  color:#07111f;
+  background:var(--cyan);
+  font-weight:900;
+  flex-shrink:0;
+}
+h2 {font-size:20px;margin:0;}
+h3 {font-size:15px;margin:0 0 12px;}
+p {color:var(--muted);font-size:14px;}
+
+.formula {
+  background:#080f1e;
+  border:1px solid rgba(96,165,250,.22);
+  border-radius:14px;
+  padding:19px;
+  margin:15px 0;
+  text-align:center;
+  font-family:"JetBrains Mono",monospace;
+  font-size:clamp(15px,2.5vw,21px);
+  color:#dbeafe;
+  overflow-x:auto;
+}
+.formula small {
+  display:block;
+  font-family:Inter,sans-serif;
+  color:var(--muted);
+  font-size:11px;
+  margin-top:9px;
+}
+
+.grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:13px;
+}
+.two-col {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+.four-col {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+
+.result {
+  background:#081321;
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:16px;
+  min-width:0;
+}
+.result-label {
+  font-size:10px;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:1px;
+  font-weight:800;
+}
+.result-value {
+  font-family:"JetBrains Mono",monospace;
+  font-size:clamp(23px,3vw,31px);
+  font-weight:800;
+  margin:5px 0;
+}
+.blue {color:var(--blue);}
+.green {color:var(--green);}
+.orange {color:var(--orange);}
+.pink {color:var(--pink);}
+.red {color:var(--red);}
+.muted {color:var(--muted);}
+.mono {font-family:"JetBrains Mono",monospace;}
+.small {font-size:12px;}
+
+.bar {
+  height:16px;
+  border-radius:20px;
+  background:#25334a;
+  overflow:hidden;
+  display:flex;
+  margin:12px 0;
+}
+.bar > div {height:100%;transition:width .2s;}
+
+.class-row {
+  display:grid;
+  grid-template-columns:140px 1fr 65px;
+  gap:12px;
+  align-items:center;
+  margin:12px 0;
+  font-size:12px;
+}
+.mini-bar {
+  height:10px;
+  background:#26364d;
+  border-radius:20px;
+  overflow:hidden;
+}
+.mini-bar div {height:100%;transition:width .2s;}
+
+.control {
+  background:rgba(8,15,30,.7);
+  border:1px solid var(--border);
+  border-radius:13px;
+  padding:15px;
+  margin:10px 0;
+}
+.control-top {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+.control-name {font-size:13px;font-weight:700;}
+.control-value {
+  font-family:"JetBrains Mono",monospace;
+  font-weight:800;
+  font-size:17px;
+}
+input[type=range] {
+  width:100%;
+  accent-color:var(--cyan);
+  cursor:pointer;
+  margin:14px 0 4px;
+}
+input[type=number],select {
+  width:100%;
+  background:#091323;
+  border:1px solid var(--border);
+  color:var(--text);
+  padding:11px;
+  border-radius:9px;
+  font-family:"JetBrains Mono",monospace;
+  font-size:13px;
+  outline:none;
+}
+input:focus,select:focus {border-color:var(--cyan);}
+label {
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:700;
+  margin-bottom:7px;
+}
+.field {margin-bottom:13px;}
+
+button {
+  border:1px solid var(--border);
+  background:#1b2a42;
+  color:var(--text);
+  padding:9px 13px;
+  border-radius:9px;
+  cursor:pointer;
+  font-weight:700;
+  font-family:Inter,sans-serif;
+  font-size:11px;
+  transition:.2s;
+}
+button:hover {
+  border-color:var(--cyan);
+  transform:translateY(-2px);
+}
+button.active {
+  background:rgba(34,211,238,.15);
+  border-color:var(--cyan);
+  color:var(--cyan);
+}
+.preset-row {
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin:14px 0;
+}
+
+.note {
+  background:rgba(34,211,238,.07);
+  border:1px solid rgba(34,211,238,.2);
+  padding:14px;
+  border-radius:12px;
+  color:#b8dce8;
+  font-size:12px;
+  margin-top:14px;
+}
+.warning {
+  background:rgba(251,191,36,.07);
+  border:1px solid rgba(251,191,36,.2);
+  color:#f6d78c;
+  padding:14px;
+  border-radius:12px;
+  font-size:12px;
+  margin-top:14px;
+}
+.breakdown {
+  background:#080f1e;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:15px;
+  margin-top:13px;
+  font-family:"JetBrains Mono",monospace;
+  font-size:12px;
+  color:#cbd5e1;
+  overflow-wrap:anywhere;
+  line-height:2;
+}
+.step {
+  border-left:2px solid var(--blue);
+  padding:3px 0 3px 14px;
+  margin:15px 0;
+}
+.step strong {color:var(--text);}
+.step p {font-family:"JetBrains Mono",monospace;font-size:12px;}
+
+.meter {
+  height:12px;
+  border-radius:20px;
+  background:#26364d;
+  overflow:hidden;
+  margin:10px 0;
+}
+.meter-fill {
+  height:100%;
+  border-radius:20px;
+  transition:width .25s;
+}
+.meter-labels {
+  display:flex;
+  justify-content:space-between;
+  color:var(--muted);
+  font-size:10px;
+}
+
+.comparison {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.comparison-card {
+  border:1px solid var(--border);
+  border-radius:13px;
+  padding:15px;
+  background:#0a1425;
+}
+
+table {width:100%;border-collapse:collapse;font-size:12px;margin-top:12px;}
+td,th {padding:10px;border-bottom:1px solid var(--border);text-align:left;}
+th {color:var(--muted);font-size:10px;}
+
+details {
+  border:1px solid var(--border);
+  border-radius:12px;
+  margin:12px 0;
+  background:rgba(8,15,30,.5);
+}
+summary {cursor:pointer;padding:14px;font-weight:700;font-size:12px;}
+.inside {padding:0 15px 15px;color:var(--muted);font-size:13px;}
+
+.status {
+  display:inline-block;
+  border-radius:20px;
+  padding:5px 10px;
+  font-size:10px;
+  font-weight:800;
+  background:rgba(52,211,153,.1);
+  color:var(--green);
+}
+.footer {
+  text-align:center;
+  color:#71829c;
+  font-size:10px;
+  margin-top:40px;
+}
+
+@media(max-width:700px) {
+  .grid,.two-col,.four-col,.comparison {grid-template-columns:1fr;}
+  .panel {padding:17px;}
+  .class-row {grid-template-columns:105px 1fr 50px;gap:7px;}
+  .container {padding-top:30px;}
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<header class="hero">
+  <div class="eyebrow">Out-of-Fold Prediction · Interactive Lab</div>
+  <h1>Understanding <span class="gradient">Q & C</span></h1>
+  <p class="subtitle">
+    Explore how probability distributions affect label agreement,
+    entropy, model confidence, and the final training weight.
+    Change the numbers and watch the mathematics happen.
+  </p>
+</header>
+
+<!-- INTRO -->
+<section class="panel">
+  <div class="section-head">
+    <div class="number">01</div>
+    <h2>One comment, three probabilities</h2>
+  </div>
+
+  <p>
+    The model predicts a probability for each of the three classes.
+    These are three possible outcomes for one comment.
+  </p>
+
+  <div class="grid">
+    <div class="result">
+      <div class="result-label">Class 1</div>
+      <strong>recommended</strong>
+      <div class="result-value blue" id="topP1">0.80</div>
+    </div>
+    <div class="result">
+      <div class="result-label">Class 2</div>
+      <strong>no_idea</strong>
+      <div class="result-value orange" id="topP2">0.15</div>
+    </div>
+    <div class="result">
+      <div class="result-label">Class 3</div>
+      <strong>not_recommended</strong>
+      <div class="result-value pink" id="topP3">0.05</div>
+    </div>
+  </div>
+
+  <div class="bar">
+    <div id="topBar1" style="width:80%;background:#60a5fa"></div>
+    <div id="topBar2" style="width:15%;background:#fbbf24"></div>
+    <div id="topBar3" style="width:5%;background:#f472b6"></div>
+  </div>
+
+  <div class="note">
+    The probabilities always add up to 1 (100%).
+    We are distributing one unit of probability across three classes.
+  </div>
+</section>
+
+<!-- ENTROPY LAB -->
+<section class="panel" id="entropyLab">
+  <div class="section-head">
+    <div class="number">02</div>
+    <h2>Entropy Playground</h2>
+  </div>
+
+  <p>
+    This is the main experiment. Change the probability distribution
+    and observe how entropy and confidence change immediately.
+  </p>
+
+  <div class="formula">
+    H = − Σ p<sub>k</sub> ln(p<sub>k</sub>)
+    <small>Three terms are calculated and added together</small>
+  </div>
+
+  <h3>Adjust the probabilities</h3>
+
+  <div class="control">
+    <div class="control-top">
+      <span class="control-name blue">Class 1 · recommended</span>
+      <span class="control-value blue" id="valP1">0.80</span>
+    </div>
+    <input id="sliderP1" type="range" min="0" max="1" step="0.01" value="0.80">
+    <div class="meter-labels"><span>0</span><span>1</span></div>
+  </div>
+
+  <div class="control">
+    <div class="control-top">
+      <span class="control-name orange">Class 2 · no_idea</span>
+      <span class="control-value orange" id="valP2">0.15</span>
+    </div>
+    <input id="sliderP2" type="range" min="0" max="0.20" step="0.01" value="0.15">
+    <div class="meter-labels">
+      <span>0</span><span id="p2MaxLabel">0.20</span>
+    </div>
+  </div>
+
+  <div class="control">
+    <div class="control-top">
+      <span class="control-name pink">Class 3 · not_recommended</span>
+      <span class="control-value pink" id="valP3">0.05</span>
+    </div>
+    <p class="small muted" style="margin:4px 0 0">
+      This probability is automatically calculated as:
+      1 − p₁ − p₂
+    </p>
+  </div>
+
+  <h3 style="margin-top:23px">Try a predefined distribution</h3>
+  <div class="preset-row">
+    <button onclick="setScenario('equal')" id="btnEqual">Equal probabilities</button>
+    <button onclick="setScenario('certain')" id="btnCertain">One class = 100%</button>
+    <button onclick="setScenario('balanced2')" id="btnBalanced2">Two equal classes</button>
+    <button onclick="setScenario('skewed')" id="btnSkewed">Highly concentrated</button>
+    <button onclick="setScenario('current')" id="btnCurrent">Reset example</button>
+  </div>
+
+  <div class="result" style="margin-top:18px">
+    <div class="result-label">Current probability distribution</div>
+    <div class="class-row">
+      <span class="blue">recommended</span>
+      <div class="mini-bar"><div id="distBar1" style="width:80%;background:#60a5fa"></div></div>
+      <strong class="mono" id="distP1">0.80</strong>
+    </div>
+    <div class="class-row">
+      <span class="orange">no_idea</span>
+      <div class="mini-bar"><div id="distBar2" style="width:15%;background:#fbbf24"></div></div>
+      <strong class="mono" id="distP2">0.15</strong>
+    </div>
+    <div class="class-row">
+      <span class="pink">not_recommended</span>
+      <div class="mini-bar"><div id="distBar3" style="width:5%;background:#f472b6"></div></div>
+      <strong class="mono" id="distP3">0.05</strong>
+    </div>
+    <div class="meter">
+      <div id="distributionMeter" class="meter-fill" style="width:80%;background:var(--cyan)"></div>
+    </div>
+    <div class="meter-labels">
+      <span>Probability mass</span>
+      <span id="sumLabel">Total = 1.00</span>
+    </div>
+  </div>
+
+  <div class="grid" style="margin-top:15px">
+    <div class="result">
+      <div class="result-label">Entropy · H</div>
+      <div class="result-value blue" id="liveH">0.6129</div>
+      <div class="small muted">Raw uncertainty</div>
+    </div>
+    <div class="result">
+      <div class="result-label">Normalized entropy</div>
+      <div class="result-value orange" id="liveHN">0.5581</div>
+      <div class="small muted">H / ln(3)</div>
+    </div>
+    <div class="result">
+      <div class="result-label">Confidence · C</div>
+      <div class="result-value green" id="liveC">0.4419</div>
+      <div class="small muted">1 − normalized entropy</div>
+    </div>
+  </div>
+
+  <div class="result" style="margin-top:14px">
+    <div class="control-top">
+      <strong>Entropy level</strong>
+      <span class="status" id="entropyStatus">Moderate uncertainty</span>
+    </div>
+    <div class="meter">
+      <div id="entropyMeter" class="meter-fill"
+           style="width:55.81%;background:var(--orange)"></div>
+    </div>
+    <div class="meter-labels">
+      <span>Minimum entropy · 0</span>
+      <span>Maximum entropy · ln(3)</span>
+    </div>
+    <p id="entropyExplanation" class="small">
+      The probabilities are not equal, but they are not concentrated
+      entirely on one class either.
+    </p>
+  </div>
+
+  <!-- WHY MAXIMUM -->
+  <div class="step">
+    <strong>Why is maximum entropy reached at equal probabilities?</strong>
+    <p>
+      When all three classes have probability 1/3,
+      the model has no preference for any class.
+      The uncertainty is therefore at its maximum.
+    </p>
+  </div>
+
+  <div class="formula">
+    H<sub>max</sub> = −3 × (1/3) ln(1/3) = ln(3)
+    <small>Approximately 1.0986</small>
+  </div>
+
+  <div class="step">
+    <strong>Why is minimum entropy reached at [1, 0, 0]?</strong>
+    <p>
+      When one class has probability 1 and the others have
+      probability 0, the model has no uncertainty about its
+      predicted class.
+    </p>
+  </div>
+
+  <div class="formula">
+    H<sub>min</sub> = −[1 ln(1) + 0 + 0] = 0
+    <small>Because ln(1) = 0 and 0 ln(0) is defined by its limit as 0</small>
+  </div>
+</section>
+
+<!-- ENTROPY TERMS -->
+<section class="panel">
+  <div class="section-head">
+    <div class="number">03</div>
+    <h2>Look inside the entropy formula</h2>
+  </div>
+
+  <p>
+    The formula is not a black box. It performs three simple
+    multiplications and then adds their results.
+  </p>
+
+  <div class="formula">
+    H = − [
+    p₁ ln(p₁) + p₂ ln(p₂) + p₃ ln(p₃)
+    ]
+  </div>
+
+  <div id="termCards" class="grid">
+    <div class="result">
+      <div class="result-label">Class 1 term</div>
+      <div class="result-value blue">−0.1785</div>
+      <div class="small muted">0.80 × ln(0.80)</div>
+    </div>
+    <div class="result">
+      <div class="result-label">Class 2 term</div>
+      <div class="result-value orange">−0.2846</div>
+      <div class="small muted">0.15 × ln(0.15)</div>
+    </div>
+    <div class="result">
+      <div class="result-label">Class 3 term</div>
+      <div class="result-value pink">−0.1498</div>
+      <div class="small muted">0.05 × ln(0.05)</div>
+    </div>
+  </div>
+
+  <div class="breakdown" id="entropyCalculation">
+    H = − [−0.1785 + −0.2846 + −0.1498]<br>
+    H = 0.6129
+  </div>
+
+  <div class="note">
+    Notice that each term is zero when its probability is 0 or 1.
+    Intermediate probabilities contribute positive uncertainty
+    to the total entropy after the minus sign is applied.
+  </div>
+
+  <details>
+    <summary>Why does p × ln(p) approach zero near p = 0?</summary>
+    <div class="inside">
+      ln(p) approaches negative infinity as p approaches zero
+      from the positive side. However, p itself also approaches
+      zero, and the product has this limit:
+
+      <div class="formula">
+        lim<sub>p→0⁺</sub> p ln(p) = 0
+      </div>
+
+      Therefore, a zero-probability class contributes zero
+      to mathematical entropy. In numerical code, epsilon may
+      be used to avoid evaluating ln(0) directly.
+    </div>
+  </details>
+</section>
+
+<!-- MAX MIN -->
+<section class="panel">
+  <div class="section-head">
+    <div class="number">04</div>
+    <h2>Compare the two extreme cases</h2>
+  </div>
+
+  <div class="comparison">
+    <div class="comparison-card">
+      <span class="status">Maximum entropy</span>
+      <h3 style="margin-top:12px">Equal probabilities</h3>
+      <div class="bar">
+        <div style="width:33.333%;background:#60a5fa"></div>
+        <div style="width:33.333%;background:#fbbf24"></div>
+        <div style="width:33.334%;background:#f472b6"></div>
+      </div>
+      <div class="mono small">[0.3333, 0.3333, 0.3333]</div>
+      <div class="result-value orange">1.0986</div>
+      <p class="small">Maximum uncertainty. No class is preferred.</p>
+      <button onclick="setScenario('equal')">Explore this case</button>
+    </div>
+
+    <div class="comparison-card">
+      <span class="status">Minimum entropy</span>
+      <h3 style="margin-top:12px">One certain class</h3>
+      <div class="bar">
+        <div style="width:100%;background:#60a5fa"></div>
+        <div style="width:0%;background:#fbbf24"></div>
+        <div style="width:0%;background:#f472b6"></div>
+      </div>
+      <div class="mono small">[1, 0, 0]</div>
+      <div class="result-value green">0.0000</div>
+      <p class="small">Minimum uncertainty. One class gets all probability.</p>
+      <button onclick="setScenario('certain')">Explore this case</button>
+    </div>
+  </div>
+
+  <div class="note">
+    The maximum and minimum are not arbitrary observations.
+    They are mathematical properties of entropy for a probability
+    distribution with three classes.
+  </div>
+</section>
+
+<!-- C -->
+<section class="panel">
+  <div class="section-head">
+    <div class="number">05</div>
+    <h2>C — Turn uncertainty into confidence</h2>
+  </div>
+
+  <div class="formula">
+    H<sub>norm</sub> = H / ln(3)
+    <br><br>
+    C = 1 − H<sub>norm</sub>
+  </div>
+
+  <div class="grid">
+    <div class="result">
+      <div class="result-label">Entropy</div>
+      <div class="result-value blue" id="cH">0.6129</div>
+    </div>
+    <div class="result">
+      <div class="result-label">Normalized entropy</div>
+      <div class="result-value orange" id="cHN">0.5581</div>
+    </div>
+    <div class="result">
+      <div class="result-label">Confidence</div>
+      <div class="result-value green" id="cFinal">0.4419</div>
+    </div>
+  </div>
+
+  <div class="result" style="margin-top:14px">
+    <div class="control-top">
+      <strong>Confidence meter</strong>
+      <strong class="green mono" id="confidencePercent">44.19%</strong>
+    </div>
+    <div class="meter">
+      <div id="confidenceMeter" class="meter-fill"
+           style="width:44.19%;background:var(--green)"></div>
+    </div>
+    <div class="meter-labels">
+      <span>0 · Low confidence</span>
+      <span>1 · High confidence</span>
+    </div>
+  </div>
+
+  <div class="breakdown" id="cCalculation">
+    C = 1 − (0.6129 / 1.0986)<br>
+    C = 0.4419
+  </div>
+
+  <div class="note">
+    High C means the model's probability distribution is concentrated.
+    It does not necessarily mean that the recorded label is correct.
+  </div>
+</section>
+
+<!-- Q -->
+<section class="panel">
+  <div class="section-head">
+    <div class="number">06</div>
+    <h2>Q — Agreement with the recorded label</h2>
+  </div>
+
+  <div class="formula">
+    Q<sub>i</sub> = min(1, p<sub>i,yᵢ</sub> / m<sub>c</sub>)
+  </div>
+
+  <p>
+    Q selects only one of the three probabilities:
+    the probability corresponding to the comment's recorded label.
+  </p>
+
+  <div class="two-col">
+    <div>
+      <div class="field">
+        <label>Recorded label</label>
+        <select id="recordedLabel">
+          <option value="0">recommended</option>
+          <option value="1">no_idea</option>
+          <option value="2">not_recommended</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Class mean probability · m_c</label>
+        <input type="number" id="meanQ" min="0.000001"
+               max="1" step="0.01" value="0.65">
+      </div>
+    </div>
+
+    <div class="result">
+      <div class="result-label">Selected probability</div>
+      <div class="result-value blue" id="selectedP">0.80</div>
+      <p class="small" id="selectedLabelText">
+        Probability assigned to recommended.
+      </p>
+    </div>
+  </div>
+
+  <div class="result">
+    <div class="result-label">Q score</div>
+    <div class="result-value green" id="qResult">1.0000</div>
+    <p class="small" id="qDescription">
+      The selected probability is at least as high as the class mean.
+    </p>
+  </div>
+
+  <div class="breakdown" id="qCalculation">
+    Q = min(1, 0.80 / 0.65)<br>
+    Q = 1.0000
+  </div>
+
+  <div class="warning">
+    Q uses one probability, while entropy uses all three probabilities.
+    This is the fundamental difference between the two metrics.
+  </div>
+</section>
+
+<!-- WEIGHT -->
+<section class="panel">
+  <div class="section-head">
+    <div class="number">07</div>
+    <h2>Combine Q and C into the final weight</h2>
+  </div>
+
+  <div class="formula">
+    w<sub>i</sub> = max(W<sub>MIN</sub>,
+    1 − C<sub>i</sub>(1 − Q<sub>i</sub>))
+  </div>
+
+  <div class="grid">
+    <div class="result">
+      <div class="result-label">Q</div>
+      <div class="result-value blue" id="weightQ">1.000</div>
+    </div>
+    <div class="result">
+      <div class="result-label">C</div>
+      <div class="result-value green" id="weightC">0.442</div>
+    </div>
+    <div class="result">
+      <div class="result-label">Final weight</div>
+      <div class="result-value orange" id="weightFinal">1.000</div>
+    </div>
+  </div>
+
+  <div class="breakdown" id="weightCalculation">
+    w = max(0.1, 1 − 0.4419 × (1 − 1.0000))<br>
+    w = 1.0000
+  </div>
+
+  <p class="small">
+    The minimum weight in this educational example is W_MIN = 0.1.
+  </p>
+
+  <div class="note">
+    A low Q indicates disagreement with the recorded label.
+    A high C means the model is confident in its distribution.
+    Their combination determines how strongly the sample is downweighted.
+  </div>
+</section>
+
+<!-- SUMMARY -->
+<section class="panel">
+  <div class="section-head">
+    <div class="number">08</div>
+    <h2>The complete picture</h2>
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>Metric</th><th>What does it use?</th><th>What does it measure?</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="blue"><strong>Q</strong></td>
+        <td>One selected probability</td>
+        <td>Agreement with recorded label relative to class mean</td>
+      </tr>
+      <tr>
+        <td class="orange"><strong>H</strong></td>
+        <td>All three probabilities</td>
+        <td>Prediction uncertainty</td>
+      </tr>
+      <tr>
+        <td class="green"><strong>C</strong></td>
+        <td>Normalized entropy</td>
+        <td>Prediction confidence</td>
+      </tr>
+      <tr>
+        <td class="pink"><strong>w</strong></td>
+        <td>Q and C</td>
+        <td>Final sample training weight</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    Remember: these are heuristic scores derived from OOF model
+    predictions. They estimate agreement and uncertainty; they do
+    not prove that a recorded label is objectively correct.
+  </div>
+</section>
+
+<footer class="footer">
+  OOF LABEL QUALITY ANALYSIS · INTERACTIVE Q & C LEARNING LAB
+</footer>
+
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+const CLASS_NAMES = [
+  "recommended",
+  "no_idea",
+  "not_recommended"
+];
+
+const MAX_H = Math.log(3);
+const W_MIN = 0.1;
+
+let probabilities = [0.80, 0.15, 0.05];
+
+function fmt(x, digits=4) {
+  return Number(x).toFixed(digits);
+}
+
+function getEntropy(p) {
+  // Mathematical convention: 0 * ln(0) = 0.
+  const terms = p.map(x =>
+    x === 0 ? 0 : x * Math.log(x)
+  );
+  const H = -terms.reduce((a,b) => a+b, 0);
+  return {terms, H};
+}
+
+function renderAll() {
+  const p = probabilities;
+  const {terms, H} = getEntropy(p);
+  const Hnorm = H / MAX_H;
+  const C = 1 - Hnorm;
+
+  // Top prediction display
+  p.forEach((x,i) => {
+    $("topP" + (i+1)).textContent = fmt(x,2);
+    $("topBar" + (i+1)).style.width = (x*100) + "%";
+    $("distP" + (i+1)).textContent = fmt(x,2);
+    $("distBar" + (i+1)).style.width = (x*100) + "%";
+  });
+
+  // Entropy controls
+  $("valP1").textContent = fmt(p[0],2);
+  $("valP2").textContent = fmt(p[1],2);
+  $("valP3").textContent = fmt(p[2],2);
+
+  $("sliderP1").value = p[0];
+  $("sliderP2").max = Math.max(0, 1-p[0]);
+  $("sliderP2").value = p[1];
+  $("p2MaxLabel").textContent = fmt(1-p[0],2);
+
+  $("distributionMeter").style.width = "100%";
+  $("sumLabel").textContent = "Total = " + fmt(p.reduce((a,b)=>a+b,0),2);
+
+  // Entropy numbers
+  $("liveH").textContent = fmt(H);
+  $("liveHN").textContent = fmt(Hnorm);
+  $("liveC").textContent = fmt(C);
+
+  $("entropyMeter").style.width = (Hnorm*100) + "%";
+  $("confidenceMeter").style.width = (C*100) + "%";
+  $("confidencePercent").textContent = fmt(C*100,2) + "%";
+
+  $("cH").textContent = fmt(H);
+  $("cHN").textContent = fmt(Hnorm);
+  $("cFinal").textContent = fmt(C);
+
+  // Entropy interpretation
+  if (Hnorm > 0.999) {
+    $("entropyStatus").textContent = "Maximum uncertainty";
+    $("entropyExplanation").textContent =
+      "All three classes have equal probability. The model is completely undecided between them.";
+  } else if (Hnorm < 0.001) {
+    $("entropyStatus").textContent = "Minimum uncertainty";
+    $("entropyExplanation").textContent =
+      "One class has probability 1. The model has no uncertainty about its predicted class.";
+  } else if (Hnorm > 0.7) {
+    $("entropyStatus").textContent = "High uncertainty";
+    $("entropyExplanation").textContent =
+      "Probability is spread across several classes. The model has difficulty distinguishing them.";
+  } else if (Hnorm < 0.3) {
+    $("entropyStatus").textContent = "Low uncertainty";
+    $("entropyExplanation").textContent =
+      "Most probability is concentrated on one class.";
+  } else {
+    $("entropyStatus").textContent = "Moderate uncertainty";
+    $("entropyExplanation").textContent =
+      "The distribution is neither uniform nor fully concentrated on one class.";
+  }
+
+  // Individual terms
+  $("termCards").innerHTML = p.map((x,i) => {
+    const color = ["blue","orange","pink"][i];
+    const term = terms[i];
+    const expression = x === 0
+      ? "0 × ln(0) → 0"
+      : fmt(x,4) + " × ln(" + fmt(x,4) + ")";
+
+    return `
+      <div class="result">
+        <div class="result-label">Class ${i+1} term</div>
+        <div class="result-value ${color}">${fmt(term)}</div>
+        <div class="small muted">${expression}</div>
+      </div>`;
+  }).join("");
+
+  $("entropyCalculation").innerHTML =
+    "H = − [" + terms.map(x=>fmt(x,6)).join(" + ") + "]<br>" +
+    "H = " + fmt(H);
+
+  $("cCalculation").innerHTML =
+    "C = 1 − H / ln(3)<br>" +
+    "C = 1 − " + fmt(H) + " / " + fmt(MAX_H) + "<br>" +
+    "C = " + fmt(C);
+
+  // Q
+  const label = Number($("recordedLabel").value);
+  const mean = Number($("meanQ").value);
+  const selected = p[label];
+
+  $("selectedP").textContent = fmt(selected);
+  $("selectedLabelText").textContent =
+    "Probability assigned to " + CLASS_NAMES[label] + ".";
+
+  let Q = NaN;
+
+  if (Number.isFinite(mean) && mean > 0 && mean <= 1) {
+    Q = Math.min(1, selected/mean);
+    $("qResult").textContent = fmt(Q);
+    $("qCalculation").innerHTML =
+      "Q = min(1, " + fmt(selected) + " / " + fmt(mean) + ")<br>" +
+      "Q = min(1, " + fmt(selected/mean) + ")<br>" +
+      "Q = " + fmt(Q);
+
+    $("qDescription").textContent =
+      selected/mean >= 1
+        ? "The selected probability is at least as high as the class mean."
+        : "The selected probability is below the class mean.";
+  } else {
+    $("qResult").textContent = "—";
+    $("qCalculation").textContent =
+      "Enter a class mean greater than 0 and no greater than 1.";
+    $("qDescription").textContent = "Invalid class mean.";
+  }
+
+  // Final weight
+  if (Number.isFinite(Q)) {
+    const rawWeight = 1 - C*(1-Q);
+    const weight = Math.max(W_MIN,rawWeight);
+
+    $("weightQ").textContent = fmt(Q,3);
+    $("weightC").textContent = fmt(C,3);
+    $("weightFinal").textContent = fmt(weight,3);
+
+    $("weightCalculation").innerHTML =
+      "w = max(0.1, 1 − C × (1 − Q))<br>" +
+      "w = max(0.1, 1 − " + fmt(C) +
+      " × (1 − " + fmt(Q) + "))<br>" +
+      "w = " + fmt(weight);
+  } else {
+    $("weightQ").textContent = "—";
+    $("weightC").textContent = fmt(C,3);
+    $("weightFinal").textContent = "—";
+    $("weightCalculation").textContent =
+      "A valid Q score is needed to calculate the final weight.";
+  }
+}
+
+// Sliders: p3 is always the remaining probability.
+function updateFromSliders(changed) {
+  let p1 = Number($("sliderP1").value);
+  let p2 = Number($("sliderP2").value);
+
+  if (changed === "p1" && p1+p2 > 1) {
+    p2 = 1-p1;
+  }
+
+  if (changed === "p2" && p1+p2 > 1) {
+    p1 = 1-p2;
+  }
+
+  p1 = Math.max(0,Math.min(1,p1));
+  p2 = Math.max(0,Math.min(1-p1,p2));
+
+  probabilities = [p1,p2,1-p1-p2];
+
+  renderAll();
+}
+
+$("sliderP1").addEventListener("input",()=>updateFromSliders("p1"));
+$("sliderP2").addEventListener("input",()=>updateFromSliders("p2"));
+
+$("recordedLabel").addEventListener("change",renderAll);
+$("meanQ").addEventListener("input",renderAll);
+
+function setScenario(name) {
+  const scenarios = {
+    equal: [1/3,1/3,1/3],
+    certain: [1,0,0],
+    balanced2: [0.5,0.5,0],
+    skewed: [0.95,0.03,0.02],
+    current: [0.80,0.15,0.05]
+  };
+
+  probabilities = [...scenarios[name]];
+
+  document.querySelectorAll(".preset-row button")
+    .forEach(btn=>btn.classList.remove("active"));
+
+  const buttonIds = {
+    equal:"btnEqual",
+    certain:"btnCertain",
+    balanced2:"btnBalanced2",
+    skewed:"btnSkewed",
+    current:"btnCurrent"
+  };
+
+  $(buttonIds[name]).classList.add("active");
+
+  renderAll();
+}
+
+// Initialize
+renderAll();
+</script>
+</body>
+</html>

@@ -6,7 +6,7 @@ import re
 import struct
 from pathlib import Path
 
-import arabic_reshaper
+import arabic_reshaper  # noqa: F401
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import font_manager
@@ -16,7 +16,7 @@ from matplotlib.patches import FancyBboxPatch, Patch
 try:                                    # python-bidi >= 0.5 exposes get_display at top level
     from bidi import get_display
 except ImportError:                     # older python-bidi
-    from bidi.algorithm import get_display
+    from bidi.algorithm import get_display  # noqa: F401
 
 # ---------------- constants ----------------
 FIG_SIZE = (16, 9)                      # inches
@@ -57,7 +57,7 @@ PERSIAN_FONT = "Vazirmatn"              # use fontfamily=PERSIAN_FONT for every 
 def _assert_no_purple(colors):
     """Raise if any colour has a purple/magenta hue (250-330 degrees) and is clearly saturated."""
     for color in colors:
-        hue, saturation, value = colorsys.rgb_to_hsv(*to_rgb(color))
+        hue, saturation, _value = colorsys.rgb_to_hsv(*to_rgb(color))
         if saturation > 0.25 and 250 <= hue * 360 <= 330:
             raise ValueError(f"purple-range colour is not allowed: {color}")
 

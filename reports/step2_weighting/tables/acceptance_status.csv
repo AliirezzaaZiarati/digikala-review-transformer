@@ -1,0 +1,7 @@
+head,check,value,threshold,rule,status
+rec,mean_weight,0.960279,0.850000,mean_w >= MEAN_WEIGHT_MIN,OK
+rec,share_w_le_0.3,0.003147,0.100000,share <= LOW_WEIGHT_SHARE_MAX,OK
+rec,ambiguous_gap_no_idea,-0.032851,0.050000,|gap| <= AMBIGUOUS_CLASS_MEAN_GAP_MAX,OK
+band,mean_weight,0.978055,0.850000,mean_w >= MEAN_WEIGHT_MIN,OK
+band,share_w_le_0.3,0.000574,0.100000,share <= LOW_WEIGHT_SHARE_MAX,OK
+band,ambiguous_gap_medium,-0.011351,0.050000,|gap| <= AMBIGUOUS_CLASS_MEAN_GAP_MAX,OK

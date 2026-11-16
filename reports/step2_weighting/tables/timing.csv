@@ -1,0 +1,17 @@
+record_type,stage,head,fold,seconds,n_iter,converged,peak_rss_mb,source,note
+notebook_cell,cell3_load_training_table,,,5.713630,,,,step_seconds,Recorded notebook-cell duration; does not include OOF worker training.
+notebook_cell,cell4_build_folds,,,34.217531,,,,step_seconds,Recorded notebook-cell duration; does not include OOF worker training.
+notebook_cell,cell5_params_snapshot,,,0.020836,,,,step_seconds,Recorded notebook-cell duration; does not include OOF worker training.
+notebook_cell,cell6_assemble_oof,,,4.537094,,,,step_seconds,Recorded notebook-cell duration; does not include OOF worker training.
+notebook_cell,cell7_oof_sanity,,,1.497792,,,,step_seconds,Recorded notebook-cell duration; does not include OOF worker training.
+notebook_cell,cell8_compute_weights,,,2.080742,,,,step_seconds,Recorded notebook-cell duration; does not include OOF worker training.
+oof_fold_fit,logistic_regression_fit,band,0,85.933005,166,True,1371.30078125,fold_meta,"Per-worker fold fit time and peak RSS; parallel workers overlap, so fit times are not wall-clock phase duration."
+oof_fold_fit,logistic_regression_fit,band,1,73.171648,143,True,1371.23046875,fold_meta,"Per-worker fold fit time and peak RSS; parallel workers overlap, so fit times are not wall-clock phase duration."
+oof_fold_fit,logistic_regression_fit,band,2,109.933169,218,True,1379.08984375,fold_meta,"Per-worker fold fit time and peak RSS; parallel workers overlap, so fit times are not wall-clock phase duration."
+oof_fold_fit,logistic_regression_fit,band,3,79.119134,151,True,1371.0703125,fold_meta,"Per-worker fold fit time and peak RSS; parallel workers overlap, so fit times are not wall-clock phase duration."
+oof_fold_fit,logistic_regression_fit,band,4,88.108818,179,True,1378.45703125,fold_meta,"Per-worker fold fit time and peak RSS; parallel workers overlap, so fit times are not wall-clock phase duration."
+oof_fold_fit,logistic_regression_fit,rec,0,87.594411,240,True,1324.515625,fold_meta,"Per-worker fold fit time and peak RSS; parallel workers overlap, so fit times are not wall-clock phase duration."
+oof_fold_fit,logistic_regression_fit,rec,1,136.684587,279,True,1324.18359375,fold_meta,"Per-worker fold fit time and peak RSS; parallel workers overlap, so fit times are not wall-clock phase duration."
+oof_fold_fit,logistic_regression_fit,rec,2,113.426115,233,True,1326.40234375,fold_meta,"Per-worker fold fit time and peak RSS; parallel workers overlap, so fit times are not wall-clock phase duration."
+oof_fold_fit,logistic_regression_fit,rec,3,107.367481,214,True,1326.35546875,fold_meta,"Per-worker fold fit time and peak RSS; parallel workers overlap, so fit times are not wall-clock phase duration."
+oof_fold_fit,logistic_regression_fit,rec,4,117.660439,256,True,1327.27734375,fold_meta,"Per-worker fold fit time and peak RSS; parallel workers overlap, so fit times are not wall-clock phase duration."

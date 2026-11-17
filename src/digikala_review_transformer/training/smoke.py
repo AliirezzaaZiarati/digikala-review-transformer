@@ -401,13 +401,38 @@ def _check_worst_case_batch(
             lr_heads=float(cfg["training"]["lr_heads"]),
             weight_decay=float(cfg["training"]["weight_decay"]),
         )
-        optimizer = torch.optim.AdamW(param_groups)
+        use_fused = device.type == "cuda"
+        try:
+            optimizer = torch.optim.AdamW(param_groups, fused=use_fused)
+        except TypeError:
+            optimizer = torch.optim.AdamW(param_groups)
         optimizer.zero_grad(set_to_none=True)
+
+        # Warm up optimizer state tensors (exp_avg, exp_avg_sq) on a tiny batch so
+        # the worst-case measurement reflects steady-state training memory (Step >= 2).
+        warm_ids = torch.full((1, 8), fill_value=10, dtype=torch.long, device=device)
+        warm_mask = torch.ones((1, 8), dtype=torch.long, device=device)
+        warm_batch: dict[str, torch.Tensor] = {
+            "input_ids": warm_ids,
+            "attention_mask": warm_mask,
+            "y_rec": torch.zeros(1, dtype=torch.long, device=device),
+            "y_band": torch.zeros(1, dtype=torch.long, device=device),
+            "w_rec": torch.ones(1, dtype=torch.float32, device=device),
+            "w_band": torch.ones(1, dtype=torch.float32, device=device),
+        }
+        with torch.amp.autocast(device_type=device.type, dtype=torch.bfloat16, enabled=use_bf16):
+            warm_logits = model(input_ids=warm_ids, attention_mask=warm_mask)
+            warm_loss = loss_fn(warm_logits, warm_batch)
+        warm_loss.total.backward()
+        optimizer.step()
+        optimizer.zero_grad(set_to_none=True)
+        del warm_ids, warm_mask, warm_batch, warm_logits, warm_loss
 
         if device.type == "cuda":
             torch.cuda.synchronize(device)
+            torch.cuda.empty_cache()
             torch.cuda.reset_peak_memory_stats(device)
-
+            
         input_ids = torch.full(
             (batch_size, max_length),
             fill_value=10,

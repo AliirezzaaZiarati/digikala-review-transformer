@@ -1,0 +1,10 @@
+extends: base.yaml
+run_name: mdeberta_B
+
+model:
+  pretrained_path: models/pretrained/mdeberta-v3-base
+  max_length: 160
+  tokenizer_backend: sentencepiece
+
+training:
+  variant: B

@@ -1142,8 +1142,8 @@ def run_smoke(
                 finalized.test_probabilities_path,
                 test_split,
             )
-            val_ids_match = np.array_equal(val_df["id"].to_numpy(dtype=np.int64), val_split.ids)
-            test_ids_match = np.array_equal(test_df["id"].to_numpy(dtype=np.int64), test_split.ids)
+            val_ids_match = np.array_equal(val_df["id"].to_numpy(), np.asarray(val_split.ids))
+            test_ids_match = np.array_equal(test_df["id"].to_numpy(), np.asarray(test_split.ids))
             final_status = checkpoint.run_status(smoke_dir)
             last_removed = not (smoke_dir / predict.LAST_CHECKPOINT_NAME).exists()
 

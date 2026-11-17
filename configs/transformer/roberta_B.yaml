@@ -1,0 +1,10 @@
+extends: base.yaml
+run_name: roberta_B
+
+model:
+  pretrained_path: models/pretrained/roberta-fa-zwnj-base
+  max_length: 128
+  tokenizer_backend: hf_fast
+
+training:
+  variant: B

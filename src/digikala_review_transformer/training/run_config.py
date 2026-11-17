@@ -18,8 +18,12 @@ from digikala_review_transformer import config
 CONFIG_SCHEMA = {
     "run_name": str,
     "data": {"pack_dir": str},
-    "model": {"pretrained_path": str, "max_length": int, "head_dropout": float},
-    "training": {
+    "model": {
+        "pretrained_path": str,
+        "max_length": int,
+        "head_dropout": float,
+        "tokenizer_backend": str,
+    },    "training": {
         "variant": str,
         "max_epochs": int,
         "early_stopping_patience": int,
@@ -44,6 +48,7 @@ CONFIG_SCHEMA = {
 
 RUN_NAME_PATTERN = re.compile(r"[A-Za-z0-9_]+")
 VARIANTS = ("B", "C")
+TOKENIZER_BACKENDS = ("hf_fast", "sentencepiece")
 
 # These keys change speed or memory only, never the training result. They stay out of the
 # hash so that e.g. num_workers can be lowered after a crash without blocking the resume.
@@ -160,6 +165,9 @@ def _check_values(cfg, errors):
     _expect(errors, training["variant"] in VARIANTS,
             f"training.variant is {training['variant']!r}", f"use one of {VARIANTS}")
     _expect(errors, model["max_length"] > 0, "model.max_length must be positive", "e.g. 128")
+    _expect(errors, model["tokenizer_backend"] in TOKENIZER_BACKENDS,
+            f"model.tokenizer_backend is {model['tokenizer_backend']!r}",
+            f"use one of {TOKENIZER_BACKENDS}")
     _expect(errors, 0 <= model["head_dropout"] < 1, "model.head_dropout must be in [0, 1)", "e.g. 0.1")
     _expect(errors, training["max_epochs"] >= 1, "training.max_epochs must be at least 1", "e.g. 4")
     _expect(errors, training["early_stopping_patience"] >= 0,

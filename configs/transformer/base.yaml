@@ -4,6 +4,7 @@ model:
   pretrained_path: null        # set per run
   max_length: null             # set per run
   head_dropout: 0.1
+  tokenizer_backend: hf_fast
 training:
   variant: B                   # B = no sample weights, C = Step-2 sample weights
   max_epochs: 4

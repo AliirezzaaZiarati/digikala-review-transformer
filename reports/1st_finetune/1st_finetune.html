@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multi-Task Transformer Fine-Tuning</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ---- Section: Design tokens ---- */
+:root{
+  --bg:#143641; --bg2:#1d4b59;
+  --mint:#8ff0d4; --sky:#9fd4ff; --sand:#f6e2b8; --amber:#ffc98a;
+  --text:#f3f8f8; --muted:#b5cbd0;
+  --glass:rgba(255,255,255,.08); --glass-b:rgba(255,255,255,.2);
+  --radius:22px;
+  --serif:'Fraunces',Georgia,serif; --sans:'Inter',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans); font-size:19px; line-height:1.75; color:var(--text);
+  background:radial-gradient(1100px 700px at 90% -10%,#2f6f78 0%,transparent 60%),
+             radial-gradient(900px 600px at -5% 45%,#2a5d73 0%,transparent 60%),
+             linear-gradient(180deg,var(--bg),var(--bg2));
+  min-height:100vh; overflow-x:hidden;
+}
+em,.it{font-family:var(--serif);font-style:italic;font-weight:400}
+
+/* ---- Section: Ambient background ---- */
+.orb{position:fixed;border-radius:50%;filter:blur(100px);opacity:.32;pointer-events:none;z-index:0;transition:transform .4s ease-out}
+.orb.a{width:460px;height:460px;background:var(--mint);top:-140px;right:-100px}
+.orb.b{width:400px;height:400px;background:var(--sky);bottom:-140px;left:-80px}
+.grid-bg{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.06;
+  background-image:linear-gradient(var(--text) 1px,transparent 1px),linear-gradient(90deg,var(--text) 1px,transparent 1px);
+  background-size:72px 72px;mask-image:radial-gradient(circle at 50% 30%,#000,transparent 75%)}
+main{position:relative;z-index:1;max-width:1320px;margin:0 auto;padding:0 40px 120px}
+
+/* ---- Section: Glass primitive ---- */
+.glass{
+  background:var(--glass);border:1px solid var(--glass-b);border-radius:var(--radius);
+  backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%);
+  box-shadow:0 18px 50px rgba(5,20,28,.28),inset 0 1px 0 rgba(255,255,255,.2);
+}
+
+/* ---- Section: Masthead and ticker ---- */
+.mast{display:flex;justify-content:space-between;align-items:center;padding:26px 0;border-bottom:1px solid var(--glass-b);
+  font-size:13px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted)}
+.mast b{color:var(--mint);font-weight:600}
+.ticker{overflow:hidden;border-bottom:1px solid var(--glass-b);padding:12px 0;white-space:nowrap}
+.ticker div{display:inline-block;animation:tick 38s linear infinite;font-family:var(--serif);font-style:italic;font-size:22px;color:var(--sand)}
+.ticker span{margin:0 26px;color:var(--mint)}
+@keyframes tick{to{transform:translateX(-50%)}}
+
+/* ---- Section: Hero ---- */
+.hero{min-height:84vh;display:grid;grid-template-columns:1.5fr 1fr;gap:64px;align-items:center;padding-top:50px}
+.kicker{font-size:13px;letter-spacing:.35em;color:var(--mint);text-transform:uppercase;font-weight:600}
+.hero h1{font-family:var(--serif);font-weight:300;font-size:clamp(52px,7.4vw,118px);line-height:.98;letter-spacing:-.02em;margin:22px 0 28px}
+.hero h1 em{color:var(--mint);font-weight:300}
+.hero h1 b{font-weight:800}
+.hero p.lead{font-size:clamp(19px,1.6vw,23px);color:var(--muted);max-width:40ch;border-left:2px solid var(--mint);padding-left:22px}
+.cta{display:inline-flex;gap:12px;align-items:center;margin-top:36px;padding:16px 32px;border-radius:999px;
+  font:600 17px var(--sans);letter-spacing:.04em;color:#0c2830;background:linear-gradient(120deg,var(--mint),var(--sky));border:0;cursor:pointer;
+  box-shadow:0 10px 40px rgba(143,240,212,.35);transition:transform .25s}
+.cta:hover{transform:translateY(-3px) scale(1.03)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.stat{padding:26px 22px}
+.stat b{display:block;font:300 78px/1 var(--serif);color:var(--mint);margin-bottom:8px}
+.stat:nth-child(2) b{color:var(--sky);font-style:italic} .stat:nth-child(3) b{color:var(--sand)} .stat:nth-child(4) b{color:var(--amber);font-style:italic}
+.stat span{color:var(--muted);font-size:16px;line-height:1.5;display:block}
+
+/* ---- Section: Section headers (editorial) ---- */
+section{padding-top:120px}
+.sec-head{display:grid;grid-template-columns:auto 1fr;gap:34px;align-items:end;margin-bottom:46px;padding-bottom:26px;border-bottom:1px solid var(--glass-b)}
+.sec-no{font:italic 300 clamp(90px,12vw,170px)/.78 var(--serif);color:transparent;-webkit-text-stroke:1.5px rgba(143,240,212,.6)}
+.sec-head h2{font:400 clamp(34px,4.2vw,62px)/1.05 var(--serif);letter-spacing:-.01em}
+.sec-head h2 em{color:var(--mint)}
+.sec-head p{color:var(--muted);font-size:18px;margin-top:10px;max-width:60ch}
+
+/* ---- Section: Pipeline ---- */
+.controls{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:28px}
+.btn{padding:11px 24px;border-radius:999px;border:1px solid var(--glass-b);background:var(--glass);color:var(--text);
+  font:500 16px var(--sans);cursor:pointer;backdrop-filter:blur(10px);transition:.25s}
+.btn:hover{border-color:var(--mint);color:var(--mint)}
+.pipeline{display:flex;align-items:stretch}
+.node{flex:1;padding:26px 22px;cursor:pointer;transition:transform .35s,border-color .35s,box-shadow .35s;min-width:0}
+.node:hover{transform:translateY(-8px)}
+.node .n{font:italic 300 60px/1 var(--serif);color:rgba(255,255,255,.28);transition:.35s}
+.node h3{font:500 23px/1.25 var(--serif);margin:12px 0 8px}
+.node small{color:var(--muted);font-size:15.5px;line-height:1.55;display:block}
+.node.active{border-color:var(--mint);box-shadow:0 0 0 1px var(--mint),0 0 70px rgba(143,240,212,.3);transform:translateY(-12px)}
+.node.active .n{color:var(--mint)}
+.node.done .n{color:var(--sky)}
+.link{width:44px;flex:none;align-self:center;height:4px;border-radius:4px;background:rgba(255,255,255,.18);position:relative;overflow:hidden}
+.link::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,#fff,transparent);transform:translateX(-120%);opacity:0}
+.link.on{background:linear-gradient(90deg,var(--sky),var(--mint))}
+.link.on::after{opacity:.9;animation:flow 1.6s linear infinite}
+@keyframes flow{to{transform:translateX(120%)}}
+.loopback{margin:22px 0 0;color:var(--amber);font-size:16px}
+.loopback span{display:inline-block;padding:7px 20px;border:1px dashed rgba(255,201,138,.7);border-radius:999px}
+
+/* ---- Section: Detail panel ---- */
+.detail{margin-top:34px;padding:46px;display:grid;grid-template-columns:1.35fr 1fr;gap:46px;min-height:400px}
+.detail h3{font:400 clamp(30px,3vw,44px)/1.1 var(--serif);margin-bottom:8px}
+.detail .goal{color:var(--mint);margin-bottom:22px;font-family:var(--serif);font-style:italic;font-size:21px}
+.detail ul{list-style:none;display:grid;gap:10px}
+.detail li{padding:10px 0 10px 20px;border-left:3px solid var(--sky);background:linear-gradient(90deg,rgba(159,212,255,.14),transparent)}
+.detail li.key{border-left-color:var(--amber);background:linear-gradient(90deg,rgba(255,201,138,.18),transparent)}
+.io{display:grid;gap:18px;align-content:start}
+.io div{padding:22px 24px;border-radius:18px;background:rgba(8,28,36,.3);border:1px solid var(--glass-b)}
+.io h4{font-size:12.5px;letter-spacing:.3em;color:var(--sand);margin-bottom:8px;font-weight:600}
+.io p{font-size:17.5px;line-height:1.7}
+.fade{animation:fade .5s ease}
+@keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* ---- Section: Architecture ---- */
+.arch{padding:46px;display:grid;grid-template-columns:1.3fr 1fr;gap:44px}
+.stack{display:flex;flex-direction:column;align-items:center}
+.blk{width:100%;max-width:520px;padding:16px 22px;border-radius:16px;text-align:center;cursor:pointer;
+  background:rgba(255,255,255,.09);border:1px solid var(--glass-b);transition:.3s;font-weight:600}
+.blk:hover,.blk.sel{border-color:var(--mint);background:rgba(143,240,212,.18);transform:scale(1.03)}
+.blk small{display:block;font:400 15px var(--sans);color:var(--muted)}
+.arrow{width:2px;height:26px;background:linear-gradient(var(--sky),var(--mint))}
+.heads{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%;max-width:520px}
+.blk.h{border-color:rgba(246,226,184,.6)}
+.tip{padding:28px;border-radius:20px;background:rgba(8,28,36,.3);border:1px solid var(--glass-b);min-height:170px}
+.tip h4{color:var(--mint);margin-bottom:8px;font:italic 400 28px var(--serif)}
+.toggle{display:inline-flex;padding:5px;border-radius:999px;background:rgba(8,28,36,.35);border:1px solid var(--glass-b);margin:18px 0 12px}
+.toggle button{border:0;background:none;color:var(--muted);padding:9px 24px;border-radius:999px;font:600 15px var(--sans);cursor:pointer;transition:.3s}
+.toggle button.on{background:linear-gradient(120deg,var(--mint),var(--sky));color:#0c2830}
+.formula{font:500 17px/1.9 ui-monospace,Consolas,monospace;padding:18px 22px;border-radius:16px;background:rgba(8,28,36,.35);color:var(--sand)}
+.formula em{font-style:normal;color:var(--mint)}
+
+/* ---- Section: Decision simulator ---- */
+.sim{padding:46px;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.slider-row{margin:22px 0}
+.slider-row label{display:flex;justify-content:space-between;margin-bottom:8px;gap:12px}
+.slider-row b{font:italic 400 26px var(--serif);color:var(--sky)}
+input[type=range]{width:100%;accent-color:var(--mint);height:6px}
+.gauge{position:relative;height:18px;border-radius:99px;background:rgba(255,255,255,.16);margin:34px 0 14px}
+.gauge .fill{position:absolute;top:0;bottom:0;border-radius:99px;background:linear-gradient(90deg,var(--sky),var(--mint));transition:.3s}
+.gauge .mid{position:absolute;left:50%;top:-6px;width:2px;height:30px;background:rgba(255,255,255,.5)}
+.gauge .mark{position:absolute;top:-8px;width:3px;height:34px;background:var(--amber);border-radius:2px}
+.verdict{padding:28px;border-radius:20px;text-align:center;border:1px solid var(--glass-b);transition:.4s}
+.verdict b{display:block;font:italic 400 clamp(34px,3.4vw,50px)/1.15 var(--serif)}
+.verdict.win{background:rgba(143,240,212,.18);border-color:var(--mint)} .verdict.win b{color:var(--mint)}
+.verdict.keep{background:rgba(159,212,255,.15);border-color:var(--sky)} .verdict.keep b{color:var(--sky)}
+
+/* ---- Section: Rules ---- */
+.rules{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.rule{padding:30px;transition:.3s} .rule:hover{transform:translateY(-6px);border-color:var(--amber)}
+.rule i{font:italic 300 54px/1 var(--serif);color:var(--amber);display:block;margin-bottom:8px}
+
+/* ---- Section: Outputs ---- */
+.outs{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.out{padding:26px;font-size:17px;line-height:1.7}
+.out b{display:block;font:italic 500 24px var(--serif);color:var(--mint);margin-bottom:8px}
+
+/* ---- Section: Reveal and responsive ---- */
+.rv{opacity:0;transform:translateY(34px);transition:opacity .9s,transform .9s}
+.rv.in{opacity:1;transform:none}
+footer{text-align:center;color:var(--muted);margin-top:110px;font:italic 300 20px var(--serif)}
+@media(max-width:1000px){
+  .hero,.detail,.arch,.sim{grid-template-columns:1fr}
+  .pipeline{flex-direction:column}.link{width:4px;height:34px}
+  .rules,.outs{grid-template-columns:1fr 1fr}
+  main{padding:0 18px 80px} .sec-head{grid-template-columns:1fr}
+}
+@media(max-width:600px){.rules,.outs{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="orb a"></div><div class="orb b"></div><div class="grid-bg"></div>
+
+<main>
+<!-- ---- Section: Masthead ---- -->
+<div class="mast"><span><b>Project 3</b> · Digikala Reviews</span><span>Phase Report · Fine-Tuning</span></div>
+<div class="ticker"><div>
+  <span>✦</span>Shared encoder<span>✦</span>Two heads<span>✦</span>Variant B vs C<span>✦</span>Length-bucketed batches<span>✦</span>Macro F1 gate<span>✦</span>Resume on interruption<span>✦</span>
+  <span>✦</span>Shared encoder<span>✦</span>Two heads<span>✦</span>Variant B vs C<span>✦</span>Length-bucketed batches<span>✦</span>Macro F1 gate<span>✦</span>Resume on interruption<span>✦</span>
+</div></div>
+
+<!-- ---- Section: Hero ---- -->
+<header class="hero">
+  <div class="rv">
+    <div class="kicker">Multi-Task Fine-Tuning</div>
+    <h1>One <em>encoder,</em><br>two <b>heads.</b></h1>
+    <p class="lead">A pretrained Transformer learns two tasks at once: recommendation and rating band. From preparation to the primary model, in five steps.</p>
+    <button class="cta" onclick="document.getElementById('flow').scrollIntoView()">Explore the process ↓</button>
+  </div>
+  <div class="stats rv">
+    <div class="glass stat"><b>3</b><span>candidate encoders</span></div>
+    <div class="glass stat"><b>2</b><span>shared heads: rec and band</span></div>
+    <div class="glass stat"><b>2</b><span>training variants: B and C</span></div>
+    <div class="glass stat"><b>5</b><span>full trainings on the GPU</span></div>
+  </div>
+</header>
+
+<!-- ---- Section: Pipeline ---- -->
+<section id="flow">
+  <div class="sec-head rv"><div class="sec-no">01</div>
+    <div><h2>The <em>process</em> at a glance</h2><p>Click any step, press play, or use the ← → keys.</p></div></div>
+  <div class="controls rv">
+    <button class="btn" id="play">▶ Auto-play</button>
+    <button class="btn" id="prev">← Previous</button>
+    <button class="btn" id="next">Next →</button>
+  </div>
+  <div class="pipeline rv" id="pipeline"></div>
+  <div class="loopback rv"><span>↺ If the smoke test fails, return to fixing the code in Preparation</span></div>
+  <div class="glass detail" id="detail"></div>
+</section>
+
+<!-- ---- Section: Architecture ---- -->
+<section>
+  <div class="sec-head rv"><div class="sec-no">02</div>
+    <div><h2>Model and <em>loss</em></h2><p>Click the blocks, then switch between the two variants.</p></div></div>
+  <div class="glass arch rv">
+    <div class="stack">
+      <div class="blk" data-k="in">Input: only the review <i>body</i></div><div class="arrow"></div>
+      <div class="blk" data-k="tok">Tokenizer<small>truncation · dynamic padding</small></div><div class="arrow"></div>
+      <div class="blk" data-k="enc">Shared Encoder<small>pretrained · LR = 2e-5</small></div><div class="arrow"></div>
+      <div class="blk" data-k="cls">First-token representation<small>dropout 0.1 before heads</small></div><div class="arrow"></div>
+      <div class="heads">
+        <div class="blk h" data-k="rec">Head rec<small>Linear → 3 · LR = 1e-4</small></div>
+        <div class="blk h" data-k="band">Head band<small>Linear → 3 · LR = 1e-4</small></div>
+      </div>
+    </div>
+    <div>
+      <div class="tip" id="tip"></div>
+      <div class="toggle" id="vtoggle"><button class="on" data-v="B">Variant B</button><button data-v="C">Variant C</button></div>
+      <div class="formula" id="formula"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ---- Section: Decision simulator ---- -->
+<section>
+  <div class="sec-head rv"><div class="sec-no">03</div>
+    <div><h2>The decision <em>rule</em></h2><p>The rule was fixed before any result was seen. Turn the dials yourself.</p></div></div>
+  <div class="glass sim rv">
+    <div>
+      <div class="toggle" id="mtoggle"><button class="on" data-m="bc">Step 3 · B vs C</button><button data-m="enc">Step 4 · Challenger vs Tooka</button></div>
+      <div class="slider-row"><label><span id="lblBase">Variant B · mean Macro F1 (validation)</span><b id="vBase">0.800</b></label>
+        <input type="range" id="base" min="0.70" max="0.90" step="0.001" value="0.800"></div>
+      <div class="slider-row"><label><span id="lblChal">Variant C · mean Macro F1 (validation)</span><b id="vChal">0.802</b></label>
+        <input type="range" id="chal" min="0.70" max="0.90" step="0.001" value="0.802"></div>
+      <p id="simNote" style="color:var(--muted);font-size:17px"></p>
+    </div>
+    <div>
+      <div class="gauge"><div class="fill" id="fill"></div><div class="mid"></div><div class="mark" id="mark"></div></div>
+      <div style="display:flex;justify-content:space-between;color:var(--muted);font-size:15px"><span>Negative gap</span><span>Δ = <b id="delta" style="color:var(--text)">+0.002</b></span><span>Positive gap</span></div>
+      <div class="verdict keep" id="verdict" style="margin-top:26px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ---- Section: Rules ---- -->
+<section>
+  <div class="sec-head rv"><div class="sec-no">04</div>
+    <div><h2>Standing <em>principles</em></h2><p>Rules that hold across every step.</p></div></div>
+  <div class="rules">
+    <div class="glass rule rv"><i>01</i>Training and checkpoint selection use only corrected labels. Raw labels are for reporting.</div>
+    <div class="glass rule rv"><i>02</i>The model input is the review <b>body</b> and nothing else.</div>
+    <div class="glass rule rv"><i>03</i>No decision is ever made with the test set.</div>
+    <div class="glass rule rv"><i>04</i>A Macro F1 gap below 0.003 is never called an "advantage".</div>
+    <div class="glass rule rv"><i>05</i>B and C train on identical batches; only the sample weights differ.</div>
+    <div class="glass rule rv"><i>06</i>If training becomes unstable, LR and batch size are not changed without the project owner's approval.</div>
+  </div>
+</section>
+
+<!-- ---- Section: Outputs ---- -->
+<section>
+  <div class="sec-head rv"><div class="sec-no">05</div>
+    <div><h2>What the phase <em>delivers</em></h2><p>Everything handed over to the following phases.</p></div></div>
+  <div class="outs">
+    <div class="glass out rv"><b>Code and configs</b>Reusable training modules, scripts, and six configs</div>
+    <div class="glass out rv"><b>Per-run outputs</b>Curves, run summary, validation and test probabilities, tokenizer, best-epoch weights</div>
+    <div class="glass out rv"><b>Tables and figures</b>Settings, run comparison, metrics, confusion matrices, and four figures</div>
+    <div class="glass out rv"><b>Decisions and report</b>B/C choice, primary model with reasons, phase report, and handoff</div>
+  </div>
+</section>
+
+<footer>Multi-Task Transformer Fine-Tuning · Digikala Reviews</footer>
+</main>
+
+<script>
+/* ---- Section: Pipeline data ---- */
+const STEPS = [
+  { t:"Preparation", s:"Build and verify before training",
+    goal:"Everything is built and tested on the owner's machine, then moved to the GPU machine.",
+    subs:["Read-only project inspection, CUDA environment, training modules, and six configs",
+          "Training pack: parquet files without rate and product_id, plus a manifest",
+          "Smoke test on a small subset, then transfer to the training machine"],
+    keys:["Gate: the smoke test must report ALL PASSED before anything is sent",
+          "Batch order is confirmed identical for B and C",
+          "Time gate: total training time is estimated from the smoke test; on OOM only the batch size may shrink, and it is logged"],
+    inp:"Previous handoff file, processed CSVs, Step 2 sample weights", out:"Training pack, verified code, ready environment, time estimate" },
+  { t:"First Queue", s:"TookaBERT: variants B and C",
+    goal:"Two fine-tuning runs back to back on the GPU machine, with automatic resume.",
+    subs:["Each epoch: full validation plus a fixed 100k-row train subset","Save last.pt and best_model.pt","Predict test and write run_summary.json"],
+    keys:["At most 4 epochs, patience of 1","Checkpoint criterion: mean Macro F1 of both heads on corrected labels"],
+    inp:"Training pack, TookaBERT, configs for B and C", out:"Curves, validation and test probabilities, tokenizer, best-epoch weights" },
+  { t:"B vs C Decision", s:"Notebook, first stage",
+    goal:"Check training quality, then choose the winning variant. TookaBERT is compared only with itself here.",
+    subs:["Training-settings table and run comparison table","Learning curves, overfitting and stability check"],
+    keys:["C wins only if its mean validation Macro F1 is at least 0.003 above B; otherwise B","Each head is also reported separately"],
+    inp:"Outputs of the first queue", out:"variant_decision.json and the loss and Macro F1 curves" },
+  { t:"Second Queue and Primary Model", s:"roberta and mdeberta vs TookaBERT",
+    goal:"The winning variant's configuration is applied to the two other encoders, and each is compared with TookaBERT to find the best model.",
+    subs:["Train roberta and mdeberta with the winning variant, using the same protocol","Package the light outputs and transfer them","Compare each challenger with TookaBERT on validation"],
+    keys:["A challenger wins only if its mean validation Macro F1 is at least 0.003 higher; otherwise TookaBERT stays (simpler)","best_model.pt stays on the training machine for the semi-supervised phase"],
+    inp:"Winning variant, two other encoders, TookaBERT results", out:"Two new runs and primary_model.json" },
+  { t:"Evaluation and Closeout", s:"Notebook, second stage",
+    goal:"Final test evaluation of the primary model, comparison with baselines, and handoff.",
+    subs:["Test metrics with raw and corrected labels, including ordinal distance error for band","Comparison with TF-IDF and dummy on the same rows, plus confusion matrices","Phase report and handoff"],
+    keys:["Raw-label test numbers are the ones comparable with classmates","Rows without a rec label are excluded from rec metrics only"],
+    inp:"Outputs of all 5 runs, baseline predictions, primary_model.json", out:"Metric tables, four figures, report, handoff" }
+];
+
+/* ---- Section: Pipeline rendering ---- */
+const pipe=document.getElementById('pipeline'), detail=document.getElementById('detail');
+let cur=0, timer=null;
+STEPS.forEach((s,i)=>{
+  pipe.insertAdjacentHTML('beforeend',`<div class="glass node" data-i="${i}"><div class="n">0${i+1}</div><h3>${s.t}</h3><small>${s.s}</small></div>`);
+  if(i<STEPS.length-1) pipe.insertAdjacentHTML('beforeend','<div class="link"></div>');
+});
+const nodes=[...pipe.querySelectorAll('.node')], links=[...pipe.querySelectorAll('.link')];
+function show(i){
+  cur=(i+STEPS.length)%STEPS.length; const s=STEPS[cur];
+  nodes.forEach((n,k)=>{n.classList.toggle('active',k===cur);n.classList.toggle('done',k<cur)});
+  links.forEach((l,k)=>l.classList.toggle('on',k<cur));
+  detail.innerHTML=`<div class="fade"><h3>${s.t}</h3><div class="goal">${s.goal}</div><ul>
+    ${s.subs.map(x=>`<li>${x}</li>`).join('')}${s.keys.map(x=>`<li class="key">${x}</li>`).join('')}</ul></div>
+    <div class="io fade"><div><h4>INPUT</h4><p>${s.inp}</p></div><div><h4>OUTPUT</h4><p>${s.out}</p></div></div>`;
+}
+nodes.forEach(n=>n.addEventListener('click',()=>{stop();show(+n.dataset.i)}));
+document.getElementById('next').onclick=()=>{stop();show(cur+1)};
+document.getElementById('prev').onclick=()=>{stop();show(cur-1)};
+function stop(){clearInterval(timer);timer=null;document.getElementById('play').textContent='▶ Auto-play'}
+document.getElementById('play').onclick=()=>{
+  if(timer){stop();return}
+  document.getElementById('play').textContent='⏸ Pause'; show(0);
+  timer=setInterval(()=>{ if(cur===STEPS.length-1){stop();return} show(cur+1) },5000);
+};
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'){stop();show(cur+1)} if(e.key==='ArrowLeft'){stop();show(cur-1)}
+});
+show(0);
+
+/* ---- Section: Architecture interaction ---- */
+const TIPS={
+  in:["Input","Only the review text (body). No other column, such as rate or product_id, ever reaches the model."],
+  tok:["Tokenizer","Truncates to max_length (128 or 160). Padding is applied dynamically inside each batch."],
+  enc:["Shared encoder","Pretrained weights shared by both heads, so one checkpoint must serve both. Its learning rate is smaller than the heads'."],
+  cls:["Sentence representation","The first-token vector stands for the whole sentence, since all three encoders provide it. A dropout of 0.1 sits before the heads."],
+  rec:["Recommendation head","A linear layer with three classes. Rows without a rec label are masked out of this head's loss."],
+  band:["Rating-band head","A linear layer with three classes. Total loss = loss_rec + loss_band, with equal weights."]
+};
+const tip=document.getElementById('tip'), formula=document.getElementById('formula');
+function setTip(k){
+  document.querySelectorAll('.blk').forEach(b=>b.classList.toggle('sel',b.dataset.k===k));
+  tip.innerHTML=`<div class="fade"><h4>${TIPS[k][0]}</h4><p>${TIPS[k][1]}</p></div>`;
+}
+document.querySelectorAll('.blk').forEach(b=>b.onclick=()=>setTip(b.dataset.k)); setTip('enc');
+function setVariant(v){
+  document.querySelectorAll('#vtoggle button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  const w=v==='B'?'<em>1</em>':'<em>w_step2</em>';
+  formula.innerHTML=`e = ${w} × class_weight[target] × mask<br>loss_head = Σ(e · ce) / Σe<br>loss = loss_rec + loss_band`;
+}
+document.querySelectorAll('#vtoggle button').forEach(b=>b.onclick=()=>setVariant(b.dataset.v)); setVariant('B');
+
+/* ---- Section: Decision simulator ---- */
+const MIN_GAIN=0.003;
+const MODES={
+  bc:{base:'Variant B · mean Macro F1 (validation)',chal:'Variant C · mean Macro F1 (validation)',win:'Variant C',keep:'Variant B',
+      note:'C replaces B only if it leads by at least 0.003 on corrected validation labels.'},
+  enc:{base:'TookaBERT (winning variant) · mean Macro F1 (validation)',chal:'Challenger encoder (same variant) · mean Macro F1 (validation)',win:'Challenger',keep:'TookaBERT',
+      note:'A challenger replaces TookaBERT only if it leads by at least 0.003; otherwise the simpler TookaBERT stays.'}
+};
+let mode='bc';
+const base=document.getElementById('base'), chal=document.getElementById('chal');
+function sim(){
+  const m=MODES[mode], b=+base.value, c=+chal.value, d=c-b;
+  document.getElementById('lblBase').textContent=m.base;
+  document.getElementById('lblChal').textContent=m.chal;
+  document.getElementById('simNote').textContent=m.note;
+  document.getElementById('vBase').textContent=b.toFixed(3);
+  document.getElementById('vChal').textContent=c.toFixed(3);
+  document.getElementById('delta').textContent=(d>=0?'+':'')+d.toFixed(3);
+  const pct=Math.min(Math.abs(d),0.02)/0.02*50, fill=document.getElementById('fill');
+  fill.style.width=pct+'%';
+  if(d>=0){fill.style.left='50%';fill.style.right='auto'}else{fill.style.right='50%';fill.style.left='auto'}
+  document.getElementById('mark').style.left=`calc(${50+MIN_GAIN/0.02*50}% - 1px)`;
+  const win=d>=MIN_GAIN-1e-9, v=document.getElementById('verdict');
+  v.className='verdict '+(win?'win':'keep');
+  v.innerHTML=`<b>${win?m.win:m.keep}</b>${win?'Meaningful advantage: the gap is at least 0.003':'Gap too small: the simpler option is kept'}`;
+}
+[base,chal].forEach(el=>el.addEventListener('input',sim));
+document.querySelectorAll('#mtoggle button').forEach(b=>b.onclick=()=>{
+  mode=b.dataset.m;
+  document.querySelectorAll('#mtoggle button').forEach(x=>x.classList.toggle('on',x===b));
+  sim();
+});
+sim();
+
+/* ---- Section: Scroll reveal and parallax ---- */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});
+document.querySelectorAll('.rv').forEach((el,i)=>{el.style.transitionDelay=(i%4)*90+'ms';io.observe(el)});
+addEventListener('pointermove',e=>{
+  const x=(e.clientX/innerWidth-.5)*40, y=(e.clientY/innerHeight-.5)*40;
+  document.querySelector('.orb.a').style.transform=`translate(${x}px,${y}px)`;
+  document.querySelector('.orb.b').style.transform=`translate(${-x}px,${-y}px)`;
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+extends: base.yaml
+run_name: tooka_B
+model:
+  pretrained_path: models/pretrained/TookaBERT-Base
+  max_length: 128
+training:
+  variant: B

@@ -1,0 +1,27 @@
+data:
+  pack_dir: data/training_pack
+model:
+  pretrained_path: null        # set per run
+  max_length: null             # set per run
+  head_dropout: 0.1
+training:
+  variant: B                   # B = no sample weights, C = Step-2 sample weights
+  max_epochs: 4
+  early_stopping_patience: 1
+  early_stopping_min_delta: 0.0
+  batch_size: 128
+  eval_batch_size: 512
+  lr_encoder: 2.0e-5           # write floats with a dot: 1e-5 would be read as text
+  lr_heads: 1.0e-4
+  weight_decay: 0.01
+  warmup_ratio: 0.06
+  max_grad_norm: 1.0
+  label_smoothing: 0.1
+  loss_weight_band: 1.0
+  use_class_weights: true
+  bf16: true
+  num_workers: 4
+  log_every_steps: 200
+  train_subset_eval_rows: 100000
+output:
+  root: artifacts/transformer_runs

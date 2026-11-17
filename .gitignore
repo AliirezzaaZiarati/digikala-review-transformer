@@ -19,6 +19,13 @@ wheels/
 *.bin
 *.joblib
 
+# models: weights and tokenizers are downloaded by script, never committed
+models/*
+!models/.gitkeep
+
+# zip files produced by package_run_outputs.py
+outputs_to_send/
+
 # notebooks and misc
 .ipynb_checkpoints/
 .env

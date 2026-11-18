@@ -1,0 +1,134 @@
+{
+  "stage": 1,
+  "mode_tag": "DEV (100k-row training subset, 10k-row validation/test subsets)",
+  "is_real_decision": false,
+  "decision_label": "DEV (not a real decision)",
+  "pack_fingerprint": "9faa2a97e4502701",
+  "selection_metric": "val_mean_macro_f1",
+  "rule": "C wins only if val_mean_macro_f1 >= B + 0.003, else B",
+  "scores": {
+    "B": 0.6460797148675436,
+    "C": 0.6489189862057416,
+    "C_minus_B": 0.002839271338198057
+  },
+  "winner_variant": "B",
+  "stage2_configs": [
+    "configs/transformer/roberta_B.yaml",
+    "configs/transformer/mdeberta_B.yaml"
+  ],
+  "stage2_command_powershell": "uv run python scripts/train_transformer.py --config configs/transformer/roberta_B.yaml configs/transformer/mdeberta_B.yaml",
+  "runs": {
+    "tooka_B": {
+      "variant": "B",
+      "run_dir": "artifacts/transformer_runs_dev_scale/tooka_B",
+      "config_hash": "20f37593896553d8c630aaea0602537a01b7a05788cef9e940d20eed3b55c539",
+      "best_epoch": 2,
+      "stop_reason": "early_stopping_patience",
+      "val_corrected": {
+        "rec": {
+          "n": 8541,
+          "macro_f1": 0.6941985404182734,
+          "accuracy": 0.8216836436014519,
+          "balanced_accuracy": 0.7377422653062342,
+          "macro_precision": 0.6817269056752564,
+          "macro_recall": 0.7377422653062342
+        },
+        "band": {
+          "n": 10000,
+          "macro_f1": 0.5979608893168137,
+          "accuracy": 0.6991,
+          "balanced_accuracy": 0.5985527203846118,
+          "macro_precision": 0.6020372601634848,
+          "macro_recall": 0.5985527203846118,
+          "mean_abs_distance": 0.3867,
+          "neighbor_error_pct": 71.48554336989032,
+          "extreme_error_pct": 28.51445663010967
+        },
+        "mean_macro_f1": 0.6460797148675436
+      },
+      "val_raw": {
+        "rec": {
+          "n": 8541,
+          "macro_f1": 0.6916899048181865,
+          "accuracy": 0.8182882566444211,
+          "balanced_accuracy": 0.7309468511125301,
+          "macro_precision": 0.6801248727507176,
+          "macro_recall": 0.7309468511125301
+        },
+        "band": {
+          "n": 10000,
+          "macro_f1": 0.5896267869518987,
+          "accuracy": 0.6886,
+          "balanced_accuracy": 0.5876922324656277,
+          "macro_precision": 0.5963985133271508,
+          "macro_recall": 0.5876922324656277,
+          "mean_abs_distance": 0.4031,
+          "neighbor_error_pct": 70.55234425176621,
+          "extreme_error_pct": 29.44765574823378
+        },
+        "mean_macro_f1": 0.6406583458850426
+      },
+      "epochs_run": 3,
+      "total_wall_hours": 0.11920027777777777,
+      "peak_reserved_mb": 3552.0,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    },
+    "tooka_C": {
+      "variant": "C",
+      "run_dir": "artifacts/transformer_runs_dev_scale/tooka_C",
+      "config_hash": "52d42ebbff0602377e3d0351b589f0209ec9595f8269640e912b8100925d6b51",
+      "best_epoch": 3,
+      "stop_reason": "early_stopping_patience",
+      "val_corrected": {
+        "rec": {
+          "n": 8541,
+          "macro_f1": 0.704784582423939,
+          "accuracy": 0.8339772860320805,
+          "balanced_accuracy": 0.754486679797744,
+          "macro_precision": 0.674752146232709,
+          "macro_recall": 0.754486679797744
+        },
+        "band": {
+          "n": 10000,
+          "macro_f1": 0.5930533899875442,
+          "accuracy": 0.6801,
+          "balanced_accuracy": 0.6038755404933945,
+          "macro_precision": 0.591960631997459,
+          "macro_recall": 0.6038755404933945,
+          "mean_abs_distance": 0.4035,
+          "neighbor_error_pct": 73.86683338543295,
+          "extreme_error_pct": 26.133166614567056
+        },
+        "mean_macro_f1": 0.6489189862057416
+      },
+      "val_raw": {
+        "rec": {
+          "n": 8541,
+          "macro_f1": 0.7020993326392385,
+          "accuracy": 0.8305818990750498,
+          "balanced_accuracy": 0.748398915485884,
+          "macro_precision": 0.6731731415501434,
+          "macro_recall": 0.748398915485884
+        },
+        "band": {
+          "n": 10000,
+          "macro_f1": 0.5849737708059974,
+          "accuracy": 0.6698,
+          "balanced_accuracy": 0.5924147253999128,
+          "macro_precision": 0.58613092437866,
+          "macro_recall": 0.5924147253999128,
+          "mean_abs_distance": 0.4197,
+          "neighbor_error_pct": 72.89521502119928,
+          "extreme_error_pct": 27.104784978800726
+        },
+        "mean_macro_f1": 0.6435365517226179
+      },
+      "epochs_run": 4,
+      "total_wall_hours": 0.15892222222222221,
+      "peak_reserved_mb": 3552.0,
+      "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU"
+    }
+  },
+  "stage1_total_wall_hours": 0.2781225,
+  "decision_file_sha256": "76faf4ff632a3fc58e2eb104018280705ca40be8fe63070d5c4fc77d3f7f80db"
+}

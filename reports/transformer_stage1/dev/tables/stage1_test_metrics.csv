@@ -1,0 +1,13 @@
+model,variant,head,view,n,accuracy,macro_f1,balanced_accuracy,macro_precision,macro_recall
+tfidf (same rows),-,band,corrected,10000,0.6754,0.582117,0.595358,0.577241,0.595358
+transformer_B,B,band,corrected,10000,0.6964,0.593015,0.594561,0.599011,0.594561
+transformer_C,C,band,corrected,10000,0.6722,0.58201,0.59309,0.583984,0.59309
+tfidf (same rows),-,band,raw,10000,0.6661,0.574393,0.584751,0.571465,0.584751
+transformer_B,B,band,raw,10000,0.6871,0.585006,0.584556,0.593415,0.584556
+transformer_C,C,band,raw,10000,0.6631,0.574302,0.582776,0.57834,0.582776
+tfidf (same rows),-,rec,corrected,8543,0.820438,0.683992,0.744541,0.652574,0.744541
+transformer_B,B,rec,corrected,8543,0.822077,0.689999,0.738728,0.672515,0.738728
+transformer_C,C,rec,corrected,8543,0.82512,0.684908,0.739885,0.653112,0.739885
+tfidf (same rows),-,rec,raw,8543,0.817628,0.681757,0.73912,0.651107,0.73912
+transformer_B,B,rec,raw,8543,0.819267,0.687747,0.732949,0.670972,0.732949
+transformer_C,C,rec,raw,8543,0.822077,0.682335,0.734424,0.651405,0.734424

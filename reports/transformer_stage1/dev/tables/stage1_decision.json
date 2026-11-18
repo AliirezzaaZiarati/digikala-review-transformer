@@ -1,0 +1,38 @@
+{
+  "decision_label": "DEV (not a real decision)",
+  "is_real_decision": false,
+  "mode": "dev",
+  "rule": "C wins only if val_mean_macro_f1(C) >= val_mean_macro_f1(B) + 0.003; otherwise B. Validation, corrected labels, best epoch of each run.",
+  "threshold": 0.003,
+  "winner": "B",
+  "score_B": 0.64608,
+  "score_C": 0.648919,
+  "difference_C_minus_B": 0.002839,
+  "margin_to_threshold": -0.000161,
+  "per_variant": {
+    "B": {
+      "run": "tooka_B",
+      "best_epoch": 2,
+      "epochs_done": 3,
+      "val_mean": 0.64608,
+      "val_rec": 0.694199,
+      "val_band": 0.597961,
+      "stop_reason": "early_stopping_patience"
+    },
+    "C": {
+      "run": "tooka_C",
+      "best_epoch": 3,
+      "epochs_done": 4,
+      "val_mean": 0.648919,
+      "val_rec": 0.704785,
+      "val_band": 0.593053,
+      "stop_reason": "early_stopping_patience"
+    }
+  },
+  "stage2_configs": [
+    "configs/transformer/roberta_B.yaml",
+    "configs/transformer/mdeberta_B.yaml"
+  ],
+  "pack_fingerprint": "9faa2a97e4502701",
+  "created_utc": "2026-11-18T18:36:23+00:00"
+}

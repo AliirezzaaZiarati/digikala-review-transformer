@@ -18,6 +18,9 @@ FLOAT_SLACK = 1e-12          # guards the exact-threshold case against float noi
 CONSISTENCY_TOLERANCE = 1e-6
 RUN_NAME_TEMPLATE = "tooka_{variant}"
 EXIT_DECIDED, EXIT_ERROR, EXIT_NOT_READY = 0, 1, 3
+# Observed value in real run_summary.json is "complete"; "completed" is accepted too
+# (an unfinished run is already detected by the leftover last.pt).
+COMPLETE_STATUSES = {"complete", "completed"}
 
 
 class RunNotReady(Exception):
@@ -37,7 +40,7 @@ def load_run_score(runs_root: Path, variant: str) -> tuple[float, int]:
     if not summary_path.is_file() or (run_dir / "last.pt").exists():
         raise RunNotReady(f"{run_name}: not finished yet")
     summary = json.loads(summary_path.read_text(encoding="utf-8"))
-    if summary.get("status") != "completed":
+    if summary.get("status") not in COMPLETE_STATUSES:
         raise RunNotReady(f"{run_name}: status is {summary.get('status')!r}")
     if summary.get("variant") != variant:
         raise RunInvalid(f"{run_name}: variant in summary is {summary.get('variant')!r}")

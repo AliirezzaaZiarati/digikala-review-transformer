@@ -1,0 +1,4 @@
+variant,run,best_epoch,epochs_done,val_mean,val_rec,val_band
+B (no weights),tooka_B,4,4,0.663465,0.720016,0.606914
+C (Step-2 weights),tooka_C,4,4,0.663744,0.71983,0.607659
+C minus B,,,,0.00028,-0.000186,0.000745

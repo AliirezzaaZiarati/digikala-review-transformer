@@ -31,12 +31,15 @@ if ($LASTEXITCODE -eq 0) {
 $done = @()
 foreach ($model in $Models) {
     $config = "configs/transformer/${model}_${variant}.yaml"
-    uv run python scripts/train_transformer.py --smoke --config $config
+    # mdeberta uses batch 64 (same flag in smoke, training and every resume, because it enters config_hash)
+    $extra = @()
+    if ($model -eq "mdeberta") { $extra = @("--batch-size", "64") }
+    uv run python scripts/train_transformer.py --smoke --config $config @extra
     if ($LASTEXITCODE -ne 0) { Write-Host "[FAIL] smoke failed for $model, skipping it."; continue }
     $finished = $false
     for ($attempt = 1; $attempt -le $MaxTrainTries; $attempt++) {
         Write-Host "[INFO] training $model, attempt $attempt of $MaxTrainTries"
-        uv run python scripts/train_transformer.py --config $config
+        uv run python scripts/train_transformer.py --config $config @extra
         if ($LASTEXITCODE -eq 0) { $finished = $true; break }
         Start-Sleep -Seconds 30
     }

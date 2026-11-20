@@ -40,6 +40,11 @@ Every `train_supervised` row gets one weight per head, `w_rec` and `w_band`, in 
 
 Rows with no TF-IDF feature get `w = 1` and are excluded from `m_c`. `w_rec` is NaN where the row has no recommendation label. Only corrected (Step 1) labels are used.
 
+**Notebooks**
+| Phase / Bootcamp Module | Notebook(s) | Key Outputs |
+|---|---|---|
+| `11_transfer_learning_finetuning` (Multi-Task Transformer Fine-Tuning: Stage 1 Variant B vs C & Stage 2 Encoder Comparison) | `notebooks/10_1st_transformer_finetune.ipynb` (Stage 1: TookaBERT B vs C) and Stage 2 4-run analysis notebook | `reports/transformer/tables/` (`primary_model.json`, `stage1_decision.json`, `run_comparison.csv`, `training_settings.csv`, `stage1_test_metrics.csv`, `stage1_vs_tfidf.csv`, `stage1_learning_summary.csv`, ...) & `reports/transformer/figures/01..06_*.png` |
+
 **Outputs** (not tracked by Git).
 
 | File | Content |

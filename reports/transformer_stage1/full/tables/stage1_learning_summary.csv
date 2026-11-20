@@ -1,3 +1,7 @@
-run,epochs_done,best_epoch,best_val_mean,best_rec,best_band,last_val_mean,best_minus_last,mean_epoch_seconds
-tooka_B,4,4,0.663465,0.720016,0.606914,0.663465,0.0,1813.8
-tooka_C,4,4,0.663744,0.71983,0.607659,0.663744,0.0,2024.5
+run,variant,head,n_epochs,best_epoch_mean,last_epoch,best_is_last,head_best_epoch,val_f1_first,val_f1_at_best_epoch,val_f1_last,gain_last_epoch,gain_total,train_ce_last,val_ce_last,ce_gap_last,val_ce_min_epoch,val_ce_rises_last,train_ce_falls_last,overfit_sign_last
+tooka_B,B,rec,4,4,4,True,4,0.71209,0.720016,0.720016,0.002388,0.007926,0.406233,0.419109,0.012875,4.0,False,True,False
+tooka_B,B,band,4,4,4,True,4,0.602301,0.606914,0.606914,0.003647,0.004613,0.748272,0.742727,-0.005544,4.0,False,True,False
+tooka_B,B,mean,4,4,4,True,4,0.657195,0.663465,0.663465,0.003017,0.006269,,,,,,,
+tooka_C,C,rec,4,4,4,True,4,0.712304,0.71983,0.71983,0.002664,0.007526,0.400973,0.414144,0.01317,4.0,False,True,False
+tooka_C,C,band,4,4,4,True,4,0.601348,0.607659,0.607659,0.004296,0.00631,0.740104,0.735591,-0.004513,4.0,False,True,False
+tooka_C,C,mean,4,4,4,True,4,0.656826,0.663744,0.663744,0.00348,0.006918,,,,,,,

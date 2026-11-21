@@ -40,7 +40,7 @@ body[data-l=code] .node:not(.script),body[data-l=code] .e-d,body[data-l=code] .e
 body[data-l=data] .script,body[data-l=data] .e-k,body[data-l=data] .e-x{opacity:.15!important}
 body[data-l=data] .e-d{stroke-width:5}
 body[data-l=res] .badge{opacity:1}
-body.hov .node:not(.hot),body.hov path:not(.hot){opacity:.18!important}
+body.hov .node:not(.hot),body.hov path[data-a]:not(.hot){opacity:.18!important}
 body.story .node:not(.cur){opacity:.2!important}
 body.story .node.cur{box-shadow:0 0 0 3px var(--tq),0 0 80px rgba(45,212,191,.35)}
 #bar{position:absolute;left:0;top:18px;width:1920px;padding:0 40px;display:flex;align-items:center;justify-content:space-between;z-index:5}
@@ -51,7 +51,7 @@ button:hover,button:focus-visible{background:rgba(255,255,255,.1);outline:none}
 button.on{background:rgba(45,212,191,.2);border-color:rgba(45,212,191,.6)}
 .acts{display:flex;gap:10px}
 .acts button{border-color:rgba(255,255,255,.2)}
-#note{position:absolute;left:380px;width:1160px;bottom:26px;padding:18px 28px;font-size:22px;line-height:1.4;display:none;z-index:6}
+#note{position:absolute;left:300px;width:1140px;bottom:26px;padding:18px 28px;font-size:22px;line-height:1.4;display:none;z-index:6}
 body.story #note{display:block}
 #hero{position:absolute;inset:0;z-index:20;background:rgba(7,11,22,.93);display:flex;flex-direction:column;justify-content:center;padding:0 170px;transition:opacity .8s,visibility .8s}
 #hero.gone{opacity:0;visibility:hidden}
@@ -87,19 +87,23 @@ body.story #note{display:block}
 .row:hover{background:rgba(255,255,255,.07)}
 .row b{font:600 20px var(--sans)}.row code{font:16px var(--mono);color:var(--tq);word-break:break-all}.row span{grid-column:2;font-size:18px;color:var(--mu)}
 #toast{position:absolute;left:50%;top:70px;transform:translateX(-50%);padding:10px 22px;font:18px var(--mono);z-index:30;opacity:0;transition:opacity .3s}
-#keys{position:absolute;right:40px;bottom:24px;font:16px var(--mono);color:var(--mu);z-index:5}
+#keys{position:absolute;left:40px;bottom:16px;font:16px var(--mono);color:var(--mu);z-index:5}body.story #keys{display:none}#legend{position:absolute;left:1556px;top:925px;width:344px;padding:12px 20px;font-size:16px;line-height:30px;z-index:4}#legend div{display:flex;align-items:center;gap:14px}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style></head>
 <body data-l="flow">
 <div id="stage">
 <div class="blob" style="left:-200px;top:-150px;width:800px;height:800px;background:#2DD4BF"></div>
 <div class="blob" style="right:-250px;bottom:-250px;width:900px;height:900px;background:#38BDF8;animation-duration:30s"></div>
-<div class="zone" style="left:1130px;top:170px;width:740px;height:440px"></div>
-<div class="lbl" style="left:1160px;top:560px">Friend’s PC · Windows 11 · RTX 4060 Ti 16 GB</div>
-<div class="lbl" style="left:40px;top:960px;display:none"></div>
-<div class="lbl" style="left:60px;top:100px">Stage 1 · recap</div>
-<div class="lbl" style="left:1000px;top:100px">Stage 2 · encoder comparison</div>
-<div class="lbl" style="left:60px;top:1020px;font-size:19px">Everything outside the dashed box ran on the author’s laptop · Linux · RTX 4060 8 GB</div>
+<div class="zone" style="left:70px;top:450px;width:720px;height:180px"></div>
+<div class="lbl" style="left:90px;top:640px">Friend’s PC · Windows 11 · RTX 4060 Ti 16 GB</div>
+<div class="lbl" style="left:1530px;top:115px">Stage 1 · recap</div>
+<div class="lbl" style="left:1580px;top:470px">Stage 2 · encoders</div>
+<div id="legend" class="glass">
+<div><svg width="70" height="14"><line x1="0" y1="7" x2="60" y2="7" stroke="#38BDF8" stroke-width="3"/><path d="M60,2L70,7L60,12z" style="fill:#38BDF8;stroke:none"/></svg>Data flows to the next step</div>
+<div><svg width="70" height="14"><line x1="0" y1="7" x2="60" y2="7" stroke="#2DD4BF" stroke-width="3" stroke-dasharray="9 8"/><path d="M60,2L70,7L60,12z" style="fill:#2DD4BF;stroke:none"/></svg>Next step is run or launched</div>
+<div><svg width="70" height="14"><line x1="0" y1="7" x2="60" y2="7" stroke="#FBBF24" stroke-width="3" stroke-dasharray="3 8" stroke-linecap="round"/><path d="M60,2L70,7L60,12z" style="fill:#FBBF24;stroke:none"/></svg>Gate decision picks what continues</div>
+<div><svg width="70" height="14"><line x1="0" y1="7" x2="70" y2="7" stroke="#2DD4BF" stroke-width="2" stroke-dasharray="5 6" opacity=".8"/></svg>Script runs inside the step</div>
+</div>
 <svg id="w"></svg>
 <div id="bar">
  <b>Transformer fine-tuning · workflow</b>
@@ -107,7 +111,7 @@ body.story #note{display:block}
  <div class="acts"><button id="bS">Story</button><button id="bF">Findings</button><button id="bO">Outputs</button></div>
 </div>
 <div id="note" class="glass"></div>
-<div id="keys">1–4 lenses · S story · F findings · O outputs · Esc close</div>
+<div id="keys">Dashed box: friend’s PC · everything else: author’s laptop (Linux, RTX 4060 8 GB) · 1–4 lenses · S story · F findings · O outputs · Esc close</div>
 <div id="modal" class="glass"></div>
 <div id="drawer" class="glass"></div>
 <div id="vault" class="glass" style="position:absolute;top:100px;height:880px;z-index:15;padding:44px 56px;overflow:auto;display:none"></div>
@@ -173,22 +177,29 @@ const N=[
 {id:"c_auto",x:1330,y:130,c:"script",t:"stage2_auto.ps1",sc:1},
 {id:"c_pk2",x:1750,y:690,c:"script",t:"package_run_outputs.py",sc:1},
 {id:"c_nb",x:820,y:1040,c:"script",t:"notebooks 10 · 11",sc:1}];
-const E=[["s1a","s1b","d"],["s1b","s1c","d"],["s1c","n3","c"],["s1a","h","d"],["h","s1b","x"],["h","n4","x"],["n1","h","d"],["n1","n2","d"],["n2","n3","x"],["n3","n4","x"],["n4","n5","d"],["n5","n6","d"],["n6","n7","d"],["n7","n8","d"],["n8","ghost","c"],
+const E_OLD=[["s1a","s1b","d"],["s1b","s1c","d"],["s1c","n3","c"],["s1a","h","d"],["h","s1b","x"],["h","n4","x"],["n1","h","d"],["n1","n2","d"],["n2","n3","x"],["n3","n4","x"],["n4","n5","d"],["n5","n6","d"],["n6","n7","d"],["n7","n8","d"],["n8","ghost","c"],
 ["c_oof","s1a","k"],["c_pack","s1a","k"],["c_dl","n1","k"],["c_train","h","k"],["c_train","n4","k"],["c_pick","s1c","k"],["c_auto","n3","k"],["c_pk2","n5","k"],["c_nb","n6","k"],["c_nb","n8","k"]];
+/* ---- Serpentine layout; every step connects only to the next step of the story ---- */
+const POS={s1a:[230,230],s1b:[620,230],h:[1010,230],s1c:[1400,230],n1:[1400,540],n2:[1010,540],n3:[620,540],n4:[230,540],n5:[230,850],n6:[620,850],n7:[1010,850],n8:[1400,850],ghost:[1750,850],
+c_pack:[230,128],c_oof:[230,345],c_train:[620,345],c_pick:[1400,128],c_dl:[1400,690],c_smoke:[1010,690],c_auto:[620,690],c_train2:[230,425],c_pk2:[230,985],c_nb:[620,985]};
+N.push({id:"c_smoke",c:"script",t:"train_transformer.py --smoke",sc:1},{id:"c_train2",c:"script",t:"train_transformer.py",sc:1});
+const E=[["s1a","s1b","d"],["s1b","h","x"],["h","s1c","d"],["s1c","n1","c"],["n1","n2","d"],["n2","n3","x"],["n3","n4","x"],["n4","n5","d"],["n5","n6","d"],["n6","n7","d"],["n7","n8","c"],["n8","ghost","d"],
+["c_pack","s1a","k"],["c_oof","s1a","k"],["c_train","s1b","k"],["c_pick","s1c","k"],["c_dl","n1","k"],["c_smoke","n2","k"],["c_auto","n3","k"],["c_train2","n4","k"],["c_pk2","n5","k"],["c_nb","n6","k"]];
+const DEFS="<defs>"+[["d","#38BDF8"],["x","#2DD4BF"],["c","#FBBF24"]].map(([k,c])=>`<marker id="a-${k}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0L10,5L0,10z" style="fill:${c};stroke:none"/></marker>`).join("")+"</defs>";
 const F=[["Tokenizer bug (mdeberta)","Fast tokenizer turned ZWNJ into [UNK] (2.6%). Direct SentencePiece gives 0%."],["Memory limit (mdeberta)","Batch 128 did not fit 16 GB, so batch 64 was used. It doubles the steps per epoch."],["Variant C was not enough","C − B = +0.00028, far below the +0.003 rule. Variant B won."],["TookaBERT hit the epoch cap","Best epoch was 4 of 4, so a fifth epoch might add a little."],["No encoder cleared the bar","roberta was lower. mdeberta was +0.00096 at 2.27× the parameters."],["Warning for semi-supervised","Label smoothing 0.1 caps probability near 0.933, so check max(p) before using a 0.90 threshold."],["Limits","One seed, untuned settings, mdeberta’s different batch size."]];
 const O=[["Code","Training package","src/digikala_review_transformer/training/","Model, loss, data, loop, checkpoint and prediction modules"],["Code","train_transformer.py","scripts/train_transformer.py","Trains from YAML configs, --smoke test, automatic resume"],["Code","pick_variant.py · stage2_auto.ps1","scripts/pick_variant.py · scripts/stage2_auto.ps1","Applies the +0.003 rule and launches Stage 2"],["Code","Other scripts","scripts/{make_training_pack,step2_run_oof,download_pretrained_models,package_run_outputs}.py","Pack, weights, model download, output packaging"],["Code","Configs","configs/transformer/*.yaml","Base settings and per-run overrides"],["Code","Notebooks","notebooks/10_1st_transformer_finetune.ipynb · notebooks/11_all_supervised_finetuned.ipynb","Stage-1 analysis and the full-phase report"],["Weights","tooka_B (primary)","artifacts/transformer_runs/tooka_B/tooka_B_best_model.pt","Best epoch 4, 466.7 MB"],["Weights","Other checkpoints","artifacts/transformer_runs/<run>/<run>_best_model.pt","tooka_C, roberta_B, mdeberta_B"],["Weights","Probabilities and metadata","artifacts/transformer_runs/<run>/{val_probs_best,test_probs}.parquet · run_summary.json · history.csv","Both heads’ probabilities, settings, curves, timing"],["Tables","Decisions and settings","reports/transformer/tables/{primary_model.json,stage1_decision.json,run_comparison.csv,training_settings.csv}","Gate outcomes, run comparison, settings with rationale"],["Tables","Metrics","reports/transformer/tables/stage1_{test_metrics,vs_tfidf,confusion_matrices,per_class_metrics,time_resources,learning_summary}.csv","Test metrics, baseline comparison, confusion, time, curves"],["Figures","Figures","reports/transformer/figures/01–06 *.png","Curves, baselines, confusion matrices, per-class F1, time and memory"]];
-const NOTES={s1a:"Stage 1 starts with weights and a verified data pack.",s1c:"Gate 1: Variant C gained +0.00028, far below +0.003, so B wins.",n1:"Three backbones are downloaded once for identical offline weights.",n2:"Pre-flight found two problems: a tokenizer bug and a memory limit.",n3:"One script chains the decision, smoke tests and training.",n4:"roberta and mdeberta train on the friend’s PC.",n5:"Complete runs are packaged and carried over by flash drive.",n6:"Every run is audited before any analysis.",n7:"Gate 2: no encoder beats tooka_B by +0.003.",n8:"Test results are reported only. tooka_B beats TF-IDF on both heads.",ghost:"Next: semi-supervised learning with 0.90 pseudo-labels."};
+const NOTES={s1a:"Stage 1 starts with weights and a verified data pack.",s1b:"TookaBERT trains twice: Variant B without weights, Variant C with Step-2 weights. Everything else is identical.",h:"The shared training engine: one encoder, two heads, a masked multi-task loss, and a checkpoint after every epoch.",s1c:"Gate 1: Variant C gained +0.00028, far below +0.003, so B wins.",n1:"Three backbones are downloaded once for identical offline weights.",n2:"Pre-flight found two problems: a tokenizer bug and a memory limit.",n3:"One script chains the decision, smoke tests and training.",n4:"roberta and mdeberta train on the friend’s PC.",n5:"Complete runs are packaged and carried over by flash drive.",n6:"Every run is audited before any analysis.",n7:"Gate 2: no encoder beats tooka_B by +0.003.",n8:"Test results are reported only. tooka_B beats TF-IDF on both heads.",ghost:"Next: semi-supervised learning with 0.90 pseudo-labels."};
 const ORDER=Object.keys(NOTES),M={};N.forEach(n=>M[n.id]=n);
 /* ---- Build nodes ---- */
-N.forEach((n,i)=>{const d=document.createElement("div");d.className="node glass "+n.c;d.id=n.id;d.style.cssText=`left:${n.x}px;top:${n.y}px;--i:${i}`;
+N.forEach((n,i)=>{const d=document.createElement("div");d.className="node glass "+n.c;d.id=n.id;d.style.cssText=`left:${(POS[n.id]||[n.x,n.y])[0]}px;top:${(POS[n.id]||[n.x,n.y])[1]}px;--i:${i}`;
  d.innerHTML=n.sc?n.t:`<div class="n">${n.n}</div><h3>${n.t}</h3><p>${n.p}</p>${n.b?`<span class="badge">${n.b}</span>`:""}`;
  if(n.sub){d.tabIndex=0;d.setAttribute("role","button");d.setAttribute("aria-label",n.t);d.onclick=()=>dive(n.id);d.onkeydown=e=>{if(e.key==="Enter")dive(n.id)}}
  d.onmouseenter=()=>hov(n.id,1);d.onmouseleave=()=>hov(n.id,0);st.appendChild(d)});
 /* ---- Wires: anchored on node boxes, recomputed from the DOM ---- */
-function box(id){const e=$("#"+id);return{x:e.offsetLeft,y:e.offsetTop,w:e.offsetWidth*(e.classList.contains("s1")?.96:1)/2,h:e.offsetHeight/2}}
+function box(id){const e=$("#"+id);return{x:e.offsetLeft,y:e.offsetTop,w:e.offsetWidth/2,h:e.offsetHeight/2}}
 function anchor(a,b){const dx=b.x-a.x,dy=b.y-a.y,t=Math.min(a.w/Math.abs(dx||1e-9),a.h/Math.abs(dy||1e-9));return{x:a.x+dx*t,y:a.y+dy*t}}
-function wires(){svg.innerHTML=E.map(([a,b,k],i)=>{const A=box(a),B=box(b),p=anchor(A,B),q=anchor(B,A),v=Math.abs(q.y-p.y)>Math.abs(q.x-p.x),m=v?(p.y+q.y)/2:(p.x+q.x)/2;
- const c=v?`${p.x},${m} ${q.x},${m}`:`${m},${p.y} ${m},${q.y}`;return`<path class="e-${k}" data-a="${a}" data-b="${b}" d="M${p.x},${p.y} C${c} ${q.x},${q.y}"/>`}).join("")}
+function wires(){svg.innerHTML=DEFS+E.map(([a,b,k],i)=>{const A=box(a),B=box(b),p=anchor(A,B),q=anchor(B,A),v=Math.abs(q.y-p.y)>Math.abs(q.x-p.x),m=v?(p.y+q.y)/2:(p.x+q.x)/2;
+ const c=v?`${p.x},${m} ${q.x},${m}`:`${m},${p.y} ${m},${q.y}`;return`<path class="e-${k}" data-a="${a}" data-b="${b}" ${k==="k"?"":`marker-end="url(#a-${k})"`} d="M${p.x},${p.y} C${c} ${q.x},${q.y}"/>`}).join("")}
 function hov(id,on){document.body.classList.toggle("hov",!!on);document.querySelectorAll(".hot").forEach(e=>e.classList.remove("hot"));if(!on)return;
  $("#"+id).classList.add("hot");svg.querySelectorAll(`[data-a="${id}"],[data-b="${id}"]`).forEach(p=>{p.classList.add("hot");$("#"+p.dataset.a).classList.add("hot");$("#"+p.dataset.b).classList.add("hot")})}
 /* ---- Fit, lenses, story ---- */
@@ -203,7 +214,7 @@ function story(d){if(!document.body.classList.contains("story")&&d===0){si=-1}
 function endStory(){document.body.classList.remove("story");$("#bS").classList.remove("on");document.querySelectorAll(".cur").forEach(e=>e.classList.remove("cur"))}
 /* ---- Panels ---- */
 const modal=$("#modal"),drawer=$("#drawer"),vault=$("#vault");
-function closeAll(){[modal,drawer,vault].forEach(p=>p.classList.remove("open"));[modal,drawer,vault].forEach(p=>p.style.display="")}
+function closeAll(){[modal,drawer,vault].forEach(p=>p.classList.remove("open"));[modal,drawer].forEach(p=>p.style.display="");vault.style.display="none"}
 function gauge(g){if(!g)return"";const pc=v=>(v+.004)/.008*100;
  const h=`<div class="gauge"><div class="th" style="left:${pc(.003)}%"><span>+0.003 threshold</span></div><div class="th" style="left:50%;background:rgba(255,255,255,.4);width:2px"></div>${g.map(m=>`<div class="mk" data-v="${pc(m.v)}" style="left:50%"><span>${m.l} ${m.v>0?"+":""}${m.v}</span></div>`).join("")}</div>`;
  setTimeout(()=>document.querySelectorAll(".mk").forEach(m=>m.style.left=m.dataset.v+"%"),80);return h}

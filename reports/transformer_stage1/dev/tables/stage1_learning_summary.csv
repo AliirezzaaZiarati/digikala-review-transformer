@@ -1,3 +1,0 @@
-run,epochs_done,best_epoch,best_val_mean,best_rec,best_band,last_val_mean,best_minus_last,mean_epoch_seconds
-tooka_B,3,2,0.64608,0.694199,0.597961,0.640385,0.005694,140.8
-tooka_C,4,3,0.648919,0.704785,0.593053,0.646133,0.002786,140.7

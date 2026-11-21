@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CLS Pooling | Interactive Learning</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap');
+:root{--bg:#080c18;--panel:#11182a;--panel2:#151f35;--line:#27334c;--text:#eaf0ff;--muted:#99a8c5;--cyan:#54e5d1;--blue:#71a7ff;--purple:#ba8cff;--pink:#ff7db7;--gold:#ffc96b;--green:#68e3a0}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 12% 0%,#172442 0,transparent 40%),radial-gradient(ellipse at 90% 20%,#201438 0,transparent 35%),var(--bg);color:var(--text);font-family:Vazirmatn,system-ui,sans-serif;line-height:1.85}
+.wrap{max-width:1120px;margin:auto;padding:28px 20px 60px}
+.hero{position:relative;overflow:hidden;border:1px solid #334365;border-radius:28px;padding:30px;background:linear-gradient(130deg,#152541dd,#17152edd);box-shadow:0 25px 80px #0005}
+.hero:after{content:"CLS";position:absolute;left:28px;top:8px;font-size:130px;font-weight:900;color:#6aaaff0b;direction:ltr}
+.eyebrow{color:var(--cyan);font-size:13px;letter-spacing:1px;font-weight:700}
+h1{font-size:clamp(28px,4vw,44px);line-height:1.3;margin:6px 0 10px}
+.hero p{color:var(--muted);max-width:780px;margin:0}
+.tag{display:inline-block;border:1px solid #3e5779;background:#172640;padding:4px 11px;border-radius:99px;color:#b8d4ff;font-size:12px;margin:4px 4px 0 0}
+.section{margin-top:24px;background:linear-gradient(180deg,#111a2b,#0f1625);border:1px solid var(--line);border-radius:22px;padding:22px}
+.section h2{font-size:22px;margin:0 0 5px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 16px}
+.flex{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.pill{border:1px solid var(--line);background:#0b1220;border-radius:12px;padding:9px 14px;color:var(--muted)}
+.pill strong{color:var(--text)}
+.pipeline{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}
+.step{background:#101a2c;border:1px solid #2c3a56;border-radius:15px;padding:13px;text-align:center;position:relative}
+.step b{display:block;color:#c5d8ff;font-size:14px}
+.step small{color:var(--muted)}
+.step.active{border-color:var(--cyan);box-shadow:0 0 0 1px #54e5d133,0 0 25px #54e5d114}
+.arrow{color:var(--cyan);font-size:22px}
+.tokens{display:flex;direction:ltr;gap:8px;flex-wrap:wrap;justify-content:center;margin:18px 0}
+.token{min-width:68px;text-align:center;border:1px solid #34435f;background:#131e33;border-radius:12px;padding:10px 8px;transition:.2s}
+.token .t{font-size:13px;color:#d9e5ff}
+.token .v{font:11px ui-monospace,monospace;color:#7f91b3;margin-top:5px}
+.token.cls{border-color:var(--cyan);background:linear-gradient(160deg,#123b42,#14243b);box-shadow:0 0 22px #54e5d11b}
+.token.selected{transform:translateY(-3px);border-color:var(--green);box-shadow:0 0 0 2px #68e3a022}
+.token.dim{opacity:.35;filter:grayscale(.5)}
+.legend{font-size:12px;color:var(--muted);display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-left:5px}
+.dcyan{background:var(--cyan)}.dgreen{background:var(--green)}.dgray{background:#66758f}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.control{background:#0c1321;border:1px solid var(--line);border-radius:15px;padding:14px}
+label{display:flex;justify-content:space-between;gap:12px;color:#d4def4;font-size:14px;margin-bottom:7px}
+input[type=range]{width:100%;accent-color:var(--cyan)}
+.readout{font:12px ui-monospace,monospace;color:var(--cyan)}
+.math{direction:ltr;text-align:center;font:18px ui-monospace,monospace;padding:13px;background:#0b1220;border:1px solid #293752;border-radius:13px;margin-top:14px}
+.explain{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.note{border-radius:14px;padding:14px;background:#101a2c;border:1px solid var(--line)}
+.note h3{margin:0 0 5px;font-size:15px}
+.note p{margin:0;color:var(--muted);font-size:13px}
+.note.cyan{border-color:#285c60}.note.gold{border-color:#594a30}
+.bigvec{display:flex;direction:ltr;gap:7px;justify-content:center;flex-wrap:wrap;margin:13px 0}
+.cell{padding:9px 11px;background:#112c33;border:1px solid #2c696a;border-radius:8px;font:13px ui-monospace,monospace;color:#8df5df}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.card{border:1px solid var(--line);border-radius:15px;background:#0c1423;padding:15px}
+.card h3{font-size:15px;margin:0 0 8px}
+.card p{font-size:13px;color:var(--muted);margin:6px 0}
+.formula{direction:ltr;text-align:center;color:#c7d7ff;font:14px ui-monospace,monospace;background:#111c30;border-radius:9px;padding:9px}
+.quiz{border:1px solid #5a4774;background:linear-gradient(120deg,#201936,#141d31);padding:16px;border-radius:15px}
+.q{font-weight:700;margin-bottom:10px}
+.choices{display:flex;gap:8px;flex-wrap:wrap}
+button{font-family:inherit;cursor:pointer;border:1px solid #415170;border-radius:10px;padding:9px 13px;background:#18243b;color:#e5edff;transition:.2s}
+button:hover{border-color:var(--cyan);transform:translateY(-1px)}
+button.primary{background:linear-gradient(90deg,#167b79,#3456a6);border:none;font-weight:700}
+.feedback{min-height:28px;margin-top:9px;color:var(--muted);font-size:13px}
+.code{direction:ltr;text-align:left;background:#080e19;border:1px solid #27344b;padding:16px;border-radius:13px;overflow:auto;font:13px/1.8 ui-monospace,monospace;color:#d1e1ff}
+.code .comment{color:#7e91ad}.code .kw{color:#bc9bff}.code .func{color:#70e5d1}.code .num{color:#ffc96b}
+.footer{text-align:center;color:#72829f;font-size:12px;margin-top:22px}
+@media(max-width:760px){.pipeline{grid-template-columns:1fr 1fr}.controls,.explain,.cards{grid-template-columns:1fr}.wrap{padding:15px}.section{padding:16px}.hero{padding:22px}.token{min-width:57px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+ <div class="eyebrow">TRANSFORMER → CLASSIFICATION · INTERACTIVE MINI-LESSON</div>
+ <h1>CLS Pooling؛ How does a sequence become one vector?</h1>
+ <p>Your encoder produces one vector per token, but the two classifiers need one representation for the whole text. Explore how selecting the first token (CLS / First-Token Pooling) performs this conversion.</p>
+ <span class="tag">Used in model.py</span><span class="tag">hidden[:, 0]</span><span class="tag">نه Mean Pooling</span>
+</header>
+
+<section class="section">
+<h2>۱) Data flow through the model</h2><p class="sub">Follow each stage. Pooling is where the sequence-length dimension disappears.</p>
+<div class="pipeline">
+ <div class="step"><b>Tokenizer</b><small>Text → tokens</small></div>
+ <div class="step"><b>Transformer Encoder</b><small>B × L × D</small></div>
+ <div class="step active"><b>CLS Pooling</b><small>B × D</small></div>
+ <div class="step"><b>دو Classification Head</b><small>rec + band</small></div>
+</div>
+<div class="flex" style="justify-content:center">
+ <div class="pill">B = Batch size</div><div class="pill">L = Sequence length</div><div class="pill">D = Hidden size</div>
+</div>
+</section>
+
+<section class="section">
+<h2>۲) Explore the tokens</h2><p class="sub">Assume the text has been tokenized and the Encoder has produced contextualized vectors. CLS is at position zero.</p>
+<div class="tokens" id="tokenrow">
+ <div class="token cls selected"><div class="t">[CLS]</div><div class="v">h₀</div></div>
+ <div class="token"><div class="t">This</div><div class="v">h₁</div></div>
+ <div class="token"><div class="t">product</div><div class="v">h₂</div></div>
+ <div class="token"><div class="t">is</div><div class="v">h₃</div></div>
+ <div class="token"><div class="t">great</div><div class="v">h₄</div></div>
+ <div class="token"><div class="t">[SEP]</div><div class="v">h₅</div></div>
+</div>
+<div class="legend"><span><i class="dot dcyan"></i>CLS (موقعیت صفر)</span><span><i class="dot dgreen"></i>بردار انتخاب‌شده</span><span><i class="dot dgray"></i>بردارهایی که مستقیماً انتخاب نمی‌شوند</span></div>
+<div class="controls" style="margin-top:16px">
+ <div class="control"><label>Selected position <span class="readout" id="poslabel">0 — CLS</span></label><input id="pos" type="range" min="0" max="5" value="0"></div>
+ <div class="control"><label>Tokens in this example <span class="readout" id="countlabel">6</span></label><input id="count" type="range" min="3" max="6" value="6"></div>
+</div>
+<div class="math" id="selectionformula">features = hidden[:, 0, :] → (B, D)</div>
+<div class="note cyan" style="margin-top:12px"><h3 id="seltitle">Selected: CLS</h3><p id="seltext">The vector at position zero is selected for each sequence. In this model, it serves as the text representation.</p></div>
+</section>
+
+<section class="section">
+<h2>۳) Change the Tensor dimensions</h2><p class="sub">Adjust the dimensions and see how pooling changes the shape. This is a shape illustration, not an actual model run.</p>
+<div class="controls">
+ <div class="control"><label>Batch size (B) <span class="readout" id="bval">4</span></label><input id="batch" type="range" min="1" max="64" value="4"></div>
+ <div class="control"><label>Sequence length (L) <span class="readout" id="lval">12</span></label><input id="seq" type="range" min="2" max="128" value="12"></div>
+ <div class="control"><label>Hidden size (D) <span class="readout" id="dval">8</span></label><input id="hidden" type="range" min="4" max="1024" value="8"></div>
+ <div class="control"><label>Position انتخابی <span class="readout" id="pval">0</span></label><input id="featurepos" type="range" min="0" max="127" value="0"></div>
+</div>
+<div class="math" id="shapeformula">Encoder output: (4, 12, 8) → Pooling → (4, 8)</div>
+<div class="explain">
+ <div class="note cyan"><h3>Before pooling</h3><p id="before">۴ sequences × ۱۲ tokens × ۸ Hidden size (D) برای هر Token</p></div>
+ <div class="note gold"><h3>After pooling</h3><p id="after">۴ sequences × ۸ Hidden size (D)؛ Sequence length (L) دیگر در Shape نیست.</p></div>
+</div>
+</section>
+
+<section class="section">
+<h2>۴) What does the selected vector look like?</h2><p class="sub">در این مثال کوچک D=6 است تا بتوان مقادیر را دید. بردارهای سایر Token‌ها را انتخاب کن و مقایسه کن.</p>
+<div class="controls">
+ <div class="control"><label>Token <span class="readout" id="vecname">CLS</span></label><input id="vectoken" type="range" min="0" max="5" value="0"></div>
+ <div class="control"><label>Display <span class="readout">6 vector components</span></label><div class="pill">Each hᵢ is a 6-dimensional vector</div></div>
+</div>
+<div class="bigvec" id="vector"></div>
+<div class="note"><h3>Important</h3><p>بردارها عددهای خام نیستند که از Token‌ها کپی شوند؛ خروجی Encoder هستند و با توجه به متن و Self-Attention زمینه‌مند شده‌اند (contextualized). بنابراین h₀ نیز می‌تواند اطلاعات Token‌های دیگر را در خود منعکس کند.</p></div>
+</section>
+
+<section class="section">
+<h2>۵) How it differs from other pooling methods</h2><p class="sub">Your model uses CLS Pooling. These methods are not interchangeable.</p>
+<div class="cards">
+ <div class="card"><h3 style="color:var(--cyan)">CLS / First-token</h3><div class="formula">z = h₀</div><p>Only the vector at position zero is selected. This is your project’s method.</p></div>
+ <div class="card"><h3 style="color:var(--blue)">Mean Pooling</h3><div class="formula">z = mean(h₁ … hₗ)</div><p>میانگین بردار Token‌ها؛ معمولاً Padding با attention mask کنار گذاشته می‌شود.</p></div>
+ <div class="card"><h3 style="color:var(--pink)">Max Pooling</h3><div class="formula">zⱼ = maxᵢ hᵢⱼ</div><p>برای هر بُعد، بزرگ‌ترین مقدار در بین Token‌ها انتخاب می‌شود.</p></div>
+</div>
+</section>
+
+<section class="section">
+<h2>۶) Walk through the code</h2>
+<div class="code"><span class="comment"># Encoder: one vector per token</span>
+hidden = self.encoder(input_ids=input_ids,
+                      attention_mask=attention_mask).last_hidden_state
+
+<span class="comment"># Select token at position 0 from every sequence</span>
+features = self.dropout(hidden[:, <span class="num">0</span>])
+
+<span class="comment"># Same pooled representation feeds both task heads</span>
+return {head: layer(features).float()
+        for head, layer in self.heads.items()}</div>
+<p class="sub" style="margin-top:12px">`hidden[:, 0]` This means: for every sequence in the batch, select only position zero. In the actual code, `FEATURE_POSITION = 0` is used instead of the literal 0, making the position a named constant. Dropout is applied after pooling; pooling itself has no trainable parameters.</p>
+</section>
+
+<section class="section">
+<h2>۷) Quick knowledge check</h2>
+<div class="quiz">
+<div class="q">If hidden has shape (B, L, D), what is the shape of features after CLS Pooling?</div>
+<div class="choices">
+<button onclick="quiz(0)"> (B, L, D) </button>
+<button onclick="quiz(1)"> (B, D) </button>
+<button onclick="quiz(2)"> (L, D) </button>
+</div>
+<div class="feedback" id="quizfeedback"></div>
+</div>
+</section>
+<div class="footer">Interactive learning page · CLS / First-Token Pooling · model.py</div>
+</div>
+<script>
+const pos=document.getElementById('pos'), count=document.getElementById('count'), row=document.getElementById('tokenrow');
+const labels=['[CLS]','This','product','is','great','[SEP]'];
+function updateTokens(){
+ let n=+count.value; let p=Math.min(+pos.value,n-1); pos.max=n-1;pos.value=p;
+ countlabel.textContent=n;poslabel.textContent=p+(p===0?' — CLS':' — token '+p);
+ [...row.children].forEach((el,i)=>{el.style.display=i<n?'':'none';el.classList.toggle('selected',i===p);el.classList.toggle('dim',i!==p);});
+ selectionformula.textContent=`features = hidden[:, ${p}, :] → (B, D)`;
+ seltitle.textContent=p===0?'Selected: CLS (First Token)':'Selected token '+labels[p];
+ seltext.textContent=p===0?'The vector at position zero is selected. In architectures with a CLS token, it is trained to aggregate information from the full sequence.':'You selected another token here to illustrate tensor slicing. In your model, FEATURE_POSITION=0, so the actual selection is always position zero.';
+}
+pos.oninput=updateTokens;count.oninput=updateTokens;updateTokens();
+const batch=document.getElementById('batch'),seq=document.getElementById('seq'),hid=document.getElementById('hidden'),featurepos=document.getElementById('featurepos');
+function shapes(){
+ let b=+batch.value,l=+seq.value,d=+hid.value,p=Math.min(+featurepos.value,l-1);featurepos.max=l-1;featurepos.value=p;
+ bval.textContent=b;lval.textContent=l;dval.textContent=d;pval.textContent=p;
+ shapeformula.textContent=`Encoder output: (${b}, ${l}, ${d}) → Pooling → (${b}, ${d})`;
+ before.textContent=`${b} sequences × ${l} tokens × ${d} Hidden size (D) برای هر Token`;
+ after.textContent=`${b} sequences × ${d} Hidden size (D)؛ Sequence length (L) حذف می‌شود.`;
+}
+[batch,seq,hid,featurepos].forEach(el=>el.oninput=shapes);shapes();
+const sample=[
+ [0.12,-0.31,0.80,0.44,-0.09,0.21],
+ [0.52,0.17,-0.12,0.61,0.33,-0.40],
+ [-0.20,0.72,0.31,-0.15,0.90,0.07],
+ [0.11,0.23,0.45,0.03,-0.51,0.65],
+ [0.80,-0.10,0.02,0.77,0.14,-0.22],
+ [-0.04,0.37,-0.66,0.12,0.55,0.18]
+];
+const vectoken=document.getElementById('vectoken');
+function drawVector(){let i=+vectoken.value;vecname.textContent=labels[i];vector.innerHTML=sample[i].map(v=>`<span class="cell">${v.toFixed(2)}</span>`).join('');}
+vectoken.oninput=drawVector;drawVector();
+function quiz(n){let f=document.getElementById('quizfeedback');if(n===1){f.textContent='Correct! Dimension L disappears; one D-dimensional vector remains per sequence. 🎯';f.style.color='var(--green)'}else{f.textContent='Not quite. Selecting one sequence position removes dimension L. The answer is (B, D).';f.style.color='var(--pink)'}}
+</script>
+</body>
+</html>

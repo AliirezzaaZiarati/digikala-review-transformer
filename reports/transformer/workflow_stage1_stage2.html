@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Transformer fine-tuning workflow</title>
+<style>
+:root{--tq:#2DD4BF;--bl:#38BDF8;--am:#FBBF24;--co:#FB7185;--tx:#E6E9F5;--mu:#9AA4C7;--serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;--sans:"Segoe UI",system-ui,-apple-system,sans-serif;--mono:"Cascadia Code",Consolas,Menlo,monospace}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;overflow:hidden;color:var(--tx);font-family:var(--sans);background:radial-gradient(1400px 900px at 15% 5%,#14244f,transparent 70%),linear-gradient(160deg,#070B16,#0E1530)}
+#stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px}
+.blob{position:absolute;border-radius:50%;filter:blur(120px);opacity:.25;animation:drift 24s ease-in-out infinite alternate}
+@keyframes drift{to{transform:translate(140px,-90px)}}
+.glass{background:linear-gradient(145deg,rgba(255,255,255,.10),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.15);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-radius:24px;box-shadow:0 18px 50px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.2)}
+svg#w{position:absolute;inset:0;width:1920px;height:1080px;pointer-events:none}
+path{fill:none;stroke-linecap:round;transition:opacity .3s}
+.e-d{stroke:rgba(56,189,248,.55);stroke-width:3}
+.e-x{stroke:var(--tq);stroke-width:3;stroke-dasharray:9 11;animation:flow 1.1s linear infinite}
+.e-c{stroke:var(--am);stroke-width:3;stroke-dasharray:3 10}
+.e-k{stroke:rgba(45,212,191,.7);stroke-width:2;stroke-dasharray:5 7;animation:flow 1.6s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-40}}
+.zone{position:absolute;border:1.5px dashed rgba(255,255,255,.22);border-radius:40px;background:rgba(56,189,248,.045)}
+.lbl{position:absolute;font:italic 22px var(--serif);color:var(--mu)}
+.node{position:absolute;transform:translate(-50%,-50%);cursor:pointer;transition:opacity .3s,box-shadow .3s,border-color .3s;outline:none}
+.node:hover,.node:focus-visible{border-color:var(--tq);box-shadow:0 0 0 2px rgba(45,212,191,.5),0 18px 50px rgba(0,0,0,.4)}
+.step{width:300px;padding:18px 22px}
+.step .n{font:16px var(--mono);color:var(--tq)}
+.step h3{font:600 28px/1.15 var(--serif);margin-top:2px}
+.step p{font-size:18px;line-height:1.35;color:var(--mu);margin-top:6px}
+.s1{opacity:.78;width:280px}
+.gate{border-color:rgba(251,191,36,.55);box-shadow:0 0 40px rgba(251,191,36,.14),inset 0 1px 0 rgba(255,255,255,.2);border-radius:40px 10px 40px 10px}
+.gate .n{color:var(--am)}
+.hub{width:340px;padding:26px 28px;border-color:rgba(45,212,191,.55);box-shadow:0 0 70px rgba(45,212,191,.2),inset 0 1px 0 rgba(255,255,255,.2);border-radius:44px}
+.hub h3{font-size:34px}
+.ghost{opacity:.55;width:260px;border-style:dashed}
+.script{padding:8px 16px;border-radius:14px;font:16px var(--mono);color:var(--tq);border-color:rgba(45,212,191,.45);white-space:nowrap;cursor:default}
+.badge{position:absolute;left:50%;top:100%;transform:translateX(-50%);margin-top:10px;white-space:nowrap;font:600 17px var(--mono);color:var(--am);opacity:0;transition:opacity .3s}
+.go .node{animation:rise .8s both;animation-delay:calc(var(--i)*60ms)}
+@keyframes rise{from{opacity:0;margin-top:30px}}
+.go svg#w{animation:fade 1.4s .9s both}
+@keyframes fade{from{opacity:0}}
+body[data-l=code] .node:not(.script),body[data-l=code] .e-d,body[data-l=code] .e-x,body[data-l=code] .e-c{opacity:.22!important}
+body[data-l=data] .script,body[data-l=data] .e-k,body[data-l=data] .e-x{opacity:.15!important}
+body[data-l=data] .e-d{stroke-width:5}
+body[data-l=res] .badge{opacity:1}
+body.hov .node:not(.hot),body.hov path:not(.hot){opacity:.18!important}
+body.story .node:not(.cur){opacity:.2!important}
+body.story .node.cur{box-shadow:0 0 0 3px var(--tq),0 0 80px rgba(45,212,191,.35)}
+#bar{position:absolute;left:0;top:18px;width:1920px;padding:0 40px;display:flex;align-items:center;justify-content:space-between;z-index:5}
+#bar b{font:600 26px var(--serif)}
+.seg{display:flex;gap:6px;padding:6px;border-radius:20px}
+button{font:600 18px var(--sans);color:var(--tx);background:transparent;border:1px solid transparent;border-radius:14px;padding:9px 20px;cursor:pointer;transition:.2s}
+button:hover,button:focus-visible{background:rgba(255,255,255,.1);outline:none}
+button.on{background:rgba(45,212,191,.2);border-color:rgba(45,212,191,.6)}
+.acts{display:flex;gap:10px}
+.acts button{border-color:rgba(255,255,255,.2)}
+#note{position:absolute;left:380px;width:1160px;bottom:26px;padding:18px 28px;font-size:22px;line-height:1.4;display:none;z-index:6}
+body.story #note{display:block}
+#hero{position:absolute;inset:0;z-index:20;background:rgba(7,11,22,.93);display:flex;flex-direction:column;justify-content:center;padding:0 170px;transition:opacity .8s,visibility .8s}
+#hero.gone{opacity:0;visibility:hidden}
+#hero h1{font:400 150px/.98 var(--serif);letter-spacing:-3px}
+#hero h1 i{color:var(--tq)}
+#hero p{font-size:26px;line-height:1.5;color:var(--mu);max-width:900px;margin:36px 0 44px}
+#hero button{align-self:flex-start;font-size:24px;padding:16px 36px;border-color:var(--tq);background:rgba(45,212,191,.16)}
+#hero small{position:absolute;left:170px;bottom:56px;font:17px var(--mono);color:var(--mu)}
+#modal{position:absolute;left:110px;top:100px;width:1700px;height:880px;z-index:15;padding:44px 56px;display:none;overflow:auto}
+#modal.open{display:block;animation:pop .35s}
+@keyframes pop{from{opacity:0;transform:scale(.96)}}
+#modal h2{font:400 66px/1.05 var(--serif)}
+#modal .id{font:18px var(--mono);color:var(--tq)}
+.x{position:absolute;right:30px;top:26px}
+.step-row{display:flex;gap:10px;margin:28px 0;flex-wrap:wrap}
+.step-row button{border-color:rgba(255,255,255,.2)}
+.grid{display:grid;grid-template-columns:1.25fr 1fr;gap:36px}
+.grid .main{font:400 30px/1.45 var(--serif)}
+.box{padding:18px 22px;border-radius:18px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);font-size:20px;line-height:1.4;margin-bottom:14px}
+.box em{display:block;font:600 17px var(--mono);color:var(--bl);font-style:normal;margin-bottom:4px}
+.box.f{border-color:rgba(251,113,133,.6);background:rgba(251,113,133,.1)}
+.box.f em{color:var(--co)}
+.gauge{position:relative;height:16px;border-radius:8px;background:rgba(255,255,255,.12);margin:56px 0 26px}
+.th{position:absolute;top:-14px;bottom:-14px;width:3px;background:var(--am)}
+.th span{position:absolute;top:-30px;left:-60px;width:123px;text-align:center;font:16px var(--mono);color:var(--am)}
+.mk{position:absolute;top:-7px;width:30px;height:30px;margin-left:-15px;border-radius:50%;background:var(--tq);box-shadow:0 0 20px var(--tq);transition:left 1.3s cubic-bezier(.2,.8,.2,1)}
+.mk span{position:absolute;top:36px;left:50%;transform:translateX(-50%);white-space:nowrap;font:16px var(--mono)}
+#drawer{position:absolute;right:30px;top:100px;width:620px;height:880px;padding:36px;z-index:14;overflow:auto;display:none}
+#drawer.open{display:block;animation:pop .3s}
+#drawer h2,#vault h2{font:400 46px var(--serif);margin-bottom:18px}
+#vault{left:150px;width:1620px}
+.row{display:grid;grid-template-columns:300px 1fr;gap:6px 28px;padding:14px 18px;border-radius:14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.08)}
+.row:hover{background:rgba(255,255,255,.07)}
+.row b{font:600 20px var(--sans)}.row code{font:16px var(--mono);color:var(--tq);word-break:break-all}.row span{grid-column:2;font-size:18px;color:var(--mu)}
+#toast{position:absolute;left:50%;top:70px;transform:translateX(-50%);padding:10px 22px;font:18px var(--mono);z-index:30;opacity:0;transition:opacity .3s}
+#keys{position:absolute;right:40px;bottom:24px;font:16px var(--mono);color:var(--mu);z-index:5}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head>
+<body data-l="flow">
+<div id="stage">
+<div class="blob" style="left:-200px;top:-150px;width:800px;height:800px;background:#2DD4BF"></div>
+<div class="blob" style="right:-250px;bottom:-250px;width:900px;height:900px;background:#38BDF8;animation-duration:30s"></div>
+<div class="zone" style="left:1130px;top:170px;width:740px;height:440px"></div>
+<div class="lbl" style="left:1160px;top:560px">Friend’s PC · Windows 11 · RTX 4060 Ti 16 GB</div>
+<div class="lbl" style="left:40px;top:960px;display:none"></div>
+<div class="lbl" style="left:60px;top:100px">Stage 1 · recap</div>
+<div class="lbl" style="left:1000px;top:100px">Stage 2 · encoder comparison</div>
+<div class="lbl" style="left:60px;top:1020px;font-size:19px">Everything outside the dashed box ran on the author’s laptop · Linux · RTX 4060 8 GB</div>
+<svg id="w"></svg>
+<div id="bar">
+ <b>Transformer fine-tuning · workflow</b>
+ <div class="seg glass" id="lens"><button data-l="flow" class="on">Flow</button><button data-l="code">Code</button><button data-l="data">Data</button><button data-l="res">Results</button></div>
+ <div class="acts"><button id="bS">Story</button><button id="bF">Findings</button><button id="bO">Outputs</button></div>
+</div>
+<div id="note" class="glass"></div>
+<div id="keys">1–4 lenses · S story · F findings · O outputs · Esc close</div>
+<div id="modal" class="glass"></div>
+<div id="drawer" class="glass"></div>
+<div id="vault" class="glass" style="position:absolute;top:100px;height:880px;z-index:15;padding:44px 56px;overflow:auto;display:none"></div>
+<div id="toast" class="glass"></div>
+<div id="hero">
+ <h1>One encoder,<br>two <i>heads.</i></h1>
+ <p>Fine-tuning Persian Transformers to predict a review’s recommendation status and rating band. Stage 1 tests sample weights on TookaBERT. Stage 2 compares three encoders and picks the primary model.</p>
+ <button id="enter">Enter the map</button>
+ <small>Digikala review analysis · Project 3</small>
+</div>
+</div>
+<script>
+const $=s=>document.querySelector(s),st=$("#stage"),svg=$("#w");
+/* ---- Data: nodes (px on a 1920x1080 scene), edges, findings, outputs ---- */
+const N=[
+{id:"s1a",x:230,y:260,c:"step s1",n:"Step 1a",t:"Weights and pack",p:"Out-of-fold weights, verified parquet pack",b:"2.86M train rows",sub:[
+ ["Out-of-fold weights","Step-2 reliability weights come from 5-fold out-of-fold predictions, so every row is scored by a model that never saw it.","Corrected labels","w_rec, w_band","Variant C needs a weight per row."],
+ ["Build the training pack","One parquet pack with a manifest and fingerprint. The rate and product_id columns are left out on purpose.","Split CSVs + weights","data/training_pack/*.parquet","Both machines train on identical, verifiable data."]]},
+{id:"s1b",x:230,y:510,c:"step s1",n:"Step 1b",t:"Train TookaBERT × 2",p:"Variant B and Variant C",b:"2.06 h · 2.31 h",sub:[
+ ["Two runs, one difference","Variant B uses no sample weights. Variant C uses the Step-2 weights.","Pack, TookaBERT-Base","tooka_B, tooka_C","Same seed, batch order and settings, so only the weights differ."],
+ ["Behavior","Both runs reached their best epoch at epoch 4 of 4, with no NaN, Inf or loss spikes.","history.csv","Learning curves","The epoch cap may be slightly tight."]]},
+{id:"s1c",x:230,y:760,c:"step gate s1",n:"Gate 1",t:"B or C?",p:"Fixed +0.003 rule",b:"C − B = +0.00028",g:[{l:"C − B",v:0.00028}],sub:[
+ ["The rule was fixed first","C replaces B only if its mean validation Macro F1 is at least 0.003 higher. The test split is never used.","run_summary.json × 2","variant_decision.json","A pre-registered rule prevents choosing after seeing results."],
+ ["Outcome","C − B = +0.00028, more than ten times below the threshold. Variant B wins.","Validation F1","tooka_B","C helped band slightly and rec not at all, so the simpler variant stays.","C’s gain is too small to justify the extra pipeline."]]},
+{id:"h",x:640,y:500,c:"step hub",n:"Training engine",t:"One encoder, two heads",p:"Shared by every run in both stages",sub:[
+ ["Shared encoder, two heads","CLS (first-token) pooling, dropout 0.1, then one linear head for rec and one for band.","Token ids","rec and band logits","One checkpoint has to serve both tasks."],
+ ["Masked multi-task loss","The loss is the sum of both head losses. Rows without a rec label skip only the rec loss. Class weights and label smoothing 0.1 are applied.","Logits, labels, weights","Training objective","Partial labels still teach the band head."],
+ ["Optimization","AdamW (encoder 2e-5, heads 1e-4), 6% warmup, linear decay, bf16, gradient clipping 1.0, batch 128.","Config YAML","Updated weights","Common defaults. They were not tuned."],
+ ["Checkpoint and resume","A checkpoint is written after every epoch. The same command resumes after an interruption.","last.pt","best_model.pt","Overnight runs survive power cuts and crashes."]]},
+{id:"n1",x:760,y:200,c:"step",n:"Step 2a",t:"Lock the models",p:"Three backbones, downloaded once",b:"3 encoders",sub:[
+ ["Download three backbones","TookaBERT-Base and roberta-fa-zwnj-base (apache-2.0), mdeberta-v3-base (mit).","Hugging Face hub","models/pretrained/","Identical offline weights on both machines."]]},
+{id:"n2",x:1060,y:200,c:"step",n:"Step 2b",t:"Pre-flight",p:"Smoke test before hours of training",b:"2 findings",sub:[
+ ["Smoke test","Nine checks: GPU, files, tokenizer, cache, batch order, worst-case batch, train with resume, id alignment, epoch-time estimate.","Config","PASS or FAIL lines","Failures show up in minutes, not after hours."],
+ ["Tokenizer finding","The fast tokenizer turned Persian ZWNJ into [UNK] (2.6% of tokens), and fix_mistral_regex=True broke tokenization. Direct SentencePiece gives 0% [UNK] and longer sequences (24.0 vs 15.3 tokens per review), so max_length is 160.","mdeberta-v3-base","sentencepiece backend","Silent token corruption would have damaged results.",1],
+ ["Memory finding","At batch 128, mdeberta reserved 23.06 GB on a 16 GB card. Batch size went to 64 with learning rates unchanged, which doubles the steps per epoch (22,346 to 44,692).","Smoke check 6","batch_size 64","Fits the GPU. It also makes mdeberta’s comparison less controlled.",1]]},
+{id:"n3",x:1330,y:290,c:"step",n:"Step 2c",t:"Launch",p:"One script runs the whole queue",sub:[
+ ["Launcher","stage2_auto.ps1 waits for Stage 1, runs pick_variant.py, and packages the Stage-1 outputs.","Stage-1 runs","Winning variant","The friend does not need to wait up at night."],
+ ["Train each encoder","Smoke test first, then training with up to 3 tries and automatic resume. The winner was B, so roberta_B and mdeberta_B ran.","Configs","Two trained runs","A finished model survives if the next one fails."]]},
+{id:"n4",x:1560,y:480,c:"step",n:"Step 2d",t:"Train roberta · mdeberta",p:"Two encoders, one variant",b:"2.27 h · 5.56 h",sub:[
+ ["roberta_B","Batch 128. Best epoch 3 of 4, stopped by early stopping. 2.27 h.","Pack","roberta_B run","Reached its peak early."],
+ ["mdeberta_B","Batch 64, SentencePiece, max_length 160. Best epoch 2 of 3, stopped by early stopping. 5.56 h.","Pack","mdeberta_B run","Largest model: 278M parameters."],
+ ["Health check","No NaN or Inf and no loss spikes in any run’s 200-step log.","train_log.csv","Stability verdict","Confirms the checkpoints are trustworthy."]]},
+{id:"n5",x:1560,y:800,c:"step",n:"Step 2e",t:"Package and transfer",p:"Zips plus weights, moved by flash drive",sub:[
+ ["Package","package_run_outputs.py refuses unfinished runs (a leftover last.pt). The zips leave out the weights.","Run folders","outputs_to_send/*.zip","Only complete runs travel."],
+ ["Transfer","Results and weights moved to the laptop by flash drive.","Zips, weights","Laptop artifacts/","Weights stay available for the semi-supervised phase."]]},
+{id:"n6",x:1180,y:900,c:"step",n:"Step 2f",t:"Audit and analysis",p:"Verify, then analyze",b:"4 runs audited",sub:[
+ ["Audit","Runs are complete, no last.pt, settings match, the pack fingerprint is identical, ids align, and Macro F1 recomputed from the saved probabilities matches history.csv.","Run folders","[PASS] checks","No analysis starts on a broken run."],
+ ["Analysis","Learning curves, overfitting check, settings table and run-comparison table.","history.csv, train_log.csv","reports/transformer/tables","roberta and mdeberta overfit after their peak. Checkpoint selection avoided it."]]},
+{id:"n7",x:820,y:900,c:"step gate",n:"Gate 2",t:"Primary model",p:"Fixed +0.003 rule vs TookaBERT",b:"tooka_B stays",g:[{l:"roberta",v:-0.00344},{l:"mdeberta",v:0.00096}],sub:[
+ ["The rule","Another encoder replaces the best TookaBERT only if its mean validation Macro F1 is at least 0.003 higher.","Four runs","primary_model.json","Why 0.003: it is a few times the observed noise, and a bigger model or extra pipeline should earn more than a tiny gain."],
+ ["Outcome","roberta is 0.0034 lower. mdeberta is 0.00096 higher (band +0.0055, rec −0.0036) at 2.27× the parameters and 2.70× the time. tooka_B stays primary.","Validation F1","tooka_B","Mixed head results and a high cost do not justify the swap.",1]]},
+{id:"n8",x:460,y:900,c:"step",n:"Step 2g",t:"Test evaluation",p:"Report only, never used for decisions",b:"rec 0.7175 · band 0.6007",sub:[
+ ["Against the baselines","All four transformers beat TF-IDF on both heads and both label views. Paired bootstrap intervals exclude zero.","Probabilities","Comparison tables","The same rows and the same protocol for every model."],
+ ["Primary model numbers","tooka_B test Macro F1 on raw labels: rec 0.7175 and band 0.6007, against TF-IDF 0.6849 and 0.5776.","Test probabilities","stage1_test_metrics.csv","Raw labels are comparable with classmates."],
+ ["Weak spots","The hardest classes are no_idea (F1 0.481) and medium (0.452), the hedged and mixed reviews.","Confusion matrices","Error-analysis targets","Guides the next phase."]]},
+{id:"ghost",x:150,y:990,c:"step ghost",n:"Next",t:"Semi-supervised",p:"rec pseudo-labels, threshold 0.90",sub:[
+ ["Next phase","Pseudo-labels for the rec head with a 0.90 threshold.","tooka_B","Semi-supervised run","Label smoothing caps probabilities near 0.933, so the max(p) distribution should be checked first."]]},
+{id:"c_oof",x:230,y:160,c:"script",t:"step2_run_oof.py",sc:1},
+{id:"c_pack",x:580,y:215,c:"script",t:"make_training_pack.py",sc:1},
+{id:"c_dl",x:760,y:105,c:"script",t:"download_pretrained_models.py",sc:1},
+{id:"c_train",x:990,y:590,c:"script",t:"train_transformer.py",sc:1},
+{id:"c_pick",x:470,y:700,c:"script",t:"pick_variant.py",sc:1},
+{id:"c_auto",x:1330,y:130,c:"script",t:"stage2_auto.ps1",sc:1},
+{id:"c_pk2",x:1750,y:690,c:"script",t:"package_run_outputs.py",sc:1},
+{id:"c_nb",x:820,y:1040,c:"script",t:"notebooks 10 · 11",sc:1}];
+const E=[["s1a","s1b","d"],["s1b","s1c","d"],["s1c","n3","c"],["s1a","h","d"],["h","s1b","x"],["h","n4","x"],["n1","h","d"],["n1","n2","d"],["n2","n3","x"],["n3","n4","x"],["n4","n5","d"],["n5","n6","d"],["n6","n7","d"],["n7","n8","d"],["n8","ghost","c"],
+["c_oof","s1a","k"],["c_pack","s1a","k"],["c_dl","n1","k"],["c_train","h","k"],["c_train","n4","k"],["c_pick","s1c","k"],["c_auto","n3","k"],["c_pk2","n5","k"],["c_nb","n6","k"],["c_nb","n8","k"]];
+const F=[["Tokenizer bug (mdeberta)","Fast tokenizer turned ZWNJ into [UNK] (2.6%). Direct SentencePiece gives 0%."],["Memory limit (mdeberta)","Batch 128 did not fit 16 GB, so batch 64 was used. It doubles the steps per epoch."],["Variant C was not enough","C − B = +0.00028, far below the +0.003 rule. Variant B won."],["TookaBERT hit the epoch cap","Best epoch was 4 of 4, so a fifth epoch might add a little."],["No encoder cleared the bar","roberta was lower. mdeberta was +0.00096 at 2.27× the parameters."],["Warning for semi-supervised","Label smoothing 0.1 caps probability near 0.933, so check max(p) before using a 0.90 threshold."],["Limits","One seed, untuned settings, mdeberta’s different batch size."]];
+const O=[["Code","Training package","src/digikala_review_transformer/training/","Model, loss, data, loop, checkpoint and prediction modules"],["Code","train_transformer.py","scripts/train_transformer.py","Trains from YAML configs, --smoke test, automatic resume"],["Code","pick_variant.py · stage2_auto.ps1","scripts/pick_variant.py · scripts/stage2_auto.ps1","Applies the +0.003 rule and launches Stage 2"],["Code","Other scripts","scripts/{make_training_pack,step2_run_oof,download_pretrained_models,package_run_outputs}.py","Pack, weights, model download, output packaging"],["Code","Configs","configs/transformer/*.yaml","Base settings and per-run overrides"],["Code","Notebooks","notebooks/10_1st_transformer_finetune.ipynb · notebooks/11_all_supervised_finetuned.ipynb","Stage-1 analysis and the full-phase report"],["Weights","tooka_B (primary)","artifacts/transformer_runs/tooka_B/tooka_B_best_model.pt","Best epoch 4, 466.7 MB"],["Weights","Other checkpoints","artifacts/transformer_runs/<run>/<run>_best_model.pt","tooka_C, roberta_B, mdeberta_B"],["Weights","Probabilities and metadata","artifacts/transformer_runs/<run>/{val_probs_best,test_probs}.parquet · run_summary.json · history.csv","Both heads’ probabilities, settings, curves, timing"],["Tables","Decisions and settings","reports/transformer/tables/{primary_model.json,stage1_decision.json,run_comparison.csv,training_settings.csv}","Gate outcomes, run comparison, settings with rationale"],["Tables","Metrics","reports/transformer/tables/stage1_{test_metrics,vs_tfidf,confusion_matrices,per_class_metrics,time_resources,learning_summary}.csv","Test metrics, baseline comparison, confusion, time, curves"],["Figures","Figures","reports/transformer/figures/01–06 *.png","Curves, baselines, confusion matrices, per-class F1, time and memory"]];
+const NOTES={s1a:"Stage 1 starts with weights and a verified data pack.",s1c:"Gate 1: Variant C gained +0.00028, far below +0.003, so B wins.",n1:"Three backbones are downloaded once for identical offline weights.",n2:"Pre-flight found two problems: a tokenizer bug and a memory limit.",n3:"One script chains the decision, smoke tests and training.",n4:"roberta and mdeberta train on the friend’s PC.",n5:"Complete runs are packaged and carried over by flash drive.",n6:"Every run is audited before any analysis.",n7:"Gate 2: no encoder beats tooka_B by +0.003.",n8:"Test results are reported only. tooka_B beats TF-IDF on both heads.",ghost:"Next: semi-supervised learning with 0.90 pseudo-labels."};
+const ORDER=Object.keys(NOTES),M={};N.forEach(n=>M[n.id]=n);
+/* ---- Build nodes ---- */
+N.forEach((n,i)=>{const d=document.createElement("div");d.className="node glass "+n.c;d.id=n.id;d.style.cssText=`left:${n.x}px;top:${n.y}px;--i:${i}`;
+ d.innerHTML=n.sc?n.t:`<div class="n">${n.n}</div><h3>${n.t}</h3><p>${n.p}</p>${n.b?`<span class="badge">${n.b}</span>`:""}`;
+ if(n.sub){d.tabIndex=0;d.setAttribute("role","button");d.setAttribute("aria-label",n.t);d.onclick=()=>dive(n.id);d.onkeydown=e=>{if(e.key==="Enter")dive(n.id)}}
+ d.onmouseenter=()=>hov(n.id,1);d.onmouseleave=()=>hov(n.id,0);st.appendChild(d)});
+/* ---- Wires: anchored on node boxes, recomputed from the DOM ---- */
+function box(id){const e=$("#"+id);return{x:e.offsetLeft,y:e.offsetTop,w:e.offsetWidth*(e.classList.contains("s1")?.96:1)/2,h:e.offsetHeight/2}}
+function anchor(a,b){const dx=b.x-a.x,dy=b.y-a.y,t=Math.min(a.w/Math.abs(dx||1e-9),a.h/Math.abs(dy||1e-9));return{x:a.x+dx*t,y:a.y+dy*t}}
+function wires(){svg.innerHTML=E.map(([a,b,k],i)=>{const A=box(a),B=box(b),p=anchor(A,B),q=anchor(B,A),v=Math.abs(q.y-p.y)>Math.abs(q.x-p.x),m=v?(p.y+q.y)/2:(p.x+q.x)/2;
+ const c=v?`${p.x},${m} ${q.x},${m}`:`${m},${p.y} ${m},${q.y}`;return`<path class="e-${k}" data-a="${a}" data-b="${b}" d="M${p.x},${p.y} C${c} ${q.x},${q.y}"/>`}).join("")}
+function hov(id,on){document.body.classList.toggle("hov",!!on);document.querySelectorAll(".hot").forEach(e=>e.classList.remove("hot"));if(!on)return;
+ $("#"+id).classList.add("hot");svg.querySelectorAll(`[data-a="${id}"],[data-b="${id}"]`).forEach(p=>{p.classList.add("hot");$("#"+p.dataset.a).classList.add("hot");$("#"+p.dataset.b).classList.add("hot")})}
+/* ---- Fit, lenses, story ---- */
+function fit(){st.style.transform=`translate(-50%,-50%) scale(${Math.min(innerWidth/1920,innerHeight/1080)})`}
+addEventListener("resize",fit);fit();wires();
+function lens(l){document.body.dataset.l=l;document.querySelectorAll("#lens button").forEach(b=>b.classList.toggle("on",b.dataset.l===l))}
+document.querySelectorAll("#lens button").forEach(b=>b.onclick=()=>lens(b.dataset.l));
+let si=-1;
+function story(d){if(!document.body.classList.contains("story")&&d===0){si=-1}
+ si=Math.max(0,Math.min(ORDER.length-1,si+d));document.body.classList.add("story");$("#bS").classList.add("on");
+ document.querySelectorAll(".cur").forEach(e=>e.classList.remove("cur"));$("#"+ORDER[si]).classList.add("cur");$("#note").textContent=NOTES[ORDER[si]]}
+function endStory(){document.body.classList.remove("story");$("#bS").classList.remove("on");document.querySelectorAll(".cur").forEach(e=>e.classList.remove("cur"))}
+/* ---- Panels ---- */
+const modal=$("#modal"),drawer=$("#drawer"),vault=$("#vault");
+function closeAll(){[modal,drawer,vault].forEach(p=>p.classList.remove("open"));[modal,drawer,vault].forEach(p=>p.style.display="")}
+function gauge(g){if(!g)return"";const pc=v=>(v+.004)/.008*100;
+ const h=`<div class="gauge"><div class="th" style="left:${pc(.003)}%"><span>+0.003 threshold</span></div><div class="th" style="left:50%;background:rgba(255,255,255,.4);width:2px"></div>${g.map(m=>`<div class="mk" data-v="${pc(m.v)}" style="left:50%"><span>${m.l} ${m.v>0?"+":""}${m.v}</span></div>`).join("")}</div>`;
+ setTimeout(()=>document.querySelectorAll(".mk").forEach(m=>m.style.left=m.dataset.v+"%"),80);return h}
+function dive(id,i=0){endStory();closeAll();const n=M[id],s=n.sub[i];
+ modal.innerHTML=`<button class="x" data-x>Close</button><div class="id">${n.n}</div><h2>${n.t}</h2>
+ <div class="step-row">${n.sub.map((u,j)=>`<button data-i="${j}" class="${j===i?"on":""}">${u[0]}</button>`).join("")}</div>
+ <div class="grid"><div class="main">${s[1]}</div><div><div class="box"><em>Inputs</em>${s[2]}</div><div class="box"><em>Outputs</em>${s[3]}</div><div class="box${s[5]?" f":""}"><em>${s[5]?"Finding":"Why"}</em>${s[4]}</div></div></div>${gauge(n.g)}`;
+ modal.classList.add("open");modal.dataset.id=id}
+modal.onclick=e=>{const b=e.target.closest("button");if(!b)return;if("x"in b.dataset)closeAll();else dive(modal.dataset.id,+b.dataset.i)};
+function toast(t){const e=$("#toast");e.textContent=t;e.style.opacity=1;setTimeout(()=>e.style.opacity=0,1400)}
+function showVault(f="All"){closeAll();const cats=["All",...new Set(O.map(o=>o[0]))];
+ vault.innerHTML=`<button class="x" data-x>Close</button><h2>Phase outputs</h2><div class="step-row" style="margin-top:0">${cats.map(c=>`<button data-f="${c}" class="${c===f?"on":""}">${c}</button>`).join("")}</div>
+ ${O.filter(o=>f==="All"||o[0]===f).map(o=>`<div class="row" data-p="${o[2]}"><b>${o[1]}</b><code>${o[2]}</code><span>${o[3]}</span></div>`).join("")}`;
+ vault.style.display="block";vault.classList.add("open")}
+vault.onclick=e=>{const b=e.target.closest("button"),r=e.target.closest(".row");if(b){if("x"in b.dataset)closeAll();else showVault(b.dataset.f)}else if(r){try{navigator.clipboard.writeText(r.dataset.p)}catch(x){}toast("Path copied")}};
+function showDrawer(){closeAll();drawer.innerHTML=`<button class="x" data-x>Close</button><h2>Findings</h2>${F.map(f=>`<div class="box f"><em>${f[0]}</em>${f[1]}</div>`).join("")}`;drawer.style.display="block";drawer.classList.add("open")}
+drawer.onclick=e=>{if(e.target.closest("[data-x]"))closeAll()};
+$("#bS").onclick=()=>document.body.classList.contains("story")?endStory():story(0);
+$("#bF").onclick=showDrawer;$("#bO").onclick=()=>showVault();
+$("#enter").onclick=()=>{$("#hero").classList.add("gone");st.classList.add("go")};
+addEventListener("keydown",e=>{if(e.key==="Escape"){closeAll();endStory()}
+ else if(e.key==="ArrowRight"&&document.body.classList.contains("story"))story(1);
+ else if(e.key==="ArrowLeft"&&document.body.classList.contains("story"))story(-1);
+ else if("1234".includes(e.key)&&e.key)lens(["flow","code","data","res"][+e.key-1]);
+ else if(e.key==="s"||e.key==="S")$("#bS").click();else if(e.key==="f"||e.key==="F")showDrawer();else if(e.key==="o"||e.key==="O")showVault();
+ else if(e.key==="Enter"&&!$("#hero").classList.contains("gone"))$("#enter").click()});
+</script></body></html>

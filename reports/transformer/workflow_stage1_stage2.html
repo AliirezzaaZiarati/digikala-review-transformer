@@ -43,6 +43,10 @@ body[data-l=res] .badge{opacity:1}
 body.hov .node:not(.hot),body.hov path[data-a]:not(.hot){opacity:.18!important}
 body.story .node:not(.cur){opacity:.2!important}
 body.story .node.cur{box-shadow:0 0 0 3px var(--tq),0 0 80px rgba(45,212,191,.35)}
+/* Results lens: fade out script labels and their connector lines so the result badges read cleanly.
+   Placed after the hover/story rules (same specificity) so they can't bring scripts back. */
+body[data-l=res] .node.script,body[data-l=res] path.e-k[data-a]{opacity:0!important}
+body[data-l=res] .node.script{pointer-events:none}
 #bar{position:absolute;left:0;top:18px;width:1920px;padding:0 40px;display:flex;align-items:center;justify-content:space-between;z-index:5}
 #bar b{font:600 26px var(--serif)}
 .seg{display:flex;gap:6px;padding:6px;border-radius:20px}
@@ -62,6 +66,7 @@ body.story #note{display:block}
 #hero small{position:absolute;left:170px;bottom:56px;font:17px var(--mono);color:var(--mu)}
 #modal{position:absolute;left:110px;top:100px;width:1700px;height:880px;z-index:15;padding:44px 56px;display:none;overflow:auto}
 #modal.open{display:block;animation:pop .35s}
+#modal.open.swap{animation:none}
 @keyframes pop{from{opacity:0;transform:scale(.96)}}
 #modal h2{font:400 66px/1.05 var(--serif)}
 #modal .id{font:18px var(--mono);color:var(--tq)}
@@ -106,9 +111,9 @@ body.story #note{display:block}
 </div>
 <svg id="w"></svg>
 <div id="bar">
- <b>Transformer fine-tuning · workflow</b>
- <div class="seg glass" id="lens"><button data-l="flow" class="on">Flow</button><button data-l="code">Code</button><button data-l="data">Data</button><button data-l="res">Results</button></div>
- <div class="acts"><button id="bS">Story</button><button id="bF">Findings</button><button id="bO">Outputs</button></div>
+<b>Transformer fine-tuning · workflow</b>
+<div class="seg glass" id="lens"><button data-l="flow" class="on">Flow</button><button data-l="code">Code</button><button data-l="data">Data</button><button data-l="res">Results</button></div>
+<div class="acts"><button id="bS">Story</button><button id="bF">Findings</button><button id="bO">Outputs</button></div>
 </div>
 <div id="note" class="glass"></div>
 <div id="keys">Dashed box: friend’s PC · everything else: author’s laptop (Linux, RTX 4060 8 GB) · 1–4 lenses · S story · F findings · O outputs · Esc close</div>
@@ -117,10 +122,11 @@ body.story #note{display:block}
 <div id="vault" class="glass" style="position:absolute;top:100px;height:880px;z-index:15;padding:44px 56px;overflow:auto;display:none"></div>
 <div id="toast" class="glass"></div>
 <div id="hero">
- <h1>One encoder,<br>two <i>heads.</i></h1>
- <p>Fine-tuning Persian Transformers to predict a review’s recommendation status and rating band. Stage 1 tests sample weights on TookaBERT. Stage 2 compares three encoders and picks the primary model.</p>
- <button id="enter">Enter the map</button>
- <small>Digikala review analysis · Project 3</small>
+<h1>One encoder,
+two <i>heads.</i></h1>
+<p>Fine-tuning Persian Transformers to predict a review’s recommendation status and rating band. Stage 1 tests sample weights on TookaBERT. Stage 2 compares three encoders and picks the primary model.</p>
+<button id="enter">Enter the map</button>
+<small>Digikala review analysis · Project 3</small>
 </div>
 </div>
 <script>
@@ -192,16 +198,16 @@ const NOTES={s1a:"Stage 1 starts with weights and a verified data pack.",s1b:"To
 const ORDER=Object.keys(NOTES),M={};N.forEach(n=>M[n.id]=n);
 /* ---- Build nodes ---- */
 N.forEach((n,i)=>{const d=document.createElement("div");d.className="node glass "+n.c;d.id=n.id;d.style.cssText=`left:${(POS[n.id]||[n.x,n.y])[0]}px;top:${(POS[n.id]||[n.x,n.y])[1]}px;--i:${i}`;
- d.innerHTML=n.sc?n.t:`<div class="n">${n.n}</div><h3>${n.t}</h3><p>${n.p}</p>${n.b?`<span class="badge">${n.b}</span>`:""}`;
- if(n.sub){d.tabIndex=0;d.setAttribute("role","button");d.setAttribute("aria-label",n.t);d.onclick=()=>dive(n.id);d.onkeydown=e=>{if(e.key==="Enter")dive(n.id)}}
- d.onmouseenter=()=>hov(n.id,1);d.onmouseleave=()=>hov(n.id,0);st.appendChild(d)});
+d.innerHTML=n.sc?n.t:`<div class="n">${n.n}</div><h3>${n.t}</h3><p>${n.p}</p>${n.b?`<span class="badge">${n.b}</span>`:""}`;
+if(n.sub){d.tabIndex=0;d.setAttribute("role","button");d.setAttribute("aria-label",n.t);d.onclick=()=>dive(n.id);d.onkeydown=e=>{if(e.key==="Enter")dive(n.id)}}
+d.onmouseenter=()=>hov(n.id,1);d.onmouseleave=()=>hov(n.id,0);st.appendChild(d)});
 /* ---- Wires: anchored on node boxes, recomputed from the DOM ---- */
 function box(id){const e=$("#"+id);return{x:e.offsetLeft,y:e.offsetTop,w:e.offsetWidth/2,h:e.offsetHeight/2}}
 function anchor(a,b){const dx=b.x-a.x,dy=b.y-a.y,t=Math.min(a.w/Math.abs(dx||1e-9),a.h/Math.abs(dy||1e-9));return{x:a.x+dx*t,y:a.y+dy*t}}
 function wires(){svg.innerHTML=DEFS+E.map(([a,b,k],i)=>{const A=box(a),B=box(b),p=anchor(A,B),q=anchor(B,A),v=Math.abs(q.y-p.y)>Math.abs(q.x-p.x),m=v?(p.y+q.y)/2:(p.x+q.x)/2;
- const c=v?`${p.x},${m} ${q.x},${m}`:`${m},${p.y} ${m},${q.y}`;return`<path class="e-${k}" data-a="${a}" data-b="${b}" ${k==="k"?"":`marker-end="url(#a-${k})"`} d="M${p.x},${p.y} C${c} ${q.x},${q.y}"/>`}).join("")}
+const c=v?`${p.x},${m} ${q.x},${m}`:`${m},${p.y} ${m},${q.y}`;return`<path class="e-${k}" data-a="${a}" data-b="${b}" ${k==="k"?"":`marker-end="url(#a-${k})"`} d="M${p.x},${p.y} C${c} ${q.x},${q.y}"/>`}).join("")}
 function hov(id,on){document.body.classList.toggle("hov",!!on);document.querySelectorAll(".hot").forEach(e=>e.classList.remove("hot"));if(!on)return;
- $("#"+id).classList.add("hot");svg.querySelectorAll(`[data-a="${id}"],[data-b="${id}"]`).forEach(p=>{p.classList.add("hot");$("#"+p.dataset.a).classList.add("hot");$("#"+p.dataset.b).classList.add("hot")})}
+$("#"+id).classList.add("hot");svg.querySelectorAll(`[data-a="${id}"],[data-b="${id}"]`).forEach(p=>{p.classList.add("hot");$("#"+p.dataset.a).classList.add("hot");$("#"+p.dataset.b).classList.add("hot")})}
 /* ---- Fit, lenses, story ---- */
 function fit(){st.style.transform=`translate(-50%,-50%) scale(${Math.min(innerWidth/1920,innerHeight/1080)})`}
 addEventListener("resize",fit);fit();wires();
@@ -209,26 +215,33 @@ function lens(l){document.body.dataset.l=l;document.querySelectorAll("#lens butt
 document.querySelectorAll("#lens button").forEach(b=>b.onclick=()=>lens(b.dataset.l));
 let si=-1;
 function story(d){if(!document.body.classList.contains("story")&&d===0){si=-1}
- si=Math.max(0,Math.min(ORDER.length-1,si+d));document.body.classList.add("story");$("#bS").classList.add("on");
- document.querySelectorAll(".cur").forEach(e=>e.classList.remove("cur"));$("#"+ORDER[si]).classList.add("cur");$("#note").textContent=NOTES[ORDER[si]]}
+si=Math.max(0,Math.min(ORDER.length-1,si+d));document.body.classList.add("story");$("#bS").classList.add("on");
+document.querySelectorAll(".cur").forEach(e=>e.classList.remove("cur"));$("#"+ORDER[si]).classList.add("cur");$("#note").textContent=NOTES[ORDER[si]]}
 function endStory(){document.body.classList.remove("story");$("#bS").classList.remove("on");document.querySelectorAll(".cur").forEach(e=>e.classList.remove("cur"))}
 /* ---- Panels ---- */
 const modal=$("#modal"),drawer=$("#drawer"),vault=$("#vault");
 function closeAll(){[modal,drawer,vault].forEach(p=>p.classList.remove("open"));[modal,drawer].forEach(p=>p.style.display="");vault.style.display="none"}
-function gauge(g){if(!g)return"";const pc=v=>(v+.004)/.008*100;
- const h=`<div class="gauge"><div class="th" style="left:${pc(.003)}%"><span>+0.003 threshold</span></div><div class="th" style="left:50%;background:rgba(255,255,255,.4);width:2px"></div>${g.map(m=>`<div class="mk" data-v="${pc(m.v)}" style="left:50%"><span>${m.l} ${m.v>0?"+":""}${m.v}</span></div>`).join("")}</div>`;
- setTimeout(()=>document.querySelectorAll(".mk").forEach(m=>m.style.left=m.dataset.v+"%"),80);return h}
-function dive(id,i=0){endStory();closeAll();const n=M[id],s=n.sub[i];
- modal.innerHTML=`<button class="x" data-x>Close</button><div class="id">${n.n}</div><h2>${n.t}</h2>
+/* instant=true: tab switch inside an already-open modal, so markers are placed at once (no re-animation) */
+function gauge(g,instant){if(!g)return"";const pc=v=>(v+.004)/.008*100;
+const h=`<div class="gauge"><div class="th" style="left:${pc(.003)}%"><span>+0.003 threshold</span></div><div class="th" style="left:50%;background:rgba(255,255,255,.4);width:2px"></div>${g.map(m=>`<div class="mk" data-v="${pc(m.v)}" style="left:${instant?pc(m.v):50}%${instant?";transition:none":""}"><span>${m.l} ${m.v>0?"+":""}${m.v}</span></div>`).join("")}</div>`;
+if(!instant)setTimeout(()=>document.querySelectorAll(".mk").forEach(m=>m.style.left=m.dataset.v+"%"),80);return h}
+function dive(id,i=0){endStory();
+/* If this step's window is already open, only swap the content (tab switch): no close/reopen, no pop animation */
+const swap=modal.classList.contains("open")&&modal.dataset.id===id;
+if(!swap)closeAll();
+const n=M[id],s=n.sub[i],top=modal.scrollTop;
+modal.innerHTML=`<button class="x" data-x>Close</button><div class="id">${n.n}</div><h2>${n.t}</h2>
  <div class="step-row">${n.sub.map((u,j)=>`<button data-i="${j}" class="${j===i?"on":""}">${u[0]}</button>`).join("")}</div>
- <div class="grid"><div class="main">${s[1]}</div><div><div class="box"><em>Inputs</em>${s[2]}</div><div class="box"><em>Outputs</em>${s[3]}</div><div class="box${s[5]?" f":""}"><em>${s[5]?"Finding":"Why"}</em>${s[4]}</div></div></div>${gauge(n.g)}`;
- modal.classList.add("open");modal.dataset.id=id}
+ <div class="grid"><div class="main">${s[1]}</div><div><div class="box"><em>Inputs</em>${s[2]}</div><div class="box"><em>Outputs</em>${s[3]}</div><div class="box${s[5]?" f":""}"><em>${s[5]?"Finding":"Why"}</em>${s[4]}</div></div></div>${gauge(n.g,swap)}`;
+modal.classList.toggle("swap",swap);
+modal.classList.add("open");modal.dataset.id=id;
+if(swap)modal.scrollTop=top}
 modal.onclick=e=>{const b=e.target.closest("button");if(!b)return;if("x"in b.dataset)closeAll();else dive(modal.dataset.id,+b.dataset.i)};
 function toast(t){const e=$("#toast");e.textContent=t;e.style.opacity=1;setTimeout(()=>e.style.opacity=0,1400)}
 function showVault(f="All"){closeAll();const cats=["All",...new Set(O.map(o=>o[0]))];
- vault.innerHTML=`<button class="x" data-x>Close</button><h2>Phase outputs</h2><div class="step-row" style="margin-top:0">${cats.map(c=>`<button data-f="${c}" class="${c===f?"on":""}">${c}</button>`).join("")}</div>
- ${O.filter(o=>f==="All"||o[0]===f).map(o=>`<div class="row" data-p="${o[2]}"><b>${o[1]}</b><code>${o[2]}</code><span>${o[3]}</span></div>`).join("")}`;
- vault.style.display="block";vault.classList.add("open")}
+vault.innerHTML=`<button class="x" data-x>Close</button><h2>Phase outputs</h2><div class="step-row" style="margin-top:0">${cats.map(c=>`<button data-f="${c}" class="${c===f?"on":""}">${c}</button>`).join("")}</div>
+${O.filter(o=>f==="All"||o[0]===f).map(o=>`<div class="row" data-p="${o[2]}"><b>${o[1]}</b><code>${o[2]}</code><span>${o[3]}</span></div>`).join("")}`;
+vault.style.display="block";vault.classList.add("open")}
 vault.onclick=e=>{const b=e.target.closest("button"),r=e.target.closest(".row");if(b){if("x"in b.dataset)closeAll();else showVault(b.dataset.f)}else if(r){try{navigator.clipboard.writeText(r.dataset.p)}catch(x){}toast("Path copied")}};
 function showDrawer(){closeAll();drawer.innerHTML=`<button class="x" data-x>Close</button><h2>Findings</h2>${F.map(f=>`<div class="box f"><em>${f[0]}</em>${f[1]}</div>`).join("")}`;drawer.style.display="block";drawer.classList.add("open")}
 drawer.onclick=e=>{if(e.target.closest("[data-x]"))closeAll()};
@@ -236,9 +249,9 @@ $("#bS").onclick=()=>document.body.classList.contains("story")?endStory():story(
 $("#bF").onclick=showDrawer;$("#bO").onclick=()=>showVault();
 $("#enter").onclick=()=>{$("#hero").classList.add("gone");st.classList.add("go")};
 addEventListener("keydown",e=>{if(e.key==="Escape"){closeAll();endStory()}
- else if(e.key==="ArrowRight"&&document.body.classList.contains("story"))story(1);
- else if(e.key==="ArrowLeft"&&document.body.classList.contains("story"))story(-1);
- else if("1234".includes(e.key)&&e.key)lens(["flow","code","data","res"][+e.key-1]);
- else if(e.key==="s"||e.key==="S")$("#bS").click();else if(e.key==="f"||e.key==="F")showDrawer();else if(e.key==="o"||e.key==="O")showVault();
- else if(e.key==="Enter"&&!$("#hero").classList.contains("gone"))$("#enter").click()});
+else if(e.key==="ArrowRight"&&document.body.classList.contains("story"))story(1);
+else if(e.key==="ArrowLeft"&&document.body.classList.contains("story"))story(-1);
+else if("1234".includes(e.key)&&e.key)lens(["flow","code","data","res"][+e.key-1]);
+else if(e.key==="s"||e.key==="S")$("#bS").click();else if(e.key==="f"||e.key==="F")showDrawer();else if(e.key==="o"||e.key==="O")showVault();
+else if(e.key==="Enter"&&!$("#hero").classList.contains("gone"))$("#enter").click()});
 </script></body></html>

@@ -1,90 +1,121 @@
-# Digikala Review Transformer
+# Digikala Review Intelligence
 
-Persian Digikala review analysis from the review `body` only: recommendation status and rating-band classification, a TF-IDF baseline vs a fine-tuned Transformer, and a semi-supervised pseudo-labeling experiment.
+Predict the **recommendation status** and the **rating band** of Persian Digikala reviews from the review `body` only. A TF-IDF baseline is compared with a fine-tuned Transformer, and the models are served through a FastAPI + Streamlit demo. Bootcamp Project 3.
+
+> **Central question:** can the text of a review predict both the recommendation and the ordered rating band, and can unlabeled reviews help?
+
+## Full report
+
+Every phase, decision, table and figure is documented in a Notion hub. An **edit-access link has been shared with the project mentors**; the read-only link is here:
+
+**[Digikala Review Intelligence: Project 3 Hub](https://flowery-mongoose-733.notion.site/Digikala-Review-Intelligence-Project-3-Hub-40a24398907b81779568eb059725a1b3?source=copy_link)**
+
+This README covers only installation and execution. The project has two repositories:
+
+| Repo | Content |
+| --- | --- |
+| `digikala-review-transformer` (this one) | data, analysis, training, reports |
+| [`digikala_reviews_prod`](https://github.com/AliirezzaaZiarati/digikala_reviews_prod) | FastAPI service, Streamlit UI, Docker |
+
+## Tasks
+
+| Task | Target | Classes |
+| --- | --- | --- |
+| A | `recommendation_status` | `recommended`, `not_recommended`, `no_idea` |
+| B | `rating_band` (from `rate`) | `low` < 2.5, `medium` 2.5 to < 4.0, `high` 4.0 to 5.0 |
+
+The only model input is `body`. `rate` is used only to derive the band, and `product_id` only for the product-grouped split.
+
+## Phases
+
+| Phase | Content | Status |
+| --- | --- | --- |
+| P1–P2 | Data ingest, quality gate, full-data descriptive analysis, `max_length` choice | done |
+| P3 | Product-grouped 70/15/15 split, masking, label correction (majority vote per identical body) | done |
+| P4 | TF-IDF + Logistic Regression baseline, label-noise sample weights | done |
+| P5 | Fine-tuned multi-task Transformer (shared encoder, two heads) | done |
+| P6 | FastAPI service + Streamlit UI + Docker | done |
+| P7 | Error analysis (where the models disagree) | see Notion |
+| Semi-supervised | Pseudo-labeling on the recommendation head (threshold 0.90) | pending |
+
+## Results (test set, raw labels, Macro F1)
+
+| Model | Recommendation | Rating band |
+| --- | --- | --- |
+| TF-IDF + LR | 0.6849 | 0.5776 |
+| **TookaBERT (fine-tuned)** | **0.7175** | **0.6007** |
+
+Primary model: `PartAI/TookaBERT-Base`. Also compared: `HooshvareLab/roberta-fa-zwnj-base` and `microsoft/mdeberta-v3-base`. Details, checkpoints and licenses are in the Notion hub.
 
 ## Setup
 
-Requires Linux, an NVIDIA GPU with a recent driver, and [uv](https://docs.astral.sh/uv/).
+Requires Linux, an NVIDIA GPU with a recent driver, and [uv](https://docs.astral.sh/uv/). The Transformer runs used bf16 on a 16 GB GPU.
 
-    uv sync
-    uv run python -c "import torch; print(torch.cuda.is_available())"
+```bash
+uv sync
+uv run python -c "import torch; print(torch.cuda.is_available())"
+```
 
 ## Data
 
-Download the public dataset ([RadeAI/Digikala_comments_products](https://huggingface.co/datasets/RadeAI/Digikala_comments_products)), extract the CSV files into `data/raw/` (create it if missing). Data and model weights are not tracked by Git.
+Download the [public dataset](https://huggingface.co/datasets/RadeAI/Digikala_comments_products) and extract the CSV into `data/raw/`. Data and model weights are not tracked by Git.
+
+## Run
+
+Run the notebooks in order (all code lives in `src/digikala_review_transformer/`; notebooks only call it).
+
+| Notebook | Content |
+| --- | --- |
+| `00_data_ingest_quality_gate` | ingest, schema and quality gate |
+| `01_more_data_ingest_analysis` | descriptive analysis, normalization, `max_length` |
+| `02_fetch_models` | download pretrained encoders |
+| `03_data_split_&_products_analysis` | product-grouped split |
+| `04_label_correction_step1` | label correction (majority vote) |
+| `05_db_cleanup` | DuckDB cleanup |
+| `06_masking_and_artifacts` | 20% masking, split CSVs, `split_manifest.json` |
+| `07_baselines_tfidf` | TF-IDF + LR baseline |
+| `08_emoji_correction` | emoji spacing fix |
+| `09_step2_sample_weights` | label-noise sample weights |
+| `10_1st_transformer_finetune` | Stage 1: TookaBERT, variant B vs C |
+| `11_all_supervised_finetuned` | Stage 2: all encoders, primary model |
+| `12_rearranging_reports` | report organization |
+| `13_error_analysis` | error analysis and explorer |
+
+Long jobs are scripts: `scripts/step2_run_oof.py` (sample weights) and `scripts/train_transformer.py` (YAML configs in `configs/transformer/`).
+
+## Demo (optional, `digikala_reviews_prod`)
+
+FastAPI serves the TF-IDF and Transformer models (chosen in `models.yaml`; weights go in `artifacts/baseline/` and `artifacts/encoders/`). The Streamlit UI only calls the API.
+
+```bash
+uv run uvicorn app.main:app --host 0.0.0.0 --port 8000
+uv run streamlit run ui/app.py
+```
+
+or with Docker:
+
+```bash
+docker compose up --build
+```
+
+## Reproducibility
+
+```python
+SPLIT_SEED = 2026
+MASK_SEED  = "digikala-semi-supervised-v1"
+MASK_RATE  = 0.20
+PSEUDO_LABEL_THRESHOLD = 0.90
+```
+
+Seeds, band thresholds, split strategy and masked counts are in `data/processed/split_manifest.json`. Deviation from the shared protocol: masking is applied after label correction (documented in the report).
 
 ## Layout
 
 | Path | Content |
-|---|---|
-| `src/digikala_review_transformer/` | shared code (config, normalization, model, sample weighting, plots) |
-| `scripts/` | long-running resumable scripts (e.g. `step2_run_oof.py`) |
-| `notebooks/` | 01 descriptive analysis, 02 baselines, 03 fine-tuning, 04 semi-supervised |
-| `data/` | raw, interim, processed (not tracked) |
-| `artifacts/` | saved models, tokenizer, preprocessing, weighting config (not tracked) |
-| `reports/` | figures, metrics and written reports |
-
-Seeds and paths live in `src/digikala_review_transformer/config.py`.
-
-## Sample weights (label-noise weighting)
-
-Every `train_supervised` row gets one weight per head, `w_rec` and `w_band`, in [0.1, 1]. Rows whose recorded label looks suspicious get a low weight but are never removed. Weights are used only in the per-sample training loss on `train_supervised`; validation and test rows have no weights and are never used to compute them.
-
-**Method.** A product-grouped 5-fold out-of-fold (OOF) TF-IDF + logistic regression gives, for each row, the probability of every class. Per head, on rows with a corrected label:
-
-    p_y    = OOF probability of the recorded label
-    m_c    = mean p_y over all OOF rows of class c
-    Q      = min(1, p_y / m_c)
-    C      = 1 - H_norm,  H_norm = -sum_k p_k * ln(p_k) / ln(3)
-    w      = max(0.1, 1 - C * (1 - Q))
-
-Rows with no TF-IDF feature get `w = 1` and are excluded from `m_c`. `w_rec` is NaN where the row has no recommendation label. Only corrected (Step 1) labels are used.
-
-**Notebooks**
-| Phase / Bootcamp Module | Notebook(s) | Key Outputs |
-|---|---|---|
-| `11_transfer_learning_finetuning` (Multi-Task Transformer Fine-Tuning: Stage 1 Variant B vs C & Stage 2 Encoder Comparison) | `notebooks/10_1st_transformer_finetune.ipynb` (Stage 1: TookaBERT B vs C) and Stage 2 4-run analysis notebook | `reports/transformer/tables/` (`primary_model.json`, `stage1_decision.json`, `run_comparison.csv`, `training_settings.csv`, `stage1_test_metrics.csv`, `stage1_vs_tfidf.csv`, `stage1_learning_summary.csv`, ...) & `reports/transformer/figures/01..06_*.png` |
-
-**Outputs** (not tracked by Git).
-
-| File | Content |
-|---|---|
-| `data/processed/step2_sample_weights.parquet` | `id`, `n_features_zero`, and `p_y_*`, `q_*`, `c_*`, `w_*` for `rec` and `band` (float32) |
-| `artifacts/step2_weighting/weights_config.json` | parameters, class means, library versions, fit summaries, artifact checksums |
-| `artifacts/step2_weighting/step2_decision.json` | keep/drop decision record |
-| `reports/step2_weighting/` | tables and figures |
-
-Reference SHA-256:
-
-| File | SHA-256 |
-|---|---|
-| `step2_sample_weights.parquet` | `af4422a0db37e660f32ff5a51c9b7e1c285655275afb859d3eb37a3babc94d87` |
-| `weights_config.json` | `96adb179ca6c61e1aa6c561a33f51bd88a3444ddabdbc4a04a30edf42dec6bac` |
-
-**Reproduce.** Run `notebooks/09_step2_sample_weights.ipynb` cell by cell. The OOF fits run in a separate resumable script, started from the repository root after the notebook has written the params file:
-
-    .venv/bin/python scripts/step2_run_oof.py \
-        --params "$PWD/data/interim/step2_oof/step2_params.json" --n-jobs 3
-
-Peak memory is about 1.4 GB per worker.
-
-**Use in the Transformer loss.** Join the weights to the training rows by `id`. Compute the per-sample loss with `reduction='none'`, multiply by `w`, and divide by the sum of `w` over the valid rows of the batch, not by the batch size. For `rec`, rows with NaN `w_rec` have no label and are masked out. Pseudo-labeled rows use `w = 1`. This is compatible with label smoothing and class weights.
-
-**Results.**
-
-| Head | Rows with w < 0.5 | Mean w | OOF macro-F1 | Validation reference |
-|---|---|---|---|---|
-| rec | 1.04% | 0.9603 | 0.6767 | 0.6874 |
-| band | 0.26% | 0.9781 | 0.5720 | 0.5834 |
-
-Decision: **keep**. The weights are mild, so the effect on the Transformer is expected to be small; it is measured by a controlled comparison of a weighted run against a `w = 1` run with identical settings and seed.
-
-**Limitations.**
-
-- The manual review of 100 rows was qualitative. Row-level verdicts were not recorded and the review thresholds were not evaluated.
-- All OK/WARN thresholds are engineering guesses, not tuned values.
-- OOF macro-F1 is about 0.011 below the validation reference for both heads; the cause was not determined.
-- Logistic-regression probabilities (class-balanced) are not calibrated.
-- `Q` and `C` ignore the order of the rating bands.
-- The TF-IDF vectorizer was fit on all of the training text (no labels).
-- Folds use a single seed.
+| --- | --- |
+| `src/digikala_review_transformer/` | shared code (normalization, labels, split, baseline, training, plots) |
+| `scripts/` | training and resumable long-running scripts |
+| `notebooks/` | analysis notebooks |
+| `configs/transformer/` | run configs (`tooka`, `roberta`, `mdeberta`; variants B/C) |
+| `data/`, `artifacts/` | data, models, tokenizers, weights (not tracked) |
+| `reports/` | figures, tables, interactive explorers |

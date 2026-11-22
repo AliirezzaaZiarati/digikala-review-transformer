@@ -2,7 +2,6 @@ from pathlib import Path
 
 # ==========================================
 # EXCLUDE LIST
-# نام فایل‌ها و پوشه‌هایی که نباید نمایش داده شوند
 # ==========================================
 
 EXCLUDE = [
@@ -17,7 +16,7 @@ EXCLUDE = [
 # ==========================================
 
 ROOT = Path.cwd()
-EXCLUDE_HIDDEN_CONTENTS = True  # پوشه‌های نقطه‌دار فقط با نام نمایش داده شوند
+EXCLUDE_HIDDEN_CONTENTS = True 
 
 
 # ==========================================
@@ -34,7 +33,6 @@ def print_tree(directory: Path, prefix: str = ""):
     except PermissionError:
         return
 
-    # فیلتر کردن موارد Exclude
     entries = [
         item for item in entries
         if item.name not in EXCLUDE
@@ -47,7 +45,6 @@ def print_tree(directory: Path, prefix: str = ""):
         connector = "└── " if is_last else "├── "
         print(prefix + connector + item.name)
 
-        # اگر پوشه مخفی است، محتوای آن را نمایش نده
         if item.is_dir() and not (
             EXCLUDE_HIDDEN_CONTENTS and item.name.startswith(".")
         ):

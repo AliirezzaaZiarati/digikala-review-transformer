@@ -1,0 +1,725 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Error Atlas — Digikala review models</title>
+<style>
+@font-face{font-family:"Vazirmatn";src:local("Vazirmatn"),url("fonts/Vazirmatn-Regular.ttf") format("truetype");font-weight:400;font-display:swap}
+@font-face{font-family:"Vazirmatn";src:local("Vazirmatn Medium"),url("fonts/Vazirmatn-Medium.ttf") format("truetype");font-weight:500;font-display:swap}
+@font-face{font-family:"Vazirmatn";src:local("Vazirmatn Bold"),url("fonts/Vazirmatn-Bold.ttf") format("truetype");font-weight:700;font-display:swap}
+
+:root{
+  --bg1:#EEF4F6;--bg2:#DDEAF0;
+  --ink:#0C1B2E;--ink2:#3F5468;--line:rgba(12,27,46,.14);
+  --glass:rgba(255,255,255,.55);--edge:rgba(255,255,255,.88);
+  --teal:#0E9F8E;--amber:#C98A1B;--green:#2E9B5F;--blue:#2A7DDE;--coral:#D8642F;
+  --m0:#C98A1B;--m1:#0E9F8E;--m2:#2A7DDE;--m3:#23405E;--m4:#7FA3B5;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,"Times New Roman",serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Vazirmatn",sans-serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Mono",Consolas,"Liberation Mono",monospace;
+  --fa:"Vazirmatn",Tahoma,system-ui,sans-serif;
+  --body:clamp(18px,.35vw + 16.6px,21px);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;background:linear-gradient(160deg,var(--bg1),var(--bg2)) fixed}
+body{margin:0;font:400 var(--body)/1.65 var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased}
+section{scroll-margin-top:96px}
+button,input,select{font-family:inherit;color:inherit}
+.wrap{max-width:1380px;margin:0 auto;padding:0 clamp(18px,4vw,56px) 80px}
+
+/* ---------- aurora ---------- */
+.aurora{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.6;animation:drift 30s ease-in-out infinite alternate}
+.b1{width:50vw;height:50vw;left:-12vw;top:-14vw;background:radial-gradient(circle at 35% 35%,#7fe0d2,transparent 70%)}
+.b2{width:44vw;height:44vw;right:-10vw;top:8vh;background:radial-gradient(circle,#9cc7ff,transparent 70%);animation-delay:-9s}
+.b3{width:38vw;height:38vw;left:18vw;bottom:-16vw;background:radial-gradient(circle,#a9e6c0,transparent 70%);animation-delay:-15s}
+.b4{width:28vw;height:28vw;right:16vw;bottom:6vh;background:radial-gradient(circle,#f3d9a0,transparent 70%);animation-delay:-4s;opacity:.45}
+@keyframes drift{to{transform:translate3d(6vw,4vh,0) scale(1.14)}}
+
+/* ---------- glass ---------- */
+.glass{position:relative;background:var(--glass);border:1px solid var(--edge);border-radius:28px;overflow:hidden;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 24px 54px -30px rgba(12,27,46,.38)}
+.glass::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity .35s;
+  background:radial-gradient(420px circle at var(--mx,50%) var(--my,0%),rgba(255,255,255,.85),transparent 62%)}
+.glass:hover::before{opacity:.75}
+.glass>*{position:relative;z-index:1}
+.bf{-webkit-backdrop-filter:blur(18px) saturate(140%);backdrop-filter:blur(18px) saturate(140%)}
+
+/* ---------- type ---------- */
+.label{font:600 13px/1.3 var(--mono);letter-spacing:.15em;text-transform:uppercase;color:var(--ink2);margin:0}
+h1,h2,h3{font-family:var(--serif);font-weight:300;margin:0;letter-spacing:-.02em}
+h1{font-size:clamp(60px,9.6vw,120px);line-height:.95;margin:18px 0 28px}
+h1 em{font-style:italic;color:var(--teal)}
+h2{font-size:clamp(44px,6.4vw,92px);line-height:.98}
+h3{font-size:clamp(28px,3vw,40px);font-weight:400;line-height:1.1;margin:6px 0 18px}
+.lede{font-size:clamp(19px,1.5vw,22px);max-width:36em;color:var(--ink2);margin:0 0 34px}
+.lead{margin:0 0 22px;color:var(--ink2);max-width:42em}
+.foot,.note{font-size:17px;color:var(--ink2);margin:16px 0 0}
+.note{border-top:1px solid var(--line);padding-top:14px}
+.empty{padding:32px;text-align:center;color:var(--ink2)}
+
+/* ---------- top bar ---------- */
+.topbar{position:sticky;top:12px;z-index:60;margin-top:14px;padding:10px 14px 10px 26px;border-radius:999px;
+  display:flex;align-items:center;gap:22px;flex-wrap:wrap;justify-content:space-between}
+.topbar nav{display:flex;gap:22px}
+.topbar nav a{font:600 13px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink2);text-decoration:none;transition:color .2s}
+.topbar nav a:hover{color:var(--teal)}
+@media(max-width:1000px){.topbar nav{display:none}}
+.tools{display:flex;align-items:center;gap:18px}
+.seg{position:relative;display:inline-flex;padding:5px;border-radius:999px;background:rgba(255,255,255,.6);border:1px solid var(--edge)}
+.seg .thumb{position:absolute;top:5px;bottom:5px;left:0;width:0;border-radius:999px;background:var(--ink);transition:transform .4s cubic-bezier(.2,.8,.2,1),width .4s;z-index:0}
+.seg button{position:relative;z-index:1;border:0;background:none;font:600 13px var(--mono);letter-spacing:.12em;text-transform:uppercase;padding:10px 20px;border-radius:999px;cursor:pointer;transition:color .3s}
+.seg button.on{color:#fff}
+.sw{display:inline-flex;align-items:center;gap:10px;cursor:pointer}
+.sw input{position:absolute;opacity:0;pointer-events:none}
+.sw .knob{width:42px;height:24px;border-radius:99px;background:rgba(12,27,46,.18);position:relative;transition:background .3s}
+.sw .knob::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .3s;box-shadow:0 1px 4px rgba(12,27,46,.3)}
+.sw input:checked+.knob{background:var(--teal)}
+.sw input:checked+.knob::after{transform:translateX(18px)}
+.sw input:focus-visible+.knob{outline:2px solid var(--blue);outline-offset:2px}
+
+/* ---------- hero ---------- */
+main{transition:opacity .24s ease,transform .24s ease}
+main.zoomout{opacity:0;transform:scale(1.02)}
+.hero{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(300px,1fr);gap:clamp(24px,4vw,72px);padding:clamp(48px,8vw,110px) 0 40px;align-items:start}
+.hero-r{margin-top:clamp(40px,9vw,140px)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px}
+.kpi{padding:20px 22px;border-radius:24px;display:flex;flex-direction:column;gap:4px}
+.kpi b{font:300 clamp(44px,5vw,70px)/1 var(--serif);letter-spacing:-.03em;margin-top:6px}
+.kpi small{font-size:15px;color:var(--ink2);line-height:1.35}
+.kpi:nth-child(1) b{color:var(--ink)}.kpi:nth-child(2) b{color:var(--coral)}
+.kpi:nth-child(3) b{color:var(--teal)}.kpi:nth-child(4) b{color:var(--amber)}
+.const-card{padding:18px 18px 22px;border-radius:32px}
+.const-card svg{width:100%;height:auto;display:block}
+.const-card figcaption{font-size:16px;color:var(--ink2);padding:0 8px;line-height:1.5}
+.edge .cl{stroke:var(--ink);opacity:.2;stroke-linecap:round;transition:opacity .2s,stroke .2s}
+.edge:hover .cl{opacity:.75;stroke:var(--blue)}
+.edge .hit{stroke:transparent;stroke-width:18;cursor:pointer}
+.nd{stroke:#fff;stroke-width:3;filter:drop-shadow(0 6px 10px rgba(12,27,46,.25))}
+.nl{font:600 12.5px var(--mono);fill:var(--ink);text-anchor:middle}
+.ns{font:11.5px var(--mono);fill:var(--ink2);text-anchor:middle}
+@media(max-width:980px){.hero{grid-template-columns:1fr}.hero-r{margin-top:0}}
+
+/* ---------- scope ---------- */
+.scope{border-radius:30px;padding:0;margin:26px 0 20px}
+.scope summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 28px;flex-wrap:wrap}
+.scope summary::-webkit-details-marker{display:none}
+.scope summary .sn{font-family:var(--serif);font-size:22px;color:var(--ink)}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px 22px;padding:6px 28px 26px;border-top:1px solid var(--line);padding-top:22px}
+.fld{display:flex;flex-direction:column;gap:8px}
+.fld input[type=text],.fld input[type=number],.fld select,.ann-t,.ann-n{width:100%;font:16px var(--sans);padding:10px 12px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.85)}
+.fld input:focus,.fld select:focus,.ann-t:focus,.ann-n:focus{outline:2px solid var(--blue);outline-offset:1px}
+.fld .row2{display:flex;gap:10px}
+.chk{display:flex;gap:10px;align-items:flex-start;font-size:16px;line-height:1.4;cursor:pointer}
+.chk input{width:20px;height:20px;accent-color:var(--teal);margin-top:2px}
+input[type=range]{accent-color:var(--teal);width:100%}
+.btn{border:1px solid var(--edge);background:rgba(255,255,255,.75);border-radius:999px;padding:11px 22px;font:600 13px var(--mono);letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:box-shadow .25s,transform .25s}
+.btn:hover{box-shadow:0 0 0 1.5px var(--teal),0 14px 30px -12px rgba(14,159,142,.55);transform:translateY(-1px)}
+.btn.solid{background:var(--ink);color:#fff;border-color:var(--ink)}
+.btn.warn:hover{box-shadow:0 0 0 1.5px var(--coral),0 14px 30px -12px rgba(216,100,47,.5)}
+
+/* ---------- chapters ---------- */
+.reveal{opacity:0;transform:translateY(26px) scale(.975);transition:opacity .9s ease,transform .9s cubic-bezier(.2,.8,.2,1)}
+.reveal.in{opacity:1;transform:none}
+.chapter{margin-top:clamp(70px,10vw,140px)}
+.chead{display:grid;grid-template-columns:auto 1fr;align-items:end;gap:clamp(16px,3vw,52px);padding-bottom:22px;border-bottom:1px solid var(--line)}
+.bignum{font:300 clamp(110px,17vw,250px)/.78 var(--serif);color:transparent;-webkit-text-stroke:1.5px rgba(14,159,142,.65);letter-spacing:-.04em;user-select:none}
+.c2 .bignum{-webkit-text-stroke-color:rgba(42,125,222,.65)}
+.c3 .bignum{-webkit-text-stroke-color:rgba(201,138,27,.7)}
+.cgrid{display:grid;grid-template-columns:minmax(0,1fr) clamp(250px,25vw,350px);gap:clamp(22px,3.4vw,56px);margin-top:34px}
+.cside{display:flex;flex-direction:column;gap:26px}
+.pull{font:italic 300 clamp(26px,2.3vw,36px)/1.25 var(--serif);margin:0;padding-inline-start:20px;border-inline-start:2px solid var(--teal);letter-spacing:-.01em}
+.c2 .pull{border-color:var(--blue)}.c3 .pull{border-color:var(--amber)}
+.cap{padding:20px 22px;border-radius:22px;font-size:17px;line-height:1.55}
+.cap .label{margin-bottom:8px}
+@media(max-width:980px){.cgrid{grid-template-columns:1fr}.cside{order:-1}}
+.panel{padding:clamp(22px,3vw,38px);border-radius:32px;margin-top:28px}
+
+/* k buttons */
+.kgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:14px}
+.kbtn{text-align:start;border:1px solid var(--edge);background:var(--glass);border-radius:24px;padding:16px 18px 18px;cursor:pointer;display:flex;flex-direction:column;gap:2px;transition:box-shadow .3s,transform .3s,background .3s}
+.kbtn:hover{box-shadow:0 0 0 1.5px rgba(14,159,142,.6),0 18px 36px -18px rgba(14,159,142,.6);transform:translateY(-2px)}
+.kbtn .kn{font:300 68px/1 var(--serif);color:transparent;-webkit-text-stroke:1.4px var(--teal);transition:color .3s}
+.kbtn .kl{font:600 12.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink2);margin-top:6px}
+.kbtn .kc{font-size:20px;font-weight:600}
+.kbtn.on{background:#fff;box-shadow:0 0 0 2px var(--teal),0 24px 44px -20px rgba(14,159,142,.7)}
+.kbtn.on .kn{color:var(--teal)}
+
+/* bars */
+.bar{display:grid;grid-template-columns:minmax(120px,180px) 1fr minmax(120px,160px);gap:16px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
+.bar:last-child{border-bottom:0}
+.bn{font-weight:600;font-size:18px;display:flex;align-items:center;gap:10px}
+.bn em{color:var(--amber);font-style:normal}
+.dot{display:inline-block;width:12px;height:12px;border-radius:50%;flex:none;margin-inline-end:8px}
+.bn .dot{margin:0}
+.bt{height:16px;border-radius:99px;background:rgba(12,27,46,.08);overflow:hidden}
+.bt .fill{display:block;height:100%;border-radius:99px;transition:width .7s cubic-bezier(.2,.8,.2,1)}
+.bv{font:600 15px var(--mono);text-align:end;color:var(--ink2)}
+@media(max-width:640px){.bar{grid-template-columns:1fr;gap:6px}.bv{text-align:start}}
+
+/* leaderboard */
+.mtabs,.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.mtab,.tab{border:1px solid var(--edge);background:rgba(255,255,255,.65);border-radius:999px;padding:10px 18px;font:600 13px var(--mono);letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:box-shadow .25s,background .25s,color .25s}
+.mtab:hover,.tab:hover{box-shadow:0 0 0 1.5px var(--teal),0 10px 24px -12px rgba(14,159,142,.6)}
+.mtab.on,.tab.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tab b{font-weight:700;opacity:.75;margin-inline-start:6px}
+#boardWrap{overflow-x:auto}
+.lrow{display:grid;grid-template-columns:42px minmax(150px,1.1fr) minmax(160px,2fr) repeat(3,minmax(96px,.7fr));gap:14px;align-items:center;padding:13px 0;border-bottom:1px solid var(--line);min-width:700px}
+.lrow.hd{font:600 12.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink2);padding-top:0}
+.lrow .rk{font:300 34px var(--serif);color:var(--ink2)}
+.lrow.top .rk{color:var(--teal)}
+.ln{font-weight:600;font-size:18px;display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px}
+.ln em{font:600 11.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:#fff;background:var(--teal);padding:3px 9px;border-radius:99px;font-style:normal}
+.lv{font-weight:600;font-size:18px;display:flex;flex-direction:column;line-height:1.25}
+.lv small{font:12.5px var(--mono);color:var(--ink2);font-weight:400}
+.lv.hot{color:var(--teal)}
+
+/* duel */
+.selrow{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:end;margin-bottom:26px}
+.selrow .vs{font:italic 300 40px var(--serif);color:var(--ink2);padding-bottom:4px}
+@media(max-width:640px){.selrow{grid-template-columns:1fr}.selrow .vs{display:none}}
+.duel{display:grid;grid-template-columns:1fr minmax(70px,1.3fr) 1fr;align-items:center;gap:10px}
+.node{border-radius:26px;padding:22px;background:rgba(255,255,255,.6);border:1px solid var(--edge);display:flex;flex-direction:column;gap:2px;transition:box-shadow .4s}
+.node b{font-size:20px}
+.node .big{font:300 clamp(54px,6vw,84px)/1 var(--serif);letter-spacing:-.03em}
+.node small{font:12.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink2)}
+.node.win{box-shadow:0 0 0 2px var(--teal),0 0 60px -10px rgba(14,159,142,.6)}
+.wire{position:relative;height:2px;background:linear-gradient(90deg,transparent,rgba(12,27,46,.3),transparent)}
+.pkt{position:absolute;top:-4px;left:0;width:10px;height:10px;border-radius:50%;background:var(--teal);box-shadow:0 0 14px var(--teal);opacity:0;animation:flowR 2.4s linear infinite}
+.pkt:nth-child(2){animation-delay:-.6s}.pkt:nth-child(3){animation-delay:-1.2s}.pkt:nth-child(4){animation-delay:-1.8s}
+.wire.toA .pkt{animation-name:flowL}
+.wire.tie .pkt{animation:none;opacity:.35;left:calc(var(--i)*25% + 10%)}
+@keyframes flowR{0%{left:0;opacity:0}15%{opacity:1}85%{opacity:1}100%{left:calc(100% - 10px);opacity:0}}
+@keyframes flowL{0%{left:calc(100% - 10px);opacity:0}15%{opacity:1}85%{opacity:1}100%{left:0;opacity:0}}
+.verdict{font:300 clamp(24px,2.4vw,34px)/1.25 var(--serif);margin:26px 0 8px}
+.mx{display:grid;grid-template-columns:auto 1fr 1fr;gap:10px;margin-top:22px;align-items:stretch}
+.mx .h{font:600 12.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);display:flex;align-items:center;justify-content:center;text-align:center;padding:4px 8px}
+.mcell{border:1px solid var(--edge);border-radius:22px;padding:18px 20px;cursor:pointer;text-align:start;display:flex;flex-direction:column;gap:2px;transition:box-shadow .3s,transform .3s}
+.mcell b{font:300 clamp(40px,4.4vw,60px)/1 var(--serif)}
+.mcell span{font-size:16px;color:var(--ink2)}
+.mcell:hover{transform:translateY(-2px);box-shadow:0 16px 34px -16px rgba(12,27,46,.45)}
+.mcell.t-ok{background:rgba(46,155,95,.16)}.mcell.t-a{background:rgba(42,125,222,.16)}
+.mcell.t-b{background:rgba(14,159,142,.18)}.mcell.t-bad{background:rgba(216,100,47,.16)}
+.mcell.on{box-shadow:0 0 0 2px var(--ink)}
+
+/* tables */
+.tablebox{margin-top:30px}
+.tscroll{overflow:auto;max-height:min(78vh,920px);border-radius:22px;border:1px solid var(--edge);background:rgba(255,255,255,.55)}
+.tbl{border-collapse:separate;border-spacing:0;width:100%;min-width:1180px}
+.tbl th{position:sticky;top:0;z-index:2;background:rgba(238,244,246,.97);font:600 12.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;text-align:start;padding:14px 12px;border-bottom:1px solid var(--line);color:var(--ink2);white-space:nowrap}
+.tbl td{padding:14px 12px;vertical-align:top;border-bottom:1px solid var(--line)}
+.tbl tr:hover td{background-color:rgba(255,255,255,.5)}
+.c-rev{min-width:380px;width:34%}
+.rv{font:400 18px/1.9 var(--fa);text-align:start;display:-webkit-box;-webkit-line-clamp:3;line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;cursor:zoom-in;unicode-bidi:plaintext}
+.rv.open{display:block;cursor:zoom-out}
+.rid{font:12.5px var(--mono);color:var(--ink2);margin-top:6px}
+.chip{display:inline-block;font:600 12.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:6px 11px;border-radius:999px;background:rgba(42,125,222,.12);color:#1b5fb4;border:1px solid rgba(42,125,222,.32);white-space:nowrap}
+.raw{font:12.5px var(--mono);color:var(--amber);margin-top:6px;font-weight:600}
+.mc{min-width:124px;font-size:15px}
+.mc.ok{background:rgba(46,155,95,.13)}.mc.bad{background:rgba(216,100,47,.14)}
+.pl{font-weight:600;display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;line-height:1.3}
+.mc.ok .mk{color:#1f7a49}.mc.bad .mk{color:#b24e1f}
+.dl{font:700 11.5px var(--mono);background:var(--coral);color:#fff;border-radius:99px;padding:1px 7px}
+.cf{height:4px;border-radius:3px;background:rgba(12,27,46,.1);margin-top:9px;overflow:hidden}
+.cf i{display:block;height:100%}
+.mc.ok .cf i{background:var(--green)}.mc.bad .cf i{background:var(--coral)}
+.cv{font:12.5px var(--mono);color:var(--ink2);margin-top:4px}
+.tbl th.pair{box-shadow:inset 0 -3px 0 var(--blue)}
+.tbl td.pair{box-shadow:inset 1px 0 0 rgba(42,125,222,.55),inset -1px 0 0 rgba(42,125,222,.55)}
+.ann{min-width:210px;display:flex;flex-direction:column;gap:8px}
+.pager{display:flex;align-items:center;justify-content:center;gap:18px;padding:18px 0 0;font:600 13px var(--mono);letter-spacing:.06em;color:var(--ink2);flex-wrap:wrap}
+.pg{border:1px solid var(--edge);background:rgba(255,255,255,.75);border-radius:999px;width:46px;height:46px;font-size:20px;cursor:pointer;transition:box-shadow .25s}
+.pg:hover:not(:disabled){box-shadow:0 0 0 1.5px var(--teal)}
+.pg:disabled{opacity:.35;cursor:default}
+
+/* field notes */
+.ring{display:flex;align-items:center;gap:30px;flex-wrap:wrap}
+.ring .rw{position:relative;width:170px;height:170px;flex:none}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:9}
+.ring .bg{stroke:rgba(12,27,46,.1)}
+.ring .arc{stroke:var(--amber);stroke-linecap:round;stroke-dasharray:339.29;stroke-dashoffset:339.29;transition:stroke-dashoffset .8s cubic-bezier(.2,.8,.2,1)}
+.ring .rc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring .rc b{font:300 56px/1 var(--serif)}
+.ring .rc small{font:12.5px var(--mono);color:var(--ink2);letter-spacing:.1em}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
+footer{margin-top:90px;padding-top:22px;border-top:1px solid var(--line);font-size:16px;color:var(--ink2)}
+
+/* lite + reduced motion */
+.lite .aurora{display:none}
+.lite .bf{-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(255,255,255,.86)}
+.lite .glass{box-shadow:0 1px 0 rgba(255,255,255,.9) inset,0 6px 16px -10px rgba(12,27,46,.3)}
+.lite .glass::before{display:none}
+.lite *,.lite *::before{animation:none!important}
+.lite .reveal{opacity:1;transform:none;transition:none}
+.lite main{transition:none}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<div class="aurora" aria-hidden="true"><i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i><i class="blob b4"></i></div>
+
+<div class="wrap">
+  <header class="topbar glass bf">
+    <span class="label">Error Atlas</span>
+    <nav>
+      <a href="#c1">01 Consensus</a><a href="#c2">02 Duel</a><a href="#c3">03 Field notes</a>
+    </nav>
+    <div class="tools">
+      <div class="seg" id="headSeg" role="tablist" aria-label="Classification head">
+        <span class="thumb"></span>
+        <button data-head="rec" class="on" role="tab">Recommendation</button>
+        <button data-head="band" role="tab">Rating band</button>
+      </div>
+      <label class="sw" title="Turns off blur, glow and motion for weak GPUs / projectors">
+        <input type="checkbox" id="lite"><span class="knob"></span><span class="label">Lite effects</span>
+      </label>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero reveal">
+      <div>
+        <p class="label">Digikala reviews · test split · error analysis</p>
+        <h1>Where the<br>models <em>disagree</em></h1>
+        <p class="lede">Every test review that at least one model got wrong, laid out so you can see who rescued whom, which texts fooled everybody, and which model really earns its keep on the hard cases.</p>
+        <div class="kpis">
+          <div class="kpi glass"><span class="label">Error rows in scope</span><b id="k1">0</b><small id="k1s"></small></div>
+          <div class="kpi glass"><span class="label">Fooled every model</span><b id="k2">0</b><small id="k2s"></small></div>
+          <div class="kpi glass"><span class="label">Only one model right</span><b id="k3">0</b><small id="k3s"></small></div>
+          <div class="kpi glass"><span class="label">Likely label noise</span><b id="k4">0</b><small id="k4s"></small></div>
+        </div>
+      </div>
+      <aside class="hero-r">
+        <figure class="const-card glass bf" style="margin:0">
+          <svg id="const" viewBox="0 0 400 330" role="img" aria-label="Model constellation"></svg>
+          <figcaption><span class="label">Constellation</span><br>Node size = lone saves. Line weight = how often two models disagree. Click a line to open that duel.</figcaption>
+        </figure>
+        <p class="note">Margin note — this file only contains rows where at least one model failed. Rankings below compare models on <em>hard cases</em>, not on the whole test set.</p>
+      </aside>
+    </section>
+
+    <details class="scope glass bf reveal" id="scope" open>
+      <summary>
+        <span class="label">Scope</span>
+        <span class="sn" id="scopeNote"></span>
+        <span class="label">Every number and table below respects these filters</span>
+      </summary>
+      <div class="fgrid">
+        <div class="fld"><span class="label">True class</span><select id="fTrue"></select></div>
+        <div class="fld"><span class="label">A model wrongly predicted</span><select id="fWrong"></select></div>
+        <div class="fld"><span class="label">Text contains</span><input type="text" id="fQ" placeholder="e.g. نه، ولی، متاسفانه" dir="auto"></div>
+        <div class="fld"><span class="label">Length (characters)</span>
+          <div class="row2"><input type="number" id="fMin" min="0" placeholder="min"><input type="number" id="fMax" min="0" placeholder="max"></div></div>
+        <div class="fld"><label class="chk"><input type="checkbox" id="fConfOn"><span>Some wrong model was at least this confident: <b id="fConfV">0.90</b></span></label>
+          <input type="range" id="fConf" min="0.5" max="0.99" step="0.01" value="0.9"></div>
+        <div class="fld" id="fDistWrap" hidden><span class="label">Ordinal distance</span>
+          <select id="fDist"><option value="">Any</option><option value="2">Has a 2-step error (low ↔ high)</option></select></div>
+        <div class="fld">
+          <label class="chk"><input type="checkbox" id="fStep1"><span>Label changed by Step 1 (corrected ≠ raw)</span></label>
+          <label class="chk"><input type="checkbox" id="fNoise"><span>Likely label noise: every model wrong, same guess, mean confidence ≥ 0.80</span></label>
+          <label class="chk"><input type="checkbox" id="fMine"><span>Only rows I labeled</span></label>
+        </div>
+        <div class="fld" style="justify-content:flex-end"><button class="btn" id="fReset" type="button">Reset filters</button></div>
+      </div>
+    </details>
+
+    <!-- ===================== 01 ===================== -->
+    <section class="chapter c1 reveal" id="c1">
+      <div class="chead">
+        <div class="bignum">01</div>
+        <div><p class="label">Chapter · Consensus</p><h2>Who saw it<br>right?</h2></div>
+      </div>
+      <div class="cgrid">
+        <div class="cmain">
+          <p class="lead">Choose how many models got a review right. The bars show who was in that club. Choose “1 right” to meet the lone saviors: the model that cracked a case everyone else failed.</p>
+          <div class="kgrid" id="kgrid"></div>
+          <div class="panel glass bf">
+            <p class="label" id="c1Label"></p>
+            <h3 id="c1Title"></h3>
+            <div id="c1Bars"></div>
+            <p class="foot" id="c1Foot"></p>
+          </div>
+          <div class="tablebox" id="t1" data-key="t1"></div>
+          <div class="panel glass bf">
+            <p class="label">Overall ranking · error rows only</p>
+            <h3>Who is strongest across every hard case?</h3>
+            <div class="mtabs" id="mtabs">
+              <button class="mtab on" data-metric="weighted">Hardness score</button>
+              <button class="mtab" data-metric="unique">Lone saves</button>
+              <button class="mtab" data-metric="correct">Correct</button>
+            </div>
+            <div id="boardWrap"><div id="board"></div></div>
+          </div>
+        </div>
+        <aside class="cside">
+          <p class="pull" id="q1"></p>
+          <div class="cap glass"><p class="label">Hardness score</p>A correct answer earns 1 ÷ (number of models that got the row right). Solving a row only you can solve is worth 1.0; a row four models solved is worth 0.25.</div>
+          <p class="note">Margin note — “Correct” alone just mirrors error counts. Lone saves and the hardness score reward the model that wins where others fail.</p>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ===================== 02 ===================== -->
+    <section class="chapter c2 reveal" id="c2">
+      <div class="chead">
+        <div class="bignum">02</div>
+        <div><p class="label">Chapter · Duel</p><h2>Two models,<br>one verdict</h2></div>
+      </div>
+      <div class="cgrid">
+        <div class="cmain">
+          <div class="selrow">
+            <div class="fld"><span class="label">Model A</span><select id="selA"></select></div>
+            <span class="vs">vs</span>
+            <div class="fld"><span class="label">Model B</span><select id="selB"></select></div>
+          </div>
+          <div class="panel glass bf" style="margin-top:0">
+            <div class="duel">
+              <div class="node" id="nodeA"><small>Model A · lone wins</small><b id="nameA"></b><span class="big" id="winA">0</span></div>
+              <div class="wire" id="wire"><i class="pkt" style="--i:0"></i><i class="pkt" style="--i:1"></i><i class="pkt" style="--i:2"></i><i class="pkt" style="--i:3"></i></div>
+              <div class="node" id="nodeB"><small>Model B · lone wins</small><b id="nameB"></b><span class="big" id="winB">0</span></div>
+            </div>
+            <p class="verdict" id="verdict"></p>
+            <div class="mx" id="mx"></div>
+          </div>
+          <div class="tablebox" style="margin-top:34px">
+            <div class="tabs" id="tabs"></div>
+            <div id="t2" class="tablebox" data-key="t2" style="margin-top:0"></div>
+          </div>
+        </div>
+        <aside class="cside">
+          <p class="pull" id="q2"></p>
+          <div class="cap glass"><p class="label">McNemar test</p>It looks only at rows where exactly one of the two models was right and asks whether the split is more lopsided than a fair coin. Exact for fewer than 25 disagreements, χ² with continuity correction otherwise.</div>
+          <p class="note">Margin note — “Both wrong · different guesses” is where the rating band gets interesting: two models failing in two different directions.</p>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ===================== 03 ===================== -->
+    <section class="chapter c3 reveal" id="c3">
+      <div class="chead">
+        <div class="bignum">03</div>
+        <div><p class="label">Chapter · Field notes</p><h2>Read the<br>errors</h2></div>
+      </div>
+      <div class="cgrid">
+        <div class="cmain">
+          <p class="lead">Label rows in any table above with an error type and an optional note. Labels live in this browser (localStorage) and cover both heads. Export them as CSV for the report.</p>
+          <div class="panel glass bf" style="margin-top:0">
+            <div class="ring">
+              <div class="rw">
+                <svg viewBox="0 0 120 120"><circle class="bg" cx="60" cy="60" r="54"/><circle class="arc" id="ringArc" cx="60" cy="60" r="54"/></svg>
+                <div class="rc"><b id="ringN">0</b><small>of 20 labeled</small></div>
+              </div>
+              <div><p class="label">Project requirement</p><h3 style="margin:6px 0 4px">At least 20 analyzed errors</h3><p class="foot" id="ringSub" style="margin:0"></p>
+                <div class="actions"><button class="btn solid" id="exportBtn" type="button">Export labels (CSV)</button><button class="btn warn" id="clearBtn" type="button">Clear all labels</button></div>
+              </div>
+            </div>
+            <div style="margin-top:28px" id="typeBars"></div>
+          </div>
+        </div>
+        <aside class="cside">
+          <p class="pull">A model’s mistake is a hypothesis. Reading the text is the experiment.</p>
+          <div class="cap glass"><p class="label">Suggested workflow</p>Use “Likely label noise” to find rows where the label may be wrong, then “Only one model right” to find where fine-tuning really helped.</div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer>Descriptive analysis on the test split only. Use it to understand the models, never to select a model or tune a threshold.</footer>
+</div>
+
+<script>
+const DATA = /*__DATA__*/null;
+(()=>{
+'use strict';
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const MODELS=DATA.models, M=MODELS.length;
+const COL=MODELS.map((_,i)=>`var(--m${i%5})`);
+const LS_ANN='errAtlas.ann.v1', LS_LITE='errAtlas.lite';
+const TYPES=['Negation','Sarcasm / irony','Very short text','Mixed opinion','Spelling / slang','Duplicate text','Contradictory label','Rating-band boundary','Classical vs fine-tuned gap','Finglish / Latin script','Other'];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=n=>Math.round(n).toLocaleString('en-US');
+const pct=(a,b)=>b?(100*a/b).toFixed(1)+'%':'—';
+const nm=s=>String(s).replace(/_/g,' ');
+const isLite=()=>document.documentElement.classList.contains('lite');
+const debounce=(f,ms)=>{let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>f(...a),ms)}};
+
+const state={head:'rec',k:1,metric:'weighted',mA:0,mB:Math.min(1,M-1),tab:'onlyA',
+  f:{true:'',wrongAs:'',q:'',min:'',max:'',confOn:false,conf:.9,step1:false,noise:false,dist:'',mine:false}};
+let ann={rec:{},band:{}};
+try{const s=JSON.parse(localStorage.getItem(LS_ANN)||'null');if(s)ann={rec:s.rec||{},band:s.band||{}}}catch(e){}
+const saveAnn=()=>{try{localStorage.setItem(LS_ANN,JSON.stringify(ann))}catch(e){}};
+const cur=()=>DATA.heads[state.head];
+let scope=[];
+
+/* ---------- prep ---------- */
+for(const h of Object.keys(DATA.heads)){
+  const H=DATA.heads[h]; H.ordinal=(h==='band');
+  H._rows=H.rows.map(([id,body,y,yr,p,c])=>{
+    const ok=p.map(v=>v===y); const nc=ok.reduce((s,v)=>s+(v?1:0),0);
+    let dist=0; p.forEach(v=>{dist=Math.max(dist,Math.abs(v-y))});
+    const same=p.every(v=>v===p[0]); const mc=c.reduce((s,v)=>s+v,0)/c.length;
+    return{id,body,y,yr,p,c,ok,nc,len:body.length,dist,noise:nc===0&&same&&mc>=.8};
+  });
+  H.rows=null;
+}
+
+/* ---------- stats ---------- */
+function erfc(x){const t=1/(1+.3275911*x);const y=t*(.254829592+t*(-.284496736+t*(1.421413741+t*(-1.453152027+t*1.061405429))));return y*Math.exp(-x*x)}
+function mcnemar(b,c){const n=b+c;if(!n)return 1;
+  if(n<25){let s=0,C=1;for(let i=0;i<=Math.min(b,c);i++){s+=C;C=C*(n-i)/(i+1)}return Math.min(1,2*s/Math.pow(2,n))}
+  const chi=Math.pow(Math.max(0,Math.abs(b-c)-1),2)/n;return erfc(Math.sqrt(chi/2))}
+const fmtP=p=>p<.001?'< 0.001':p.toFixed(3);
+function modelStats(S){return MODELS.map((_,j)=>{let c=0,u=0,w=0;for(const r of S){if(r.ok[j]){c++;if(r.nc===1)u++;if(r.nc>=1)w+=1/r.nc}}return{j,c,u,w}})}
+
+/* ---------- scope ---------- */
+function inScope(r){
+  const f=state.f,H=cur();
+  if(f.true!==''&&r.y!==+f.true)return false;
+  if(f.wrongAs!==''&&!r.p.some((v,j)=>!r.ok[j]&&v===+f.wrongAs))return false;
+  if(f.q&&!r.body.toLowerCase().includes(f.q))return false;
+  if(f.min!==''&&r.len<+f.min)return false;
+  if(f.max!==''&&r.len>+f.max)return false;
+  if(f.confOn&&!r.c.some((v,j)=>!r.ok[j]&&v>=f.conf))return false;
+  if(f.step1&&!(r.yr>=0&&r.yr!==r.y))return false;
+  if(f.noise&&!r.noise)return false;
+  if(f.dist==='2'&&H.ordinal&&r.dist<2)return false;
+  if(f.mine){const a=ann[state.head][r.id];if(!(a&&(a.t||a.n)))return false}
+  return true;
+}
+
+/* ---------- widgets ---------- */
+function setNum(el,v){
+  if(RM||isLite()){el.textContent=fmt(v);el._v=v;return}
+  const from=el._v||0,t0=performance.now(),id=el._id=(el._id||0)+1;el._v=v;
+  (function step(t){if(el._id!==id)return;const k=Math.min(1,(t-t0)/500),e=1-Math.pow(1-k,3);
+    el.textContent=fmt(from+(v-from)*e);if(k<1)requestAnimationFrame(step)})(t0);
+}
+const barRow=(label,color,w,val,star)=>`<div class="bar"><span class="bn"><i class="dot" style="background:${color}"></i>${esc(label)}${star?' <em>★</em>':''}</span><span class="bt"><i class="fill" style="width:${Math.max(0,Math.min(100,w)).toFixed(1)}%;background:${color}"></i></span><span class="bv">${val}</span></div>`;
+
+/* ---------- tables ---------- */
+const tables={};
+function mountTable(key,el,rows,pair,sig){
+  const t=tables[key]||(tables[key]={el,page:0,sig:''});
+  if(t.sig!==sig){t.page=0;t.sig=sig}
+  t.rows=rows;t.pair=pair||[];drawTable(t);
+}
+function rowHTML(r,t,H){
+  const A=ann[state.head][r.id]||{t:'',n:''};
+  const changed=r.yr>=0&&r.yr!==r.y;
+  let h=`<tr><td><div class="rv" dir="auto" title="Click to expand">${esc(r.body)}</div><div class="rid">id ${esc(r.id)} · ${fmt(r.len)} chars</div></td>`;
+  h+=`<td><span class="chip">${esc(nm(H.classes[r.y]))}</span>${changed?`<div class="raw">raw: ${esc(nm(H.classes[r.yr]))}</div>`:''}</td>`;
+  MODELS.forEach((m,j)=>{
+    const ok=r.ok[j],d=H.ordinal&&!ok?`<b class="dl">Δ${Math.abs(r.p[j]-r.y)}</b>`:'';
+    h+=`<td class="mc ${ok?'ok':'bad'}${t.pair.includes(j)?' pair':''}"><div class="pl"><span class="mk">${ok?'✓':'✗'}</span>${esc(nm(H.classes[r.p[j]]))}${d}</div><div class="cf"><i style="width:${(r.c[j]*100).toFixed(0)}%"></i></div><div class="cv">conf ${r.c[j].toFixed(2)}</div></td>`;
+  });
+  h+=`<td><div class="ann"><select class="ann-t" data-id="${esc(r.id)}"><option value="">— error type —</option>${TYPES.map(x=>`<option${A.t===x?' selected':''}>${esc(x)}</option>`).join('')}</select><input class="ann-n" dir="auto" data-id="${esc(r.id)}" placeholder="note" value="${esc(A.n)}"></div></td></tr>`;
+  return h;
+}
+function drawTable(t){
+  const H=cur(),per=40,pages=Math.max(1,Math.ceil(t.rows.length/per));
+  t.page=Math.min(Math.max(0,t.page),pages-1);
+  const a=t.page*per,slice=t.rows.slice(a,a+per);
+  let h=`<div class="tscroll"><table class="tbl"><thead><tr><th class="c-rev">Review</th><th>True</th>`;
+  MODELS.forEach((m,j)=>h+=`<th class="${t.pair.includes(j)?'pair':''}"><i class="dot" style="background:${COL[j]}"></i>${esc(m)}</th>`);
+  h+=`<th>Error type &amp; note</th></tr></thead><tbody>`;
+  h+=slice.length?slice.map(r=>rowHTML(r,t,H)).join(''):`<tr><td colspan="${M+3}" class="empty">No rows in this slice. Loosen the scope filters or pick another group.</td></tr>`;
+  h+=`</tbody></table></div><div class="pager"><button class="pg" data-pg="-1" ${t.page===0?'disabled':''} aria-label="Previous page">←</button><span>Rows ${t.rows.length?a+1:0}–${Math.min(a+per,t.rows.length)} of ${fmt(t.rows.length)} · page ${t.page+1}/${pages}</span><button class="pg" data-pg="1" ${t.page>=pages-1?'disabled':''} aria-label="Next page">→</button></div>`;
+  t.el.innerHTML=h;
+}
+
+/* ---------- renderers ---------- */
+function renderKPIs(){
+  const n=scope.length,H=cur(),tot=H._rows.length;
+  const c0=scope.filter(r=>r.nc===0).length,c1=scope.filter(r=>r.nc===1).length,cn=scope.filter(r=>r.noise).length;
+  setNum($('#k1'),n);$('#k1s').textContent=`of ${fmt(tot)} error rows · ${H.label} head`;
+  setNum($('#k2'),c0);$('#k2s').textContent=`${pct(c0,n)} of scope · all ${M} wrong`;
+  setNum($('#k3'),c1);$('#k3s').textContent=`${pct(c1,n)} of scope · lone saviors`;
+  setNum($('#k4'),cn);$('#k4s').textContent=`${pct(cn,n)} of scope · confident unanimous miss`;
+  $('#scopeNote').textContent=`${fmt(n)} of ${fmt(tot)} rows in scope`;
+}
+function renderConst(){
+  const S=scope,cx=200,cy=150,R=100,st=modelStats(S),maxU=Math.max(1,...st.map(s=>s.u));
+  const pos=MODELS.map((_,i)=>{const a=-Math.PI/2+i*2*Math.PI/M;return{x:cx+R*Math.cos(a),y:cy+R*Math.sin(a),a}});
+  const edges=[];let maxD=1;
+  for(let a=0;a<M;a++)for(let b=a+1;b<M;b++){let d=0;for(const r of S)if(r.ok[a]!==r.ok[b])d++;edges.push({a,b,d});maxD=Math.max(maxD,d)}
+  let h='';
+  edges.forEach(e=>{const p=pos[e.a],q=pos[e.b];
+    h+=`<g class="edge"><line class="cl" x1="${p.x}" y1="${p.y}" x2="${q.x}" y2="${q.y}" stroke-width="${(1+7*e.d/maxD).toFixed(2)}"/><line class="hit" data-a="${e.a}" data-b="${e.b}" x1="${p.x}" y1="${p.y}" x2="${q.x}" y2="${q.y}"><title>${esc(MODELS[e.a])} vs ${esc(MODELS[e.b])}: ${fmt(e.d)} disagreements</title></line></g>`});
+  pos.forEach((p,i)=>{const r=9+22*Math.sqrt(st[i].u/maxU),lx=cx+(R+r+26)*Math.cos(p.a),ly=cy+(R+r+26)*Math.sin(p.a)*0.92+4;
+    h+=`<circle class="nd" cx="${p.x}" cy="${p.y}" r="${r.toFixed(1)}" style="fill:${COL[i]}"><title>${esc(MODELS[i])}: ${fmt(st[i].u)} lone saves</title></circle><text class="nl" x="${lx.toFixed(1)}" y="${ly.toFixed(1)}">${esc(MODELS[i])}</text><text class="ns" x="${lx.toFixed(1)}" y="${(ly+15).toFixed(1)}">${fmt(st[i].u)} lone saves</text>`});
+  $('#const').innerHTML=h;
+}
+function renderBoard(){
+  const S=scope,n=S.length,st=modelStats(S),key={weighted:'w',unique:'u',correct:'c'}[state.metric];
+  st.sort((a,b)=>b[key]-a[key]);const mx=Math.max(1e-9,...st.map(s=>s[key]));
+  $$('#mtabs .mtab').forEach(b=>b.classList.toggle('on',b.dataset.metric===state.metric));
+  let h=`<div class="lrow hd"><span>#</span><span>Model</span><span></span><span>Correct</span><span>Lone saves</span><span>Hardness</span></div>`;
+  st.forEach((s,i)=>{h+=`<div class="lrow${i===0?' top':''}"><span class="rk">${i+1}</span><span class="ln"><i class="dot" style="background:${COL[s.j]}"></i>${esc(MODELS[s.j])}${i===0&&s[key]>0?' <em>★ strongest</em>':''}</span><span class="bt"><i class="fill" style="width:${(100*s[key]/mx).toFixed(1)}%;background:${COL[s.j]}"></i></span><span class="lv${key==='c'?' hot':''}">${fmt(s.c)}<small>${pct(s.c,n)}</small></span><span class="lv${key==='u'?' hot':''}">${fmt(s.u)}<small>${pct(s.u,n)}</small></span><span class="lv${key==='w'?' hot':''}">${s.w.toFixed(1)}<small>pts</small></span></div>`});
+  $('#board').innerHTML=n?h:'<p class="empty">No rows in scope.</p>';
+}
+function renderC1(){
+  const H=cur(),S=scope,n=S.length,byK=Array.from({length:M+1},()=>[]);
+  S.forEach(r=>byK[r.nc].push(r));
+  if(state.k>=M)state.k=Math.min(1,M-1);
+  const k=state.k,g=byK[k];
+  $('#kgrid').innerHTML=Array.from({length:M},(_,i)=>`<button class="kbtn${i===k?' on':''}" data-k="${i}"><span class="kn">${i}</span><span class="kl">${i===0?'none right':i===1?'only 1 right':i+' right'}</span><span class="kc">${fmt(byK[i].length)}</span></button>`).join('');
+  let bars='',foot='',quote='',title='',label='';
+  if(!g.length){bars='<p class="empty">No rows in this slice.</p>';quote='Nothing here — loosen the scope.'}
+  else if(k===0){
+    label='Rows nobody got right';title='True class of the unanimous misses';
+    const cnt=H.classes.map((_,i)=>g.filter(r=>r.y===i).length);
+    bars=H.classes.map((c,i)=>barRow(nm(c),'var(--coral)',100*cnt[i]/g.length,`${pct(cnt[i],g.length)} · ${fmt(cnt[i])}`)).join('');
+    foot='Nobody was right. A unanimous, confident miss often points at the label rather than the models — try the “Likely label noise” filter.';
+    const nz=g.filter(r=>r.noise).length;
+    quote=`${fmt(g.length)} reviews (${pct(g.length,n)}) fooled every model; ${fmt(nz)} of them look like label noise.`;
+  }else{
+    label=k===1?'The lone saviors':`Membership among the ${k} correct models`;
+    title=k===1?'Who cracked what everyone else missed?':`Who was in the club of ${k}?`;
+    const rm=MODELS.map((m,j)=>({m,j,c:g.filter(r=>r.ok[j]).length})).sort((a,b)=>b.c-a.c);
+    bars=rm.map((o,i)=>barRow(o.m,COL[o.j],100*o.c/g.length,`${pct(o.c,g.length)} · ${fmt(o.c)}`,i===0&&o.c>0)).join('');
+    foot=k===1?'Shares add up to 100%: every row has exactly one savior.':`Shares add up to ${k*100}%: every row has exactly ${k} correct models.`;
+    quote=k===1?`When only one model was right, it was ${rm[0].m} ${pct(rm[0].c,g.length)} of the time.`
+      :`Among rows with exactly ${k} correct models, ${rm[0].m} made the cut ${pct(rm[0].c,g.length)} of the time.`;
+  }
+  $('#c1Label').textContent=label;$('#c1Title').textContent=title;$('#c1Bars').innerHTML=bars;$('#c1Foot').textContent=foot;$('#q1').textContent=quote;
+  mountTable('t1',$('#t1'),g,[],`c1|${state.head}|${k}`);
+  renderBoard();
+}
+function renderC2(){
+  const A=state.mA,B=state.mB,H=cur();
+  const cl={onlyA:[],onlyB:[],diff:[],same:[],both:[]};
+  scope.forEach(r=>{const a=r.ok[A],b=r.ok[B];
+    if(a&&b)cl.both.push(r);else if(a)cl.onlyA.push(r);else if(b)cl.onlyB.push(r);else(r.p[A]===r.p[B]?cl.same:cl.diff).push(r)});
+  const bA=cl.onlyA.length,cB=cl.onlyB.length,p=mcnemar(bA,cB),sig=p<.05&&bA!==cB;
+  const win=bA>cB?A:cB>bA?B:-1;
+  $('#nameA').textContent=MODELS[A];$('#nameB').textContent=MODELS[B];
+  $('#nameA').style.color=COL[A];$('#nameB').style.color=COL[B];
+  setNum($('#winA'),bA);setNum($('#winB'),cB);
+  $('#nodeA').classList.toggle('win',sig&&win===A);$('#nodeB').classList.toggle('win',sig&&win===B);
+  const w=$('#wire');w.className='wire'+(!sig?' tie':win===A?' toA':'');
+  const v=!bA&&!cB?'These two models never split on this scope.'
+    :sig?`${MODELS[win]} is the stronger model here: ${fmt(Math.max(bA,cB))} lone wins against ${fmt(Math.min(bA,cB))} (McNemar p ${fmtP(p)}).`
+    :`No clear winner: ${fmt(bA)} vs ${fmt(cB)} lone wins (McNemar p ${fmtP(p)}).`;
+  $('#verdict').textContent=v;$('#q2').textContent=v;
+  const tab=k=>state.tab===k?' on':'';
+  $('#mx').innerHTML=`<span></span><span class="h">${esc(MODELS[B])} right</span><span class="h">${esc(MODELS[B])} wrong</span>
+    <span class="h">${esc(MODELS[A])} right</span>
+    <button class="mcell t-ok${tab('both')}" data-tab="both"><b>${fmt(cl.both.length)}</b><span>both right</span></button>
+    <button class="mcell t-a${tab('onlyA')}" data-tab="onlyA"><b>${fmt(bA)}</b><span>only ${esc(MODELS[A])}</span></button>
+    <span class="h">${esc(MODELS[A])} wrong</span>
+    <button class="mcell t-b${tab('onlyB')}" data-tab="onlyB"><b>${fmt(cB)}</b><span>only ${esc(MODELS[B])}</span></button>
+    <button class="mcell t-bad${state.tab==='diff'||state.tab==='same'?' on':''}" data-tab="diff"><b>${fmt(cl.diff.length+cl.same.length)}</b><span>both wrong</span></button>`;
+  const defs=[['onlyA',`Only ${MODELS[A]} right`],['onlyB',`Only ${MODELS[B]} right`],['diff','Both wrong · different guesses'],['same','Both wrong · same guess'],['both','Both right (others failed)']];
+  $('#tabs').innerHTML=defs.map(([k,l])=>`<button class="tab${state.tab===k?' on':''}" data-tab="${k}">${esc(l)}<b>${fmt(cl[k].length)}</b></button>`).join('');
+  mountTable('t2',$('#t2'),cl[state.tab],[A,B],`c2|${state.head}|${A}|${B}|${state.tab}`);
+}
+function renderC3(){
+  const cnt={};let tot=0;
+  for(const h of ['rec','band'])for(const a of Object.values(ann[h]))if(a.t){cnt[a.t]=(cnt[a.t]||0)+1;tot++}
+  $('#ringN').textContent=tot;
+  $('#ringArc').style.strokeDashoffset=(339.29*(1-Math.min(1,tot/20))).toFixed(1);
+  $('#ringSub').textContent=tot>=20?'Target reached ✓ — export the CSV for your report.':`${20-tot} more to reach the target.`;
+  const mx=Math.max(1,...Object.values(cnt));
+  $('#typeBars').innerHTML=TYPES.map(t=>barRow(t,'var(--amber)',100*(cnt[t]||0)/mx,fmt(cnt[t]||0))).join('');
+}
+function refresh(){scope=cur()._rows.filter(inScope);renderKPIs();renderConst();renderC1();renderC2();renderC3()}
+
+/* ---------- controls ---------- */
+function fillSelects(){
+  const H=cur(),o='<option value="">Any</option>'+H.classes.map((c,i)=>`<option value="${i}">${esc(nm(c))}</option>`).join('');
+  $('#fTrue').innerHTML=o;$('#fWrong').innerHTML=o;$('#fDistWrap').hidden=!H.ordinal;$('#fDist').value='';
+}
+function readFilters(){
+  const f=state.f;f.true=$('#fTrue').value;f.wrongAs=$('#fWrong').value;f.q=$('#fQ').value.trim().toLowerCase();
+  f.min=$('#fMin').value;f.max=$('#fMax').value;f.confOn=$('#fConfOn').checked;f.conf=+$('#fConf').value;
+  $('#fConfV').textContent=f.conf.toFixed(2);f.step1=$('#fStep1').checked;f.noise=$('#fNoise').checked;
+  f.dist=$('#fDist').value;f.mine=$('#fMine').checked;refresh();
+}
+const rf=debounce(readFilters,160);
+$('#scope').addEventListener('input',rf);$('#scope').addEventListener('change',rf);
+$('#fReset').addEventListener('click',()=>{
+  $$('#scope input[type=text],#scope input[type=number]').forEach(e=>e.value='');
+  $$('#scope select').forEach(e=>e.value='');
+  $$('#scope input[type=checkbox]').forEach(e=>e.checked=false);
+  $('#fConf').value=.9;readFilters();
+});
+function fillModelSelects(){
+  const o=MODELS.map((m,i)=>`<option value="${i}">${esc(m)}</option>`).join('');
+  $('#selA').innerHTML=o;$('#selB').innerHTML=o;syncSel();
+}
+const syncSel=()=>{$('#selA').value=state.mA;$('#selB').value=state.mB};
+$('#selA').addEventListener('change',e=>{state.mA=+e.target.value;if(state.mA===state.mB)state.mB=(state.mA+1)%M;syncSel();renderC2()});
+$('#selB').addEventListener('change',e=>{state.mB=+e.target.value;if(state.mA===state.mB)state.mA=(state.mB+1)%M;syncSel();renderC2()});
+
+function placeThumb(){const on=$('#headSeg .on'),th=$('#headSeg .thumb');if(!on)return;th.style.width=on.offsetWidth+'px';th.style.transform=`translateX(${on.offsetLeft}px)`}
+function setHead(h){
+  if(h===state.head)return;
+  const go=()=>{state.head=h;state.k=1;state.tab='onlyA';state.f.true='';state.f.wrongAs='';state.f.dist='';
+    $$('#headSeg button').forEach(b=>b.classList.toggle('on',b.dataset.head===h));placeThumb();fillSelects();refresh()};
+  if(RM||isLite()){go();return}
+  const m=$('#main');m.classList.add('zoomout');setTimeout(()=>{go();m.classList.remove('zoomout')},240);
+}
+function applyLite(on){document.documentElement.classList.toggle('lite',on);$('#lite').checked=on;try{localStorage.setItem(LS_LITE,on?'1':'0')}catch(e){}}
+$('#lite').addEventListener('change',e=>applyLite(e.target.checked));
+
+/* ---------- annotation + export ---------- */
+function setAnn(id,key,val){
+  const m=ann[state.head],a=m[id]||(m[id]={t:'',n:''});a[key]=val;
+  if(!a.t&&!a.n)delete m[id];saveAnn();renderC3();
+}
+function exportCSV(){
+  const q=v=>`"${String(v==null?'':v).replace(/"/g,'""')}"`;
+  const head=['head','id','body','true','true_raw',...MODELS.flatMap(m=>[m+'_pred',m+'_conf']),'error_type','note'];
+  const lines=[head.map(q).join(',')];
+  for(const h of ['rec','band']){
+    const H=DATA.heads[h],byId=H._byId||(H._byId=new Map(H._rows.map(r=>[r.id,r])));
+    for(const[id,a]of Object.entries(ann[h])){
+      const r=byId.get(id);if(!r)continue;
+      lines.push([h,id,r.body,H.classes[r.y],r.yr>=0?H.classes[r.yr]:'',...MODELS.flatMap((m,j)=>[H.classes[r.p[j]],r.c[j]]),a.t,a.n].map(q).join(','));
+    }
+  }
+  const url=URL.createObjectURL(new Blob(['\ufeff'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}));
+  const l=document.createElement('a');l.href=url;l.download='error_labels.csv';document.body.appendChild(l);l.click();l.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+/* ---------- global events ---------- */
+document.addEventListener('click',e=>{
+  const t=e.target;let el;
+  if(el=t.closest('[data-pg]')){const tb=tables[el.closest('.tablebox').dataset.key];tb.page+=+el.dataset.pg;drawTable(tb);return}
+  if(el=t.closest('.rv')){el.classList.toggle('open');return}
+  if(el=t.closest('.kbtn')){state.k=+el.dataset.k;renderC1();return}
+  if(el=t.closest('[data-metric]')){state.metric=el.dataset.metric;renderBoard();return}
+  if(el=t.closest('[data-tab]')){state.tab=el.dataset.tab;renderC2();return}
+  if(el=t.closest('#headSeg button')){setHead(el.dataset.head);return}
+  if(el=t.closest('#const [data-a]')){state.mA=+el.dataset.a;state.mB=+el.dataset.b;state.tab='onlyA';syncSel();renderC2();$('#c2').scrollIntoView({behavior:RM?'auto':'smooth'});return}
+  if(t.closest('#exportBtn')){exportCSV();return}
+  if(t.closest('#clearBtn')){if(confirm('Delete all saved labels (both heads)?')){ann={rec:{},band:{}};saveAnn();refresh()}return}
+});
+document.addEventListener('input',e=>{const n=e.target.closest&&e.target.closest('.ann-n');if(n)setAnn(n.dataset.id,'n',n.value)});
+document.addEventListener('change',e=>{const s=e.target.closest&&e.target.closest('.ann-t');if(s)setAnn(s.dataset.id,'t',s.value)});
+document.addEventListener('pointermove',e=>{
+  if(RM||isLite())return;const g=e.target.closest&&e.target.closest('.glass');if(!g)return;
+  const r=g.getBoundingClientRect();g.style.setProperty('--mx',(e.clientX-r.left)+'px');g.style.setProperty('--my',(e.clientY-r.top)+'px');
+},{passive:true});
+addEventListener('resize',debounce(placeThumb,120));
+
+/* ---------- init ---------- */
+try{if(localStorage.getItem(LS_LITE)==='1')applyLite(true)}catch(e){}
+fillSelects();fillModelSelects();refresh();
+(document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(placeThumb);placeThumb();
+if('IntersectionObserver'in window&&!RM){
+  const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target)}}),{threshold:.08});
+  $$('.reveal').forEach(el=>io.observe(el));
+}else $$('.reveal').forEach(el=>el.classList.add('in'));
+})();
+</script>
+</body>
+</html>

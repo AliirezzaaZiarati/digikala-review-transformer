@@ -117,6 +117,58 @@ input[type=range]{flex:1;min-width:120px;height:44px;accent-color:var(--red)}
 @keyframes bump{40%{transform:scale(1.07) rotate(-1.5deg)}}
 .chip:disabled{opacity:.35;cursor:not-allowed}
 .chip:disabled:hover{transform:none;box-shadow:none}
+/* ---- Chapters 2, 8, 10, 11 ---- */
+.br b{position:absolute;bottom:100%;left:-10%;right:-10%;margin-bottom:4px;text-align:center;font:500 14px/1.2 var(--m)}
+.ax{display:flex;justify-content:space-between;border-top:3px solid var(--ink);padding-top:4px;font:500 13px var(--m);letter-spacing:.1em;transition:opacity .6s}
+/* chapter 8 */
+.bk{position:relative;flex:0 0 52px}
+.brk{position:absolute;top:0;height:16px;border:3px solid var(--ink);border-top:0;opacity:0;transition:left .4s var(--s),width .4s var(--s),opacity .3s}
+.bk span{position:absolute;top:22px;left:0;right:0;text-align:center;font:500 14px var(--m)}
+.gg{flex:0 0 auto;padding-bottom:24px}
+.gh{display:flex;align-items:baseline;gap:12px}
+.gh b{font:800 2.6rem/1 var(--d)}
+.gh span{font:500 12px var(--m);letter-spacing:.1em;color:var(--gr)}
+.gt{position:relative;height:30px;margin-top:6px;border:3px solid var(--ink);background:var(--card)}
+.gt i{position:absolute;left:0;top:0;bottom:0;width:calc(var(--e,0)*100%);background:repeating-linear-gradient(45deg,var(--gold) 0 6px,var(--ink) 6px 8px);transition:width .5s var(--s)}
+.gt u{position:absolute;top:-9px;bottom:-9px;left:65%;border-left:4px solid var(--red);text-decoration:none;opacity:0;transition:opacity .5s}
+.gt u em{position:absolute;top:100%;left:6px;margin-top:2px;font:500 12px/1.2 var(--m);font-style:normal;color:var(--redd);white-space:nowrap}
+.gg.tg .gt u{opacity:1}
+/* chapter 10 */
+.rul{flex:0 0 auto}
+.zs{position:relative;display:flex;height:40px;margin-top:34px;border:3px solid var(--ink)}
+.zs>.zn{display:flex;align-items:center;justify-content:center;border-right:3px solid var(--ink);font:500 12px var(--m);letter-spacing:.08em;overflow:hidden;white-space:nowrap}
+.zs>.z4{border-right:0}
+.z1{background:var(--card)}.z2{background:var(--gold)}.z3{background:var(--red)}.z4{background:var(--ink);color:var(--gold)}
+.mk{position:absolute;top:50%;width:0;height:0;z-index:2;transition:opacity .5s}
+.mk i{position:absolute;left:-13px;top:-13px;width:26px;height:26px;border-radius:50%;background:var(--blue);border:3px solid var(--card);box-shadow:0 0 0 3px var(--ink);transition:transform .35s var(--s),background .3s}
+.mk.on{z-index:3}
+.mk.on i{background:var(--gold);border-color:var(--ink);transform:scale(1.4)}
+.mk span{display:none;position:absolute;bottom:32px;left:0;transform:translateX(-50%);white-space:nowrap;background:var(--ink);color:var(--gold);font:500 12px/1.4 var(--m);padding:1px 8px}
+.mk.on span{display:block}
+.rul.nm .mk{opacity:0;pointer-events:none}
+.tks{position:relative;height:22px;margin:0 3px}
+.tks span{position:absolute;top:4px;transform:translateX(-50%);font:500 12px var(--m)}
+.bds{position:relative;height:26px;margin:4px 3px 0}
+.bd2{position:absolute;top:0;height:26px;border:3px solid var(--ink);display:flex;align-items:center;justify-content:center;font:500 12px var(--m);white-space:nowrap;overflow:hidden;opacity:0;transition:opacity .6s}
+.bd2.on{opacity:1}
+.bd2.in{background:repeating-linear-gradient(45deg,var(--card) 0 6px,var(--grid) 6px 8px)}
+.bd2.we{background:repeating-linear-gradient(45deg,var(--gold) 0 6px,var(--card) 6px 8px)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.inf{border:3px solid var(--ink);padding:10px 12px;background:var(--card);box-shadow:6px 6px 0 var(--blue);font-size:16px;line-height:1.45}
+.inf h4{font:800 1.25rem var(--d)}
+.inf code{font:500 .9em var(--m);background:var(--gold);padding:0 5px}
+.inf small{display:block;color:var(--gr);font-size:13px;margin-top:6px}
+/* chapter 11 */
+.mini{flex:0 0 11%;display:flex;gap:10px;align-items:stretch;transition:opacity .5s}
+.mini.off{opacity:.3}
+.mini span{flex:0 0 26px;align-self:center;font:800 1.5rem/1 var(--d)}
+.mrow{flex:1;display:flex;align-items:flex-end;gap:4px;border-bottom:3px solid var(--ink)}
+.mrow i{flex:1;height:calc(var(--h)*1%);min-height:4px;border:2px solid var(--ink);background:var(--blue)}
+.mini.e .mrow i{background:var(--red)}
+.mrow i.z{height:0;min-height:0;border:0}
+/* small screens: let long stages scroll instead of squashing */
+@media(max-width:900px){#app .stage{overflow:auto}.fl{min-height:170px}.mini{flex-basis:56px}}
+
 @media(max-width:900px){
  #app .stage{left:12px!important;top:10px!important;width:calc(100vw - 24px)!important;height:44dvh!important;box-shadow:8px 8px 0 var(--c)}
  #app .cap{left:12px!important;top:calc(44dvh + 28px)!important;width:calc(100vw - 24px)!important;bottom:104px;overflow:auto}
@@ -287,28 +339,39 @@ const scenes=[
  },
  upd(b){this.set(b<2?0:1)}},
 
-{a:2,n:'2–3',t:'Line up. Then stack.',l:'B',c:'#2A3DDB',
+{a:2,n:'2',t:'Line everyone up',l:'C',c:'#2A3DDB',
  beats:['Step one: line the villagers up from poorest to richest. Try <b>Shuffle</b> and <b>Sort</b>.',
- 'Instantly a pattern appears: a long staircase of small amounts, then a sudden tower on the right. This sorting is the secret ingredient.',
- 'Now walk down the line, poorest first. After each person ask two questions: <b>①</b> what share of the villagers have we passed? <b>②</b> what share of all the coins have we collected?',
+ 'Instantly a pattern appears: a long staircase of small amounts, then a sudden tower on the right.',
+ 'This sorting is the secret ingredient. <b>Every step that follows depends on it.</b>'],
+ init(){
+  st.innerHTML=`<div class="ctl"><button class="chip" id="sh">Shuffle</button><button class="chip" id="so">Sort</button></div><div class="bars" style="flex:1;margin-top:26px">${VS.map(v=>`<i class="br" style="--h:${v}"><b>${v}</b></i>`).join('')}</div><div class="ax" id="ax" style="opacity:0"><span>← POOREST</span><span>RICHEST →</span></div><div class="ro" id="ro"></div>`;
+  $('#sh').onclick=()=>this.put(0);
+  $('#so').onclick=()=>this.put(1);
+ },
+ put(so){
+  st.querySelectorAll('.br').forEach((e,r)=>{e.style.setProperty('--x',so?r:PERM[r]);e.classList.toggle('f',!!so)});
+  $('#ro').textContent=so?'Sorted: a staircase of small amounts, then one tower':'Shuffled: nobody can see the pattern yet';
+ },
+ upd(b){this.put(b>0?1:0);$('#ax').style.opacity=b>1?1:0}},
+
+{a:2,n:'3',t:'Stack the coins',l:'B',c:'#2A3DDB',
+ beats:['Now walk down the line, starting with the poorest villager. After each person, ask two questions.',
+ '<b>①</b> What share of the villagers have we passed? <b>②</b> What share of all the coins have we collected? Drag the slider to walk down the line.',
  'After 5 villagers we have passed 50% of the people, but collected only <b>8%</b> of the coins.',
- 'Plot each pair as a dot, people across and coins up, and connect the dots. Drag the slider to explore.',
+ 'Plot each pair as a dot, people across and coins up, and connect the dots.',
  'That curve has a name: the <b>Lorenz curve</b>.<small>A graph of the cumulative share of people (poorest first) against the cumulative share of total income or wealth they hold.</small>'],
  init(){
-  this.k=0;
-  st.innerHTML=`<div class="ctl"><button class="chip" id="sh">Shuffle</button><button class="chip" id="so">Sort</button><label>People passed <input type="range" id="rg" min="0" max="10" value="0" aria-label="Villagers passed"></label></div><div class="bars">${VS.map(v=>`<i class="br" style="--h:${v}"></i>`).join('')}</div><div class="fl" id="ch"></div><div class="ro" id="ro"></div>`;
-  $('#sh').onclick=()=>this.put(0,this.k);$('#so').onclick=()=>this.put(1,this.k);
-  $('#rg').oninput=e=>this.put(1,+e.target.value);
+  st.innerHTML=`<div class="ctl"><label>People passed <input type="range" id="rg" min="0" max="10" value="0" aria-label="Villagers passed"></label></div><div class="bars">${VS.map((v,r)=>`<i class="br" style="--h:${v};--x:${r}"></i>`).join('')}</div><div class="fl" id="ch"></div><div class="ro" id="ro"></div>`;
+  $('#rg').oninput=e=>this.put(+e.target.value);
  },
- put(so,k,an){
-  this.k=k;
-  st.querySelectorAll('.br').forEach((e,r)=>{e.style.setProperty('--x',so?r:PERM[r]);e.classList.toggle('f',!!so&&r<k)});
+ put(k,an){
+  st.querySelectorAll('.br').forEach((e,r)=>e.classList.toggle('f',r<k));
   $('#rg').value=k;
   const w=lz(V).slice(0,k+1);
   $('#ch').innerHTML=plot(w,{dots:1,anim:an});
   $('#ro').textContent=k?`Passed ${k*10}% of villagers → they hold ${Math.round(w[k][1]*100)}% of all coins`:'Slide to walk down the line, poorest first';
  },
- upd(b){const m=[[0,0],[1,0],[1,3],[1,5],[1,10],[1,10]][b];this.put(m[0],m[1],1)}},
+ upd(b){this.put([0,3,5,10,10][b],1)}},
 
 {a:2,n:'4',t:'Read the curve',l:'A',c:'#EA4B2A',
  beats:['Every good graph needs a ruler. Ours is the <b>line of perfect equality</b>: the poorest 20% hold 20%, the poorest 50% hold 50%.',
@@ -451,6 +514,63 @@ const scenes=[
   else{clearTimeout(this.ft);st.querySelectorAll('.rc').forEach(c=>c.classList.remove('get','take'));this.draw()}
   this.b=b;
  }},
+
+ {a:3,n:'8',t:'Two random people',l:'A',c:'#FFB81F',
+ beats:['Here is a friendlier meaning of the Gini. Pick two villagers at random and compare their coins.',
+ 'Do it again and again. Average the gaps. Divide by twice the average wealth.',
+ '<b>Gini = (average gap between two random people) ÷ (2 × average wealth)</b>',
+ 'Watch the estimate settle on <b>0.65</b>, the very same number we found with areas. Two roads, one destination.',
+ 'In plain words: in a village with Gini 0.65, two random people differ by about <b>13 coins</b> on average, which is <b>1.3 times</b> the average wealth.<small>We draw with replacement, so the same villager can be picked twice.</small>'],
+ init(){
+  this.run={};this.busy=0;this.k=0;this.sum=0;this.pr=null;this.b=-1;
+  st.innerHTML=`<div class="ctl"><button class="chip" id="b1">Draw a pair</button><button class="chip" id="b100">Draw 100 pairs</button><button class="chip" id="bX">Reset</button></div><div class="rbar" id="bd" style="flex:1">${VS.map(v=>`<div class="rc" style="--h:${v}"><b>${v}</b><i${v?'':' class="z"'}></i></div>`).join('')}</div><div class="bk"><div class="brk" id="brk"></div><span id="bl"></span></div><div class="gg" id="gg"><div class="gh"><b id="gv">0.00</b><span>GINI ESTIMATE FROM RANDOM PAIRS</span></div><div class="gt"><i></i><u><em>FROM AREAS: 0.65</em></u></div></div><div class="ro" id="ro" style="min-height:76px"></div>`;
+  $('#b1').onclick=()=>this.burst(1);
+  $('#b100').onclick=()=>this.burst(100);
+  $('#bX').onclick=()=>this.reset();
+ },
+ pull(){ // one random pair, with replacement
+  const i=Math.floor(Math.random()*10),j=Math.floor(Math.random()*10);
+  this.pr=[i,j];this.k++;this.sum+=Math.abs(VS[i]-VS[j]);
+ },
+ burst(n){
+  if(this.busy)return;
+  this.busy=1;const run=this.run;let left=n;
+  const step=()=>{
+   if(run!==this.run||!$('#bd'))return; // reset pressed or scene replaced
+   for(let q=0;q<4&&left>0;q++,left--)this.pull();
+   this.show();
+   if(left>0)requestAnimationFrame(step);else this.busy=0;
+  };
+  step();
+ },
+ reset(){this.run={};this.busy=0;this.k=0;this.sum=0;this.pr=null;this.show()},
+ show(){
+  const pr=this.pr,k=this.k,avg=k?this.sum/k:0,e=avg/20; // mean wealth is 10, so 2 × 10 = 20
+  const extra=this.b>=4?'\nLong-run average gap: 0.65 × 20 = 13 coins = 1.3 × the average wealth':'';
+  st.querySelectorAll('.rc').forEach((c,i)=>{
+   c.classList.toggle('get',!!pr&&i===pr[0]);
+   c.classList.toggle('take',!!pr&&i===pr[1]&&i!==pr[0]);
+  });
+  const brk=$('#brk');
+  if(pr){
+   const lo=Math.min(pr[0],pr[1]),hi=Math.max(pr[0],pr[1]),a=VS[pr[0]],d=VS[pr[1]],g=Math.abs(a-d);
+   brk.style.left=(lo+.5)*10+'%';brk.style.width=(hi-lo)*10+'%';brk.style.opacity=1;
+   $('#bl').textContent=lo===hi?'the same villager twice · gap 0':`gap = |${a} − ${d}| = ${g}`;
+   $('#ro').textContent=`Pair ${k}: ${a} vs ${d} coins → gap ${g}\n${k} pair${k>1?'s':''} · average gap ${avg.toFixed(1)} · Gini ≈ ${avg.toFixed(1)} ÷ (2 × 10) = ${e.toFixed(2)}`+extra;
+  }else{
+   brk.style.opacity=0;$('#bl').textContent='';
+   $('#ro').textContent='Press "Draw a pair" to pick two villagers at random'+extra;
+  }
+  $('#gv').textContent=e.toFixed(2);
+  $('.gt').style.setProperty('--e',Math.min(1,e));
+ },
+ upd(b){
+  this.b=b;
+  $('#b100').disabled=b<1;
+  $('#gg').style.visibility=b<1?'hidden':'visible';
+  $('#gg').classList.toggle('tg',b>=3);
+  if(b===0)this.reset();else this.show();
+ }},
  
 {a:4,n:'9',t:'A worked example, by hand',l:'C',c:'#EA4B2A',
  beats:['Five friends\' savings, in coins: <b>10, 20, 30, 40, 100</b>.',
@@ -470,6 +590,87 @@ const scenes=[
   const ex=b==5?w.slice(1).map((q,i)=>{const a=w[i];return`<path class="fi" d="M${P(a[0])} ${Q(0)}L${P(a[0])} ${Q(a[1])}L${P(q[0])} ${Q(q[1])}L${P(q[0])} ${Q(0)}Z" fill="${i%2?'#2A3DDB':'#FFB81F'}" fill-opacity=".5" stroke="#16130F" stroke-width="2"/>`}).join(''):'';
   $('#ch').innerHTML=plot(w,{noc:b<4,dots:b>=4,A:b>=6,ex:ex,anim:1});
   $('#ro').textContent=['Five friends, sorted: 10, 20, 30, 40, 100','Total = 200 coins · Average = 40','Share = coins ÷ total','Running total of the shares','Lorenz points: (0,0) (20%,5%) (40%,15%) (60%,30%) (80%,50%) (100%,100%)','B = 0.005 + 0.020 + 0.045 + 0.080 + 0.150 = 0.300','Gini = 1 − 2 × 0.300 = 0.40 ✓'][b];
+ }},
+
+ {a:4,n:'10',t:'Gini around the world',l:'C',c:'#FFB81F',
+ data:[['Nordics','Nordic countries',.25,.28],['Germany','Germany',.30,.30],['UK','United Kingdom',.33,.35],['USA','United States',.39,.41],['Brazil','Brazil',.50,.53],['South Africa','South Africa',.63,.63]],
+ beats:['How big is a "big" Gini? For income inequality across countries, most values land between roughly <b>0.25 and 0.65</b>.',
+ 'Hover the markers (or the buttons) to see roughly what each level looks like.<small>Small print: values are rounded and illustrative. They vary by year, source and definition (income vs. wealth, before vs. after taxes). For current figures, check the World Bank or OECD. Curves shown are illustrative shapes, not real data.</small>',
+ 'Wealth is far more concentrated than income: wealth Ginis of <b>0.7 to 0.9</b> are common.'],
+ init(){
+  const D=this.data,zs=[['LOW',30],['MODERATE',10],['HIGH',10],['VERY HIGH',50]];
+  this.sel=-1;this.b=-1;
+  st.innerHTML=`<div class="rul"><div class="zs">${zs.map((z,i)=>`<div class="zn z${i+1}" style="width:${z[1]}%">${z[0]}</div>`).join('')}${D.map((d,i)=>`<div class="mk" data-i="${i}" style="left:${(d[2]+d[3])*50}%"><i></i><span>${d[0]} ${((d[2]+d[3])/2).toFixed(2)}</span></div>`).join('')}</div><div class="tks">${[0,.25,.5,.75,1].map(t=>`<span style="left:${t*100}%">${t}</span>`).join('')}</div><div class="bds"><div class="bd2 in on" id="bi" style="left:25%;width:40%">MOST INCOME GINIS · 0.25–0.65</div><div class="bd2 we" id="bw" style="left:70%;width:20%">WEALTH · 0.70–0.90</div></div></div><div class="row2"><div class="col"><div class="chips">${D.map((d,i)=>`<button class="chip" data-i="${i}">${d[0]}</button>`).join('')}</div><div class="inf" id="inf"></div></div><div class="fl" id="ch" style="flex:0 0 300px"></div></div>`;
+  st.querySelectorAll('[data-i]').forEach(e=>{
+   const i=+e.dataset.i;
+   e.addEventListener('pointerenter',()=>{if(this.b>=1)this.pick(i)});
+   e.addEventListener('focus',()=>{if(this.b>=1)this.pick(i)});
+   e.addEventListener('click',()=>{if(this.b>=1)this.pick(i)});
+  });
+ },
+ zone(g){return g<.3?'LOW':g<.4?'MODERATE':g<.5?'HIGH':'VERY HIGH'},
+ mini(g){ // illustrative Lorenz curve L(p) = p^k, where Gini = (k-1)/(k+1)
+  const k=(1+g)/(1-g),X=p=>46+232*p,Y=l=>262-232*l;
+  let d='';for(let i=0;i<=50;i++){const p=i/50;d+=(i?'L':'M')+X(p).toFixed(1)+' '+Y(Math.pow(p,k)).toFixed(1)}
+  const t=(x,y,s,a)=>`<text x="${x}" y="${y}" text-anchor="${a||'middle'}" style="font-size:12px">${s}</text>`;
+  return `<svg viewBox="0 0 300 300" role="img" aria-label="Illustrative Lorenz curve for a Gini of ${g.toFixed(2)}"><defs><pattern id="hm" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#EA4B2A" opacity=".3"/><path d="M0 0v8" stroke="#C73A1B" stroke-width="3"/></pattern></defs><rect x="${X(0)}" y="${Y(1)}" width="232" height="232" fill="none" stroke="#D8CDB5" stroke-width="2"/><path d="${d}Z" fill="url(#hm)"/><path d="M${X(0)} ${Y(0)}L${X(1)} ${Y(1)}" stroke="#16130F" stroke-width="2.5" stroke-dasharray="8 6"/><path d="${d}" fill="none" stroke="#2A3DDB" stroke-width="5" stroke-linejoin="round"/>${t(X(0),278,'0')}${t(X(.5),278,'50%')}${t(X(1),278,'100%')}${t(40,Y(.5)+4,'50%','end')}${t(40,Y(1)+4,'100%','end')}${t(X(.5),296,'PEOPLE →')}<text transform="translate(10 ${Y(.5)}) rotate(-90)" text-anchor="middle" style="font-size:12px">INCOME →</text></svg>`;
+ },
+ pick(i){
+  const d=this.data[i],g=(d[2]+d[3])/2,k=(1+g)/(1-g);
+  this.sel=i;
+  st.querySelectorAll('.mk').forEach((m,j)=>m.classList.toggle('on',j===i));
+  st.querySelectorAll('.chip').forEach((c,j)=>c.classList.toggle('on',j===i));
+  $('#ch').innerHTML=this.mini(g);
+  const rg=d[2]===d[3]?'≈ '+d[2].toFixed(2):'≈ '+d[2].toFixed(2)+'–'+d[3].toFixed(2);
+  $('#inf').innerHTML=`<h4>${d[1]}</h4><b class="bl">Gini ${rg}</b> · ${this.zone(g)}<br>Illustrative curve: <code>L(p) = p<sup>k</sup></code>, k = ${k.toFixed(2)}<br>The poorest half holds ≈ ${Math.round(Math.pow(.5,k)*100)}% of income.<small>A shape for illustration, not real data.</small>`;
+ },
+ upd(b){
+  this.b=b;
+  st.querySelector('.rul').classList.toggle('nm',b<1);
+  st.querySelectorAll('.chip').forEach(c=>c.disabled=b<1);
+  $('#bw').classList.toggle('on',b>=2);
+  if(b<1){
+   st.querySelectorAll('.mk,.chip').forEach(m=>m.classList.remove('on'));
+   $('#ch').innerHTML=this.mini(.0001);
+   $('#inf').innerHTML='<h4>Reading the ruler</h4>0 means perfect equality, 1 means one person owns everything. The band under the ruler shows where most real-world income Ginis fall.<small>Next: six examples to explore.</small>';
+  }else this.pick(this.sel<0?2:this.sel);
+ }},
+
+{a:4,n:'11',t:'Same number, different worlds',l:'B',c:'#EA4B2A',
+ beats:['Two villages. Both have 10 people, 90 coins, and a Gini of exactly <b>0.40</b>.',
+ '<b>Village T (Tycoon):</b> nine people hold 5 coins each. One holds 45.',
+ '<b>Village E (Exclusion):</b> four people hold nothing. Six hold 15 each.',
+ 'Their Lorenz curves <b>cross</b>, exactly at 60% of the people and one third of the coins.',
+ 'The Gini squeezes a whole curve into one number, and different curves can squeeze into the same one. <b>Always look at the curve too.</b>'],
+ init(){
+  this.T=[5,5,5,5,5,5,5,5,5,45];this.E=[0,0,0,0,15,15,15,15,15,15];this.s=[0,0];this.x=0;
+  const mr=a=>a.map(v=>`<i${v?'':' class="z"'} style="--h:${v/45*100}"></i>`).join('');
+  st.innerHTML=`<div class="ctl"><button class="chip" data-v="0">T · Tycoon</button><button class="chip" data-v="1">E · Exclusion</button><button class="chip" data-v="2">Both</button></div><div class="mini t"><span>T</span><div class="mrow">${mr(this.T)}</div></div><div class="mini e"><span>E</span><div class="mrow">${mr(this.E)}</div></div><div class="fl" id="ch"></div><div class="ro" id="ro" style="min-height:58px"></div>`;
+  st.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{const v=+b.dataset.v;this.s=v==0?[1,0]:v==1?[0,1]:[1,1];this.draw()});
+ },
+ draw(an){
+  const s=this.s,gT=gini(this.T).toFixed(2),gE=gini(this.E).toFixed(2),wT=lz(this.T),wE=lz(this.E);
+  st.querySelectorAll('[data-v]').forEach(b=>{
+   const v=+b.dataset.v;
+   b.classList.toggle('on',v==0?!!(s[0]&&!s[1]):v==1?!!(!s[0]&&s[1]):!!(s[0]&&s[1]));
+  });
+  st.querySelector('.mini.t').classList.toggle('off',!s[0]&&!!s[1]);
+  st.querySelector('.mini.e').classList.toggle('off',!s[1]&&!!s[0]);
+  const cv=(w,col,sq)=>`<path ${an?'class="draw" pathLength="1" ':''}d="${pa(w)}" fill="none" stroke="${col}" stroke-width="6" stroke-linejoin="round"/>`+w.map(q=>sq?`<rect x="${P(q[0])-6}" y="${Q(q[1])-6}" width="12" height="12" fill="#FFB81F" stroke="#16130F" stroke-width="2.5"/>`:`<circle cx="${P(q[0])}" cy="${Q(q[1])}" r="6.5" fill="#FFB81F" stroke="#16130F" stroke-width="2.5"/>`).join('');
+  const lb=(x,y,t,c)=>`<text x="${x}" y="${y}" style="font-size:15px;font-weight:700;fill:${c}">${t}</text>`;
+  let ex='';
+  if(s[0])ex+=cv(wT,'#2A3DDB',0)+lb(170,506,'T · TYCOON','#2A3DDB');
+  if(s[1])ex+=cv(wE,'#EA4B2A',1)+lb(300,150,'E · EXCLUSION','#C73A1B');
+  if(this.x&&s[0]&&s[1])ex+=`<g class="fi"><circle cx="${P(.6)}" cy="${Q(1/3)}" r="12" fill="none" stroke="#16130F" stroke-width="3.5"/><circle cx="${P(.6)}" cy="${Q(1/3)}" r="4.5" fill="#16130F"/><path d="M${P(.6)+9} ${Q(1/3)+10}L392 408" stroke="#16130F" stroke-width="2"/><text x="392" y="424" style="font-size:15px;font-weight:700">CURVES CROSS</text><text x="392" y="444" style="font-size:15px">60% of people</text><text x="392" y="464" style="font-size:15px">1/3 of the coins</text></g>`;
+  $('#ch').innerHTML=plot(wT,{noc:1,ex});
+  $('#ro').textContent=!s[0]&&!s[1]?`Both villages: 10 people · 90 coins · Gini ${gT} and ${gE}`
+   :s[0]&&!s[1]?`T · Tycoon: nine villagers hold 5 coins each, one holds 45 · Gini ${gT}`
+   :!s[0]&&s[1]?`E · Exclusion: four villagers hold nothing, six hold 15 each · Gini ${gE}`
+   :`Gini T = ${gT} · Gini E = ${gE}`+(this.x?'\nBefore 60% of the people the T curve is higher; after it the E curve is higher':'\nSame Gini, two different curves');
+ },
+ upd(b){
+  this.s=[[0,0],[1,0],[0,1],[1,1],[1,1]][b];this.x=b>=3;
+  this.draw(1);
  }},
 
 {a:4,n:'12',t:'Strengths, traps and tips',l:'C',c:'#2A3DDB',

@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Shape of Inequality</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=DM+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F3ECDD;--card:#FBF7EE;--ink:#16130F;--blue:#2A3DDB;--red:#EA4B2A;--redd:#C73A1B;--gold:#FFB81F;--grid:#D8CDB5;--gr:#5A5348;--e:cubic-bezier(.77,0,.18,1);--s:cubic-bezier(.2,.9,.2,1);--sw:min(74dvh,46vw);--d:'Bricolage Grotesque','Arial Narrow',Impact,sans-serif;--m:'JetBrains Mono',ui-monospace,Menlo,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--paper) radial-gradient(var(--grid) 1px,transparent 1.4px) 0 0/14px 14px;color:var(--ink);font:400 1.125rem/1.65 'DM Sans',system-ui,sans-serif;transition:background-color 1s}
+body.dk{background-color:var(--ink)}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);box-shadow:0 0 0 6px var(--ink)}
+.sh{position:fixed;transition:all 1.2s var(--e);z-index:0}
+#s1{border-radius:50%}#s2{border-radius:999px 999px 0 0}#s3{clip-path:polygon(50% 0,100% 100%,0 100%)}
+#app{position:relative;z-index:1;height:100dvh}
+#big{position:absolute;right:2vw;bottom:-4vw;font:800 clamp(10rem,28vw,26rem)/1 var(--d);color:transparent;-webkit-text-stroke:3px var(--ink);opacity:.14;pointer-events:none}
+.stage{position:absolute;z-index:2;display:flex;flex-direction:column;gap:8px;padding:14px;width:var(--sw);height:var(--sw);background:var(--card);border:4px solid var(--ink);box-shadow:14px 14px 0 var(--c,var(--gold));transition:all .9s var(--e)}
+.cap{position:absolute;z-index:3;width:min(460px,86vw);transition:all .9s var(--e)}
+#app[data-l=A] .stage{left:calc(93vw - var(--sw));top:9dvh}
+#app[data-l=A] .cap{left:90px;top:44dvh}
+#app[data-l=B] .stage{left:max(100px,9vw);top:9dvh}
+#app[data-l=B] .cap{left:calc(95vw - min(460px,86vw));top:16dvh}
+#app[data-l=C] .stage{left:max(90px,calc(50vw - 440px));top:6dvh;width:min(86vw,880px);height:min(56dvh,520px)}
+#app[data-l=C] .cap{left:calc(96vw - min(460px,86vw));top:63dvh}
+.cap.hero{width:min(900px,70vw)}
+.cap.hero h2{font-size:clamp(3.2rem,8vw,8rem)}
+.k{display:inline-block;background:var(--paper);padding:2px 8px;font:500 12px var(--m);letter-spacing:.14em;text-transform:uppercase;color:var(--gr)}
+#dots i{display:inline-block;width:9px;height:9px;border:2px solid var(--ink);margin-left:4px}
+#dots i.on{background:var(--ink)}
+.cap h2{display:block;width:fit-content;position:relative;margin:.25em 0 .35em;padding:.12em .3em;background:var(--ink);color:var(--paper);font:800 clamp(2rem,4.5vw,4rem)/.98 var(--d)}
+body.dk .cap h2{background:var(--gold);color:var(--ink)}
+#app[data-l=A] .cap h2{left:40px}#app[data-l=B] .cap h2{left:-40px}
+#tx{background:var(--paper);border-left:6px solid var(--red);padding:14px 18px;max-width:52ch}
+#tx small{display:block;font-size:15px;color:var(--gr);margin-top:8px}
+#tx code{font:500 .85em var(--m);background:var(--gold);padding:0 5px}
+.up{animation:up .7s var(--s) both}
+@keyframes up{from{opacity:0;transform:translateY(22px)}}
+@keyframes fi{from{opacity:0}}
+.fi{animation:fi .9s .5s both}
+.draw{stroke-dasharray:1;stroke-dashoffset:1;animation:dr 1.6s var(--e) forwards}
+@keyframes dr{to{stroke-dashoffset:0}}
+.fl{flex:1;min-height:0;position:relative}
+.fl svg{position:absolute;inset:0;width:100%;height:100%}
+svg text{font:500 15px var(--m);fill:#16130F}
+svg .at{font-size:14px;letter-spacing:.08em;fill:#5A5348}
+.ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font:500 13px var(--m)}
+.ctl label{display:flex;flex:1;gap:8px;align-items:center;min-width:200px}
+.chip{min-height:44px;padding:0 14px;border:3px solid var(--ink);background:var(--card);font:500 13px var(--m);text-transform:uppercase;transition:transform .3s var(--s),box-shadow .3s,background .3s}
+.chip:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink)}
+.chip.on{background:var(--ink);color:var(--gold)}
+input[type=range]{flex:1;min-width:120px;height:44px;accent-color:var(--red)}
+.ro{background:var(--ink);color:var(--gold);padding:8px 12px;min-height:38px;font:500 14px/1.4 var(--m);white-space:pre-wrap}
+.gn{position:absolute;left:19%;top:5%;padding:0 .15em;background:var(--gold);border:4px solid var(--ink);font:800 clamp(3rem,6vw,5.5rem)/1.05 var(--d);pointer-events:none;transition:opacity .5s}
+.vil{flex:1;position:relative;display:flex;gap:6px;min-height:0}
+.vl{position:relative;flex:1}
+.co{position:absolute;left:0;right:0;bottom:36px;height:calc((100% - 44px)*var(--n)/55);background:repeating-linear-gradient(0deg,var(--gold) 0 5px,var(--ink) 5px 7px);border:2px solid var(--ink);transition:height 1s var(--s)}
+.co.z{border:0}
+.pp{position:absolute;bottom:0;left:50%;width:26px;height:32px;transform:translateX(-50%);background:radial-gradient(circle at 50% 28%,var(--blue) 0 7px,transparent 7.5px),linear-gradient(var(--blue),var(--blue)) 50% 100%/22px 16px no-repeat;border-radius:0 0 4px 4px}
+.avg{position:absolute;left:0;right:0;bottom:calc(36px + (100% - 44px)*10/55);border-top:3px dashed var(--ink);pointer-events:none}
+.avg span{position:absolute;right:0;top:-24px;background:var(--card);font:500 13px var(--m);padding:0 4px}
+.bars{position:relative;flex:0 0 22%}
+.br{position:absolute;bottom:0;width:8%;left:calc(var(--x)*10% + 1%);height:calc(var(--h)/55*100%);min-height:3px;background:var(--grid);border:2px solid var(--ink);transition:left .9s var(--s),background .3s}
+.br.f{background:var(--gold)}
+.row{flex:0 0 20%;display:flex;align-items:flex-end;gap:2px}
+.row i{flex:1;height:calc(var(--h)*1%);min-height:2px;background:var(--gold);border:2px solid var(--ink);transition:height .5s var(--s)}
+.row2{flex:1;display:flex;gap:12px;min-height:0}
+.tw{flex:1.1;overflow:auto}
+.t{border-collapse:collapse;width:100%;font:500 15px var(--m)}
+.t th,.t td{border:2px solid var(--ink);padding:7px 6px;text-align:center;transition:opacity .5s,background .4s}
+.t th{background:var(--ink);color:var(--paper)}
+.t td.hl{background:var(--gold)}
+.g{flex:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;overflow:auto;align-content:start}
+.cd{border:3px solid var(--ink);padding:10px 12px;background:var(--card);font-size:16px;line-height:1.45;box-shadow:6px 6px 0 var(--blue)}
+.cd.tr{box-shadow:6px 6px 0 var(--red)}
+.cd h4{font:800 1.15rem var(--d)}
+.r{color:var(--redd)}.bl{color:var(--blue)}
+.tabs{width:36%;display:flex;flex-direction:column;gap:8px}
+.tb{text-align:left;border:3px solid var(--ink);padding:10px 12px;background:var(--card);font:500 15px/1.35 var(--m);transition:all .3s var(--s)}
+.tb b{display:block;font:800 18px var(--d)}
+.tb.on{background:var(--blue);color:#fff;transform:translateX(8px)}
+.col{flex:1;display:flex;flex-direction:column;gap:8px;min-width:0;min-height:0}
+.code{flex:1;min-height:0;overflow:auto;background:var(--ink);color:#EDE6D4;padding:14px;font:400 15px/1.6 var(--m)}
+.code .k{color:#FF7A5C;background:none;padding:0;letter-spacing:0;font:inherit;text-transform:none}
+.code .s{color:var(--gold)}.code .c{color:#9A9384}.code .f{color:#8FA0FF}
+.code i{font-style:normal}
+#rail{position:fixed;left:14px;top:50%;transform:translateY(-50%);z-index:20;display:flex;flex-direction:column;gap:10px}
+#rail button{min-width:44px;height:44px;padding:0 12px;border:3px solid var(--ink);background:var(--card);font:700 14px var(--m);display:flex;align-items:center;gap:8px;white-space:nowrap;transition:all .5s var(--s)}
+#rail button span{display:none}
+#rail button.on{background:var(--ink);color:var(--gold);padding:0 16px}
+#rail button.on span{display:inline}
+#next{position:fixed;right:28px;bottom:28px;z-index:20;width:84px;height:84px;border:0;border-radius:50%;background:conic-gradient(var(--red) calc(var(--p,0)*360deg),var(--ink) 0);display:grid;place-items:center}
+#next b{width:68px;height:68px;border-radius:50%;background:var(--gold);display:grid;place-items:center;font:800 30px var(--d);transition:transform .35s var(--s)}
+#prev{position:fixed;right:124px;bottom:46px;z-index:20;width:48px;height:48px;border:3px solid var(--ink);background:var(--card);font:800 22px var(--d);transition:transform .3s var(--s)}
+#prev:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink)}
+#sw{position:fixed;inset:0;z-index:50;pointer-events:none;display:flex}
+#sw i{flex:1;transform:translateY(100%)}
+#sw i:nth-child(1){background:var(--red)}#sw i:nth-child(2){background:var(--blue)}#sw i:nth-child(3){background:var(--gold)}
+#sw.on i{animation:swp .85s var(--e)}
+#sw.on i:nth-child(2){animation-delay:.07s}#sw.on i:nth-child(3){animation-delay:.14s}
+@keyframes swp{0%{transform:translateY(100%)}45%,55%{transform:none}100%{transform:translateY(-100%)}}
+/* ---- Chapter 7: Robin Hood ---- */
+.rbar{flex:0 0 21%;display:flex;gap:6px;padding-top:24px;border-bottom:3px solid var(--ink)}
+.rc{position:relative;flex:1}
+.rc i{position:absolute;left:10%;right:10%;bottom:0;height:calc(var(--h)/var(--mx,60)*100%);min-height:4px;background:var(--gold);border:2px solid var(--ink);transition:height .5s var(--s),background .3s}
+.rc i.z{height:0;min-height:0;border:0}
+.rc b{position:absolute;left:0;right:0;bottom:calc(var(--h)/var(--mx,60)*100% + 4px);text-align:center;font:500 14px/1.3 var(--m);transition:bottom .5s var(--s),background .3s}
+.rc.take i,.rc.take b{background:var(--red)}
+.rc.get i{background:var(--blue)}
+.rc.get b{background:var(--blue);color:#fff}
+.gn.sm{font-size:clamp(2.4rem,4.6vw,4.2rem)}
+.gn .ar{display:inline-block;min-width:.5em;margin-left:.12em;font-size:.4em;vertical-align:.45em}
+.gn.bump{animation:bump .35s var(--s)}
+@keyframes bump{40%{transform:scale(1.07) rotate(-1.5deg)}}
+.chip:disabled{opacity:.35;cursor:not-allowed}
+.chip:disabled:hover{transform:none;box-shadow:none}
+@media(max-width:900px){
+ #app .stage{left:12px!important;top:10px!important;width:calc(100vw - 24px)!important;height:44dvh!important;box-shadow:8px 8px 0 var(--c)}
+ #app .cap{left:12px!important;top:calc(44dvh + 28px)!important;width:calc(100vw - 24px)!important;bottom:104px;overflow:auto}
+ .cap h2{left:0!important}
+ #big{display:none}
+ #rail{left:12px;top:auto;bottom:14px;transform:none;flex-direction:row;gap:4px}
+ #rail button{min-width:36px;padding:0 8px}
+ #rail button span{display:none!important}
+ #next{width:68px;height:68px;right:12px;bottom:14px}#next b{width:54px;height:54px}
+ #prev{right:90px;bottom:24px}
+ .tabs{width:42%}.tb{font-size:13px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<i class="sh" id="s1"></i><i class="sh" id="s2"></i><i class="sh" id="s3"></i><i class="sh" id="s4"></i><i class="sh" id="s5"></i>
+<main id="app" data-l="A">
+  <div id="big" aria-hidden="true"></div>
+  <section class="stage" id="st"></section>
+  <section class="cap" id="cap">
+    <div class="k"><span id="kk"></span> <span id="dots"></span></div>
+    <h2 id="tt"></h2>
+    <div id="tx" aria-live="polite"></div>
+  </section>
+</main>
+<nav id="rail" aria-label="Story chapters"></nav>
+<button id="prev" aria-label="Previous">←</button>
+<button id="next" aria-label="Next"><b>→</b></button>
+<div id="sw"><i></i><i></i><i></i></div>
+
+<script>
+/* ---------- refs & math ---------- */
+const gid=i=>document.getElementById(i);
+const app=gid('app'),st=gid('st'),cap=gid('cap'),kk=gid('kk'),tt=gid('tt'),tx=gid('tx'),dots=gid('dots'),big=gid('big'),rail=gid('rail'),nxt=gid('next'),sw=gid('sw');
+const $=s=>st.querySelector(s),sA=a=>[...a].sort((x,y)=>x-y),sum=a=>a.reduce((x,y)=>x+y,0);
+const P=p=>84+480*p,Q=l=>528-480*l;
+const pa=w=>w.map((q,i)=>(i?'L':'M')+P(q[0]).toFixed(1)+' '+Q(q[1]).toFixed(1)).join('');
+function lz(v){const x=sA(v),t=sum(x);let c=0;return[[0,0],...x.map((e,i)=>[(i+1)/x.length,(c+=e)/t])]}
+function gini(v){const x=sA(v),n=x.length;return 2*x.reduce((s,e,i)=>s+(i+1)*e,0)/(n*sum(x))-(n+1)/n}
+const lab=g=>g<.2?'Very equal':g<.3?'Fairly equal':g<.4?'Moderate':g<.5?'High':g<.6?'Very high':'Extreme';
+const ani=e=>{e.classList.remove('up');void e.offsetWidth;e.classList.add('up')};
+function cnt(el,to,ms=1400){const t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/ms);el.textContent=(to*(1-Math.pow(1-k,3))).toFixed(2);if(k<1)requestAnimationFrame(f)})(t0)}
+
+/* ---------- chart ---------- */
+function plot(w,o={}){
+  const f=o.anim?'fi':'';
+  let s=`<svg viewBox="0 0 600 600" role="img" aria-label="Lorenz curve chart"><defs>
+  <pattern id="h" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="9" height="9" fill="#EA4B2A" opacity=".3"/><path d="M0 0v9" stroke="#C73A1B" stroke-width="3"/></pattern>
+  <pattern id="d" width="9" height="9" patternUnits="userSpaceOnUse"><rect width="9" height="9" fill="#2A3DDB" opacity=".12"/><circle cx="4.5" cy="4.5" r="1.8" fill="#2A3DDB"/></pattern></defs>`;
+  [0,.25,.5,.75,1].forEach(t=>s+=`<path d="M${P(t)} ${Q(0)}V${Q(1)}M${P(0)} ${Q(t)}H${P(1)}" stroke="#D8CDB5" stroke-width="1.5"/><text x="${P(t)}" y="554" text-anchor="middle">${t*100}%</text><text x="76" y="${Q(t)+5}" text-anchor="end">${t*100}%</text>`);
+  s+=`<text class="at" x="324" y="586" text-anchor="middle">CUMULATIVE SHARE OF PEOPLE →</text><text class="at" transform="translate(16 288) rotate(-90)" text-anchor="middle">CUMULATIVE SHARE OF INCOME →</text>`;
+  const c=pa(w);
+  if(o.A)s+=`<path class="${f}" d="${c}Z" fill="url(#h)"/>`;
+  if(o.B)s+=`<path class="${f}" d="${c}L${P(1)} ${Q(0)}Z" fill="url(#d)"/>`;
+  s+=o.ex||'';
+  if(o.diag!==false)s+=`<path d="M${P(0)} ${Q(0)}L${P(1)} ${Q(1)}" stroke="#16130F" stroke-width="3" stroke-dasharray="10 8"/>`;
+  if(!o.noc){
+    s+=`<path ${o.anim?'class="draw" pathLength="1"':''} d="${c}" fill="none" stroke="#2A3DDB" stroke-width="6" stroke-linejoin="round"/>`;
+    if(o.dots)w.forEach(q=>s+=`<circle class="${f}" cx="${P(q[0])}" cy="${Q(q[1])}" r="6.5" fill="#FFB81F" stroke="#16130F" stroke-width="2.5"/>`);
+  }
+  return s+'</svg>';
+}
+
+/* ---------- data ---------- */
+const V=[55,15,10,7,5,3,2,2,1,0],VS=sA(V),PERM=[3,9,1,6,0,8,2,5,7,4];
+const X5=[10,20,30,40,100];
+const PY=[
+{n:'Lorenz points',d:'Sort, accumulate, normalise.',c:`import numpy as np
+
+def lorenz_curve(values):
+    # cumulative share of people (p) and of income (L), poorest first
+    x = np.sort(np.asarray(values, dtype=float))     # 1. line everyone up
+    if x.size == 0 or np.any(x < 0) or x.sum() == 0:
+        raise ValueError("Need non-negative values with a positive total.")
+    L = np.insert(np.cumsum(x) / x.sum(), 0, 0.0)    # 2. cumulative income share
+    p = np.linspace(0, 1, L.size)                    # 3. cumulative people share
+    return p, L
+
+incomes = [10, 20, 30, 40, 100]
+p, L = lorenz_curve(incomes)
+print(p)   # [0.  0.2 0.4 0.6 0.8 1. ]
+print(L)   # [0.   0.05 0.15 0.3  0.5  1.  ]`,o:`[0.  0.2 0.4 0.6 0.8 1. ]
+[0.   0.05 0.15 0.3  0.5  1.  ]`},
+{n:'Gini, three ways',d:'Area, ranks, pairs.',c:`# uses lorenz_curve and incomes from the previous tab
+def gini_from_lorenz(values):
+    # Gini = 1 - 2 * (area under the Lorenz curve)
+    p, L = lorenz_curve(values)
+    area_under = np.sum((L[1:] + L[:-1]) / 2 * np.diff(p))   # trapezoid rule
+    return 1 - 2 * area_under
+
+def gini_rank_formula(values):
+    # fast version: sort, then weight each value by its rank
+    x = np.sort(np.asarray(values, dtype=float))
+    n = x.size
+    ranks = np.arange(1, n + 1)
+    return 2 * np.sum(ranks * x) / (n * x.sum()) - (n + 1) / n
+
+def gini_pairwise(values):
+    # intuitive version: mean gap between two people / (2 * mean)
+    # builds an n x n table, so use the rank formula for big data
+    x = np.asarray(values, dtype=float)
+    gaps = np.abs(x[:, None] - x[None, :])
+    return gaps.mean() / (2 * x.mean())
+
+for f in (gini_from_lorenz, gini_rank_formula, gini_pairwise):
+    print(f.__name__, round(f(incomes), 4))`,o:`gini_from_lorenz 0.4
+gini_rank_formula 0.4
+gini_pairwise 0.4`},
+{n:'Plot it',d:'Curve, diagonal, shaded gap.',c:`import matplotlib.pyplot as plt
+
+# uses lorenz_curve, gini_rank_formula and incomes from earlier tabs
+p, L = lorenz_curve(incomes)
+g = gini_rank_formula(incomes)
+
+fig, ax = plt.subplots(figsize=(5.5, 5.5))
+ax.plot([0, 1], [0, 1], "--", color="black", label="Perfect equality")
+ax.plot(p, L, marker="o", color="royalblue", label="Lorenz curve")
+ax.fill_between(p, p, L, color="tomato", alpha=0.35, label=f"Gap (Gini = {g:.2f})")
+ax.set(xlabel="Cumulative share of people (poorest to richest)",
+       ylabel="Cumulative share of income",
+       xlim=(0, 1), ylim=(0, 1), title="Lorenz curve")
+ax.legend(loc="upper left")
+plt.show()`,o:`A window opens: the blue Lorenz curve, the dashed diagonal and the shaded gap (Gini = 0.40).`},
+{n:'Real data',d:'Weights and pandas groups.',c:`import numpy as np
+import pandas as pd
+
+def weighted_gini(values, weights=None):
+    v = np.asarray(values, dtype=float)
+    w = np.ones_like(v) if weights is None else np.asarray(weights, dtype=float)
+    order = np.argsort(v)
+    v, w = v[order], w[order]
+    p = np.insert(np.cumsum(w) / w.sum(), 0, 0.0)             # share of people
+    L = np.insert(np.cumsum(v * w) / (v * w).sum(), 0, 0.0)   # share of income
+    return 1 - 2 * np.sum((L[1:] + L[:-1]) / 2 * np.diff(p))
+
+df = pd.DataFrame({
+    "group":  ["A", "A", "A", "B", "B", "B"],
+    "income": [20, 30, 50, 10, 10, 80],
+    "weight": [1, 2, 1, 1, 1, 2],   # how many people each row represents
+})
+
+for name, d in df.groupby("group"):
+    print(name, round(weighted_gini(d["income"], d["weight"]), 3))`,o:`A 0.173
+B 0.389`}];
+const HL=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/(#.*$)|("[^"\n]*")|\b(def|return|import|as|for|in|if|raise)\b|\b([a-z_]\w*)(?=\()/gm,(m,c,q,k)=>`<i class="${c?'c':q?'s':k?'k':'f'}">${m}</i>`);
+
+/* ---------- scenes ---------- */
+const scenes=[
+{a:0,n:'',k:'A visual story',t:'The Shape of Inequality',l:'A',c:'#FFB81F',hero:1,
+ beats:['A visual story of the <b>Lorenz curve</b> and the <b>Gini coefficient</b>. About ten minutes, zero math anxiety.<br><br><button class="chip on" onclick="go(cur+1)">Begin the story →</button><small>Use ← → keys, scroll, or swipe.</small>'],
+ init(){st.innerHTML='<div class="fl" id="ch"></div><div class="ro">Gini = 0.65</div>';$('#ch').innerHTML=plot(lz(V),{anim:1,dots:1,A:1})},upd(){}},
+
+{a:1,n:'1',t:'Ten people. One hundred coins.',l:'A',c:'#FFB81F',
+ beats:['Picture a tiny village: <b>10 people, 100 coins</b>.',
+ 'Share them equally and everyone holds 10. Perfect equality: easy to see, easy to describe.',
+ 'Now let one villager hold <b>55 coins</b>. The rest split what is left: 15, 10, 7, 5, 3, 2, 2, 1 and 0.',
+ 'Same people. Same 100 coins. Same average of 10 each. Yet these are two very different villages.',
+ 'So here is our question: <b>how do we show, and measure, how unevenly the coins are shared?</b> We need one picture and one number: the <b>Lorenz curve</b> and the <b>Gini coefficient</b>.'],
+ init(){
+  st.innerHTML='<div class="ctl"><button class="chip" data-m="0">Share equally</button><button class="chip" data-m="1">Share unevenly</button></div><div class="vil">'+V.map((_,i)=>`<div class="vl" title="Villager ${i+1}"><div class="co" style="--n:0"></div><i class="pp"></i></div>`).join('')+'<div class="avg"><span>average = 10</span></div></div><div class="ro" id="ro"></div>';
+  st.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>this.set(+b.dataset.m));
+ },
+ set(m){
+  st.querySelectorAll('.co').forEach((c,i)=>{const n=m?V[i]:10;c.style.setProperty('--n',n);c.classList.toggle('z',!n);c.parentNode.title=`Villager ${i+1} · ${n} coins`});
+  st.querySelectorAll('[data-m]').forEach(b=>b.classList.toggle('on',+b.dataset.m===m));
+  $('#ro').textContent=m?'Same 100 coins · same average of 10 · a very different village':'Everyone holds 10 coins';
+ },
+ upd(b){this.set(b<2?0:1)}},
+
+{a:2,n:'2–3',t:'Line up. Then stack.',l:'B',c:'#2A3DDB',
+ beats:['Step one: line the villagers up from poorest to richest. Try <b>Shuffle</b> and <b>Sort</b>.',
+ 'Instantly a pattern appears: a long staircase of small amounts, then a sudden tower on the right. This sorting is the secret ingredient.',
+ 'Now walk down the line, poorest first. After each person ask two questions: <b>①</b> what share of the villagers have we passed? <b>②</b> what share of all the coins have we collected?',
+ 'After 5 villagers we have passed 50% of the people, but collected only <b>8%</b> of the coins.',
+ 'Plot each pair as a dot, people across and coins up, and connect the dots. Drag the slider to explore.',
+ 'That curve has a name: the <b>Lorenz curve</b>.<small>A graph of the cumulative share of people (poorest first) against the cumulative share of total income or wealth they hold.</small>'],
+ init(){
+  this.k=0;
+  st.innerHTML=`<div class="ctl"><button class="chip" id="sh">Shuffle</button><button class="chip" id="so">Sort</button><label>People passed <input type="range" id="rg" min="0" max="10" value="0" aria-label="Villagers passed"></label></div><div class="bars">${VS.map(v=>`<i class="br" style="--h:${v}"></i>`).join('')}</div><div class="fl" id="ch"></div><div class="ro" id="ro"></div>`;
+  $('#sh').onclick=()=>this.put(0,this.k);$('#so').onclick=()=>this.put(1,this.k);
+  $('#rg').oninput=e=>this.put(1,+e.target.value);
+ },
+ put(so,k,an){
+  this.k=k;
+  st.querySelectorAll('.br').forEach((e,r)=>{e.style.setProperty('--x',so?r:PERM[r]);e.classList.toggle('f',!!so&&r<k)});
+  $('#rg').value=k;
+  const w=lz(V).slice(0,k+1);
+  $('#ch').innerHTML=plot(w,{dots:1,anim:an});
+  $('#ro').textContent=k?`Passed ${k*10}% of villagers → they hold ${Math.round(w[k][1]*100)}% of all coins`:'Slide to walk down the line, poorest first';
+ },
+ upd(b){const m=[[0,0],[1,0],[1,3],[1,5],[1,10],[1,10]][b];this.put(m[0],m[1],1)}},
+
+{a:2,n:'4',t:'Read the curve',l:'A',c:'#EA4B2A',
+ beats:['Every good graph needs a ruler. Ours is the <b>line of perfect equality</b>: the poorest 20% hold 20%, the poorest 50% hold 50%.',
+ 'At the opposite extreme, one person owns everything. The curve lies flat along the floor, then shoots up in the very last step.',
+ 'Real societies sit in between. Here is our village. Hover the chart to read it.',
+ '<b>The further the curve sags below the diagonal, the more unequal the society.</b> Where it runs parallel to the diagonal, that person holds exactly the average.',
+ 'Three rules of the road: it starts at (0, 0), it ends at (1, 1), and it never rises above the diagonal.'],
+ init(){
+  this.f=[1,0,0];
+  st.innerHTML='<div class="ctl">'+['Equality line','One person owns all','Our village'].map((x,i)=>`<button class="chip" data-i="${i}">${x}</button>`).join('')+'</div><div class="fl" id="ch"></div><div class="ro" id="ro">Hover the chart</div>';
+  st.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{this.f[+b.dataset.i]^=1;this.draw()});
+  $('#ch').onmousemove=e=>{
+   const s=$('#ch svg'),p=s.createSVGPoint();p.x=e.clientX;p.y=e.clientY;
+   const q=p.matrixTransform(s.getScreenCTM().inverse()),x=Math.max(0,Math.min(1,(q.x-84)/480)),w=lz(V),i=Math.min(9,Math.floor(x*10)),L=w[i][1]+(w[i+1][1]-w[i][1])*(x*10-i);
+   $('#ro').textContent=`Poorest ${Math.round(x*100)}% hold ${Math.round(L*100)}% of all coins`;
+  };
+ },
+ draw(an){
+  const f=this.f;
+  st.querySelectorAll('[data-i]').forEach((b,i)=>b.classList.toggle('on',!!f[i]));
+  const one=`<path d="${pa(lz([0,0,0,0,0,0,0,0,0,1]))}" fill="none" stroke="#16130F" stroke-width="5"/>`;
+  $('#ch').innerHTML=plot(lz(V),{noc:!f[2],diag:!!f[0],A:f[2]&&this.A,dots:1,anim:an,ex:f[1]?one:''});
+ },
+ upd(b){this.f=[[1,0,0],[1,1,0],[1,0,1],[1,0,1],[1,1,1]][b];this.A=b==3;this.draw(1)}},
+
+{a:3,n:'5',t:'Turn the bow into a number',l:'B',c:'#FFB81F',
+ beats:['A picture is wonderful. But sometimes you need a single number: to compare countries, track change over time, or drop into a report.',
+ 'Look at the bow between the diagonal and the curve. Call that area <b>A</b>. Call the area beneath the curve <b>B</b>.',
+ '<b>Gini = A ÷ (A + B)</b>',
+ 'A + B is always exactly one half (the triangle under the diagonal), so this simplifies to <b>Gini = 2 × A = 1 − 2 × B</b>.',
+ '0 means perfect equality. Values near 1 mean almost everything sits with almost nobody. Our village: A = 0.325, B = 0.175, so <b>Gini = 0.65</b>.'],
+ init(){
+  this.s=[0,0];
+  st.innerHTML='<div class="ctl"><button class="chip" data-i="0">Area A</button><button class="chip" data-i="1">Area B</button></div><div class="fl"><div id="ch"></div><div class="gn" id="gn">0.00</div></div><div class="ro" id="ro"></div>';
+  st.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{this.s[+b.dataset.i]^=1;this.draw()});
+ },
+ draw(an){
+  st.querySelectorAll('[data-i]').forEach((b,i)=>b.classList.toggle('on',!!this.s[i]));
+  $('#ch').innerHTML=plot(lz(V),{A:this.s[0],B:this.s[1],dots:1,anim:an});
+ },
+ upd(b){
+  this.s=b?[1,1]:[0,0];this.draw(1);
+  $('#ro').textContent=['The village curve','A = 0.325 · B = 0.175 · A + B = 0.5','Gini = A ÷ (A + B)','Gini = 2 × A = 1 − 2 × B','2 × 0.325 = 0.65'][b];
+  $('#gn').style.opacity=b>3?1:0;if(b>3)cnt($('#gn'),.65);
+ }},
+
+{a:3,n:'6',t:'The inequality dial',l:'A',c:'#2A3DDB',
+ beats:['Your turn. Twenty people, one dial. Turn it and watch the bars, the curve and the Gini move together.',
+ 'Flat bars hug the diagonal.',
+ 'A single tower drags the curve to the floor. With 20 people the highest possible Gini is 1 − 1/20 = <b>0.95</b>. It only approaches 1 as the population grows.'],
+ init(){
+  st.innerHTML=`<div class="ctl"><label>Equal <input type="range" id="rg" min="0" max="1" step="0.01" value="0.3" aria-label="Inequality dial"> Extreme</label></div><div class="row">${'<i style="--h:5"></i>'.repeat(20)}</div><div class="fl"><div id="ch"></div><div class="gn" id="gn">0.00</div></div><div class="ro" id="ro"></div>`;
+  $('#rg').oninput=e=>this.set(+e.target.value);
+ },
+ set(t){
+  const ga=100*t**3,v=Array.from({length:20},(_,i)=>((i+1)/20)**ga),g=Math.max(0,gini(v));
+  $('#rg').value=t;
+  st.querySelectorAll('.row i').forEach((e,i)=>e.style.setProperty('--h',v[i]*100));
+  $('#ch').innerHTML=plot(lz(v),{A:1});
+  $('#gn').textContent=g.toFixed(2);
+  $('#ro').textContent=`${lab(g)} · highest possible with 20 people: 0.95`;
+ },
+ upd(b){this.set([.3,0,1][b])}},
+
+{a:3,n:'7',t:'Robin Hood',l:'B',c:'#EA4B2A',
+ beats:['Take one coin from the richest villager and hand it to the poorest. What happens to inequality?',
+ 'Press the button and watch. Hold it down to keep going.',
+ 'Every time, the Gini drops. This is the <b>transfer principle</b>: moving money from a richer person to a poorer one, without swapping their places, always reduces inequality.<small>From the start, exactly 50 moves make everyone equal: 10 coins each, Gini 0.</small>',
+ 'And the Sheriff\'s way? Take from the poor, give to the rich, and the Gini climbs.<small>The Sheriff takes a coin from the poorest villager who still has one and gives it to the richest. With 10 people the highest possible Gini is 0.9.</small>'],
+ init(){
+  this.v=[...VS];this.r=0;this.s=0;this.msg='';this.rh=0;this.sh=0;this.b=-1;this.g0=gini(VS);
+  st.innerHTML=`<div class="ctl"><button class="chip" id="bR">Robin Hood ↓</button><button class="chip" id="bS">Sheriff ↑</button><button class="chip" id="bX">Reset</button></div><div class="rbar">${VS.map(()=>'<div class="rc"><b></b><i></i></div>').join('')}</div><div class="fl"><div id="ch"></div><div class="gn sm" id="gn"></div></div><div class="ro" id="ro" style="min-height:58px"></div>`;
+  this.hold($('#bR'),()=>this.move(0));
+  this.hold($('#bS'),()=>this.move(1));
+  $('#bX').onclick=()=>{this.reset();if(this.b===0)this.mark()};
+ },
+ hold(btn,fn){ // one move per press; keep holding to repeat
+  let t,iv;
+  const stop=()=>{clearTimeout(t);clearInterval(iv)};
+  btn.addEventListener('pointerdown',e=>{
+   if(e.button||btn.disabled)return;
+   fn();
+   t=setTimeout(()=>{iv=setInterval(()=>{if(!btn.isConnected||btn.disabled)stop();else fn()},110)},420);
+  });
+  ['pointerup','pointerleave','pointercancel','blur'].forEach(ev=>btn.addEventListener(ev,stop));
+  btn.addEventListener('click',e=>{if(e.detail===0)fn()}); // keyboard activation
+  btn.addEventListener('contextmenu',e=>e.preventDefault());
+ },
+ move(sh){
+  const v=this.v,n=v.length;let g,t;
+  if(sh){
+   if(!this.sh)return;
+   const p=v.findIndex(x=>x>0);if(p<0||p>=n-1)return;
+   this.msg=`Sheriff: a poor villager ${v[p]} → ${v[p]-1}, the richest ${v[n-1]} → ${v[n-1]+1}`;
+   v[p]--;v[n-1]++;t=p;g=n-1;this.s++;
+  }else{
+   if(!this.rh)return;
+   const j=v.lastIndexOf(v[0]),i=v.indexOf(v[n-1]);if(v[i]-v[j]<2)return;
+   this.msg=`Robin Hood: the richest ${v[i]} → ${v[i]-1}, the poorest ${v[j]} → ${v[j]+1}`;
+   v[i]--;v[j]++;t=i;g=j;this.r++;
+  }
+  this.draw(sh?'▲':'▼');this.flash(g,t);
+ },
+ draw(dir){
+  const v=this.v,n=v.length,g=gini(v),mv=this.r+this.s,p=v.findIndex(x=>x>0);
+  $('.rbar').style.setProperty('--mx',Math.max(60,v[n-1]));
+  st.querySelectorAll('.rc').forEach((c,i)=>{c.style.setProperty('--h',v[i]);c.firstChild.textContent=v[i];c.lastChild.classList.toggle('z',!v[i])});
+  const orig=`<path d="${pa(lz(VS))}" fill="none" stroke="#5A5348" stroke-width="3.5" stroke-dasharray="3 8" stroke-linecap="round"/>`;
+  const leg=`<path d="M104 252h36" stroke="#5A5348" stroke-width="3.5" stroke-dasharray="3 8" stroke-linecap="round"/><text class="at" style="font-size:18px" x="150" y="258">ORIGINAL</text><path d="M104 286h36" stroke="#2A3DDB" stroke-width="6"/><text class="at" style="font-size:18px" x="150" y="292">NOW</text>`;
+  $('#ch').innerHTML=plot(lz(v),{A:1,dots:1,ex:orig+leg});
+  const gn=$('#gn');
+  gn.innerHTML=g.toFixed(3)+'<span class="ar">'+(dir||'')+'</span>';
+  if(dir){gn.classList.remove('bump');void gn.offsetWidth;gn.classList.add('bump')}
+  $('#bR').disabled=!this.rh||v[n-1]-v[0]<2;
+  $('#bS').disabled=!this.sh||p<0||p>=n-1;
+  const end=v[n-1]-v[0]<2?`Perfect equality: everyone holds ${sum(v)/n} coins.`
+   :p===n-1?`One villager holds all ${sum(v)} coins: the highest possible Gini for ${n} people.`
+   :(this.msg||`Richest: ${v[n-1]} coins · Poorest: ${v[0]} coins`);
+  $('#ro').textContent=`Moves: ${mv} · Gini ${this.g0.toFixed(3)} → ${g.toFixed(3)}\n${end}`;
+ },
+ flash(g,t){ // briefly colour the receiver (blue) and the giver (red)
+  const el=st.querySelectorAll('.rc');
+  el.forEach((c,i)=>{c.classList.toggle('get',i===g);c.classList.toggle('take',i===t)});
+  clearTimeout(this.ft);
+  this.ft=setTimeout(()=>el.forEach(c=>c.classList.remove('get','take')),550);
+ },
+ mark(){ // persistent highlight on the richest and the poorest (first beat)
+  clearTimeout(this.ft);
+  const el=st.querySelectorAll('.rc'),n=el.length;
+  el.forEach((c,i)=>{c.classList.toggle('get',i===0);c.classList.toggle('take',i===n-1)});
+ },
+ reset(){
+  clearTimeout(this.ft);
+  this.v=[...VS];this.r=0;this.s=0;this.msg='';this.draw();
+  st.querySelectorAll('.rc').forEach(c=>c.classList.remove('get','take'));
+ },
+ upd(b){
+  this.rh=b>=1;this.sh=b>=3;
+  if(b===0){this.reset();this.mark()}
+  else{clearTimeout(this.ft);st.querySelectorAll('.rc').forEach(c=>c.classList.remove('get','take'));this.draw()}
+  this.b=b;
+ }},
+ 
+{a:4,n:'9',t:'A worked example, by hand',l:'C',c:'#EA4B2A',
+ beats:['Five friends\' savings, in coins: <b>10, 20, 30, 40, 100</b>.',
+ 'Sort and add: total = 200 coins, average = 40.',
+ 'Convert to shares of the total: 5%, 10%, 15%, 20%, 50%.',
+ 'Running totals (cumulative shares): 5%, 15%, 30%, 50%, 100%.',
+ 'Pair each running total with the share of people. Those are your Lorenz points.',
+ 'Slice the area under the curve into trapezoids, each 0.2 wide. Their sum is <b>B = 0.300</b>.',
+ '<b>Gini = 1 − 2 × 0.300 = 0.40.</b> Cross-check: the average gap between two people is 32 coins, and 32 ÷ (2 × 40) = 0.40 ✓<small>With only 5 people the maximum possible Gini is 0.8.</small>'],
+ init(){
+  const sh=['5%','10%','15%','20%','50%'],cu=['5%','15%','30%','50%','100%'];
+  st.innerHTML=`<div class="row2"><div class="tw"><table class="t"><tr><th>#</th><th>Coins</th><th>Share</th><th>Running</th><th>Point</th></tr>${X5.map((x,i)=>`<tr><td>${i+1}</td><td data-s="0">${x}</td><td data-s="2">${sh[i]}</td><td data-s="3">${cu[i]}</td><td data-s="4">(${(i+1)*20}%, ${cu[i]})</td></tr>`).join('')}</table></div><div class="fl" id="ch"></div></div><div class="ro" id="ro"></div>`;
+ },
+ upd(b){
+  st.querySelectorAll('td[data-s]').forEach(c=>{const s=+c.dataset.s;c.style.opacity=b>=s?1:0;c.classList.toggle('hl',b==s)});
+  const w=lz(X5);
+  const ex=b==5?w.slice(1).map((q,i)=>{const a=w[i];return`<path class="fi" d="M${P(a[0])} ${Q(0)}L${P(a[0])} ${Q(a[1])}L${P(q[0])} ${Q(q[1])}L${P(q[0])} ${Q(0)}Z" fill="${i%2?'#2A3DDB':'#FFB81F'}" fill-opacity=".5" stroke="#16130F" stroke-width="2"/>`}).join(''):'';
+  $('#ch').innerHTML=plot(w,{noc:b<4,dots:b>=4,A:b>=6,ex:ex,anim:1});
+  $('#ro').textContent=['Five friends, sorted: 10, 20, 30, 40, 100','Total = 200 coins · Average = 40','Share = coins ÷ total','Running total of the shares','Lorenz points: (0,0) (20%,5%) (40%,15%) (60%,30%) (80%,50%) (100%,100%)','B = 0.005 + 0.020 + 0.045 + 0.080 + 0.150 = 0.300','Gini = 1 − 2 × 0.300 = 0.40 ✓'][b];
+ }},
+
+{a:4,n:'12',t:'Strengths, traps and tips',l:'C',c:'#2A3DDB',
+ beats:['What the Gini gets right.','Every honest number has fine print. Each trap below comes with a fix. Scroll inside the panel.','Honorable alternatives, when one number is not enough.'],
+ init(){},
+ upd(b){
+  const tr=[['What exactly is measured?','Income, wealth or consumption? Per person or household? Before or after taxes? Each gives a different Gini.','Always state the definition.'],
+  ['Level vs. spread','The Gini ignores how rich a society is overall. Two countries can share 0.35 with very different living standards.','Pair it with average income.'],
+  ['One number, many shapes','Different Lorenz curves can squeeze into the same Gini.','Plot the Lorenz curve too.'],
+  ['Middle-sensitive','It reacts most to changes around the middle, less to the extreme top or bottom.','Add a top-1% share or the Palma ratio.'],
+  ['Zeros and debts','Negative net wealth can push the Gini above 1.','Handle negatives explicitly.'],
+  ['Small, messy samples','Small samples tend to read low, surveys miss the very rich, and subgroup Ginis do not add up to the whole.','Use the n/(n−1) correction; cross-check with tax data.']];
+  st.innerHTML=[
+   '<div class="g scroll">'+[['Scale-free','Doubling everyone\'s income does not change it.'],['Size-free','Cloning the whole village does not change it.'],['Fair-minded','Helping the poor at the rich\'s expense always lowers it.']].map(x=>`<div class="cd"><h4>${x[0]}</h4>${x[1]}</div>`).join('')+'</div>',
+   '<div class="g scroll">'+tr.map((x,i)=>`<div class="cd tr"><h4>${i+1}. ${x[0]}</h4><b class="r">TRAP</b> ${x[1]}<br><b class="bl">TIP</b> ${x[2]}</div>`).join('')+'</div>',
+   '<div class="g scroll">'+[['Palma ratio','Top 10% share ÷ bottom 40% share'],['90/10 ratio','Income of the 90th percentile ÷ the 10th'],['Top 1% share','How much the very top holds'],['Theil index','Decomposes neatly across groups'],['Atkinson index','Lets you choose how much you care about the poor']].map(x=>`<div class="cd"><h4>${x[0]}</h4>${x[1]}</div>`).join('')+'</div>'][b];
+ }},
+
+{a:4,n:'13',t:'Your Python toolkit',l:'C',c:'#FFB81F',dark:1,
+ beats:['Setup: <code>pip install numpy matplotlib pandas</code>. First, the Lorenz points: sort, accumulate, normalise.',
+ 'Gini three ways: the area, the rank formula and the pairwise gap. All three agree.',
+ 'Plot it with matplotlib: diagonal, curve and the shaded gap.',
+ 'Real surveys come with weights. <small>Tip: for small samples, multiply the Gini by n/(n−1). Prefer a ready-made package? PySAL\'s <code>inequality</code> library has one.</small>'],
+ init(){
+  st.innerHTML=`<div class="row2"><div class="tabs">${PY.map((p,i)=>`<button class="tb" data-i="${i}"><b>${p.n}</b>${p.d}</button>`).join('')}</div><div class="col"><pre class="code" id="cd"></pre><div class="ro" id="ro"></div></div></div>`;
+  st.querySelectorAll('.tb').forEach(b=>b.onclick=()=>this.pick(+b.dataset.i));
+ },
+ pick(i){
+  st.querySelectorAll('.tb').forEach((b,j)=>b.classList.toggle('on',i==j));
+  $('#cd').innerHTML=HL(PY[i].c);$('#cd').scrollTop=0;
+  $('#ro').textContent='Expected output:\n'+PY[i].o;
+ },
+ upd(b){this.pick(b)}},
+
+{a:5,n:'',k:'Epilogue',t:'What to remember',l:'A',c:'#FFB81F',dark:1,
+ beats:['The average tells you the size of the pie, never how it is sliced.',
+ '<b>Lorenz curve:</b> line people up poorest → richest and plot the cumulative share of people against the cumulative share of wealth.',
+ 'The further the curve sags from the diagonal, the more unequal the society.',
+ '<b>Gini = 2 × (area between diagonal and curve).</b> 0 means perfect equality; near 1 means one person holds nearly everything.',
+ 'The Gini is a superb summary, not the whole story. Say what you measured, and look at the curve.<small>Max O. Lorenz drew his curve in 1905, as a student. Corrado Gini proposed his coefficient in 1912.</small><br><button class="chip on" onclick="go(0)">Replay the story ↺</button>'],
+ init(){st.innerHTML='<div class="fl" id="ch"></div><div class="ro">Gini = 0.65</div>';$('#ch').innerHTML=plot(lz(V),{anim:1,dots:1,A:1})},upd(){}}
+];
+
+/* ---------- background geometry (per act) ---------- */
+const gd='#FFB81F',bl='#2A3DDB',rd='#EA4B2A',ik='#16130F';
+const G=[ // [left vw, top vh, width vmin, height vmin, rotate deg, colour] for circle, half-circle, triangle, bar, line
+ [[46,2,64,64,0,gd],[-8,58,50,25,0,bl],[66,54,42,42,14,rd],[5,-6,5,72,0,ik],[6,74,100,.8,-30,ik]],
+ [[-14,34,60,60,0,gd],[58,-8,46,23,180,rd],[80,60,30,30,0,bl],[90,0,4,80,0,ik],[24,12,92,.8,22,ik]],
+ [[64,-12,40,40,0,bl],[-12,58,64,32,0,bl],[44,70,26,26,-18,gd],[22,0,4,90,0,ik],[-6,22,110,.8,34,bl]],
+ [[72,56,36,36,0,gd],[8,-10,46,23,0,bl],[-8,34,70,70,196,rd],[96,-4,5,70,0,ik],[10,60,100,.8,-24,ik]],
+ [[78,-10,30,30,0,gd],[-10,70,40,20,0,rd],[40,64,24,24,8,bl],[16,0,3,100,0,ik],[60,0,3,100,0,ik]],
+ [[30,6,70,70,0,gd],[70,60,56,28,0,bl],[-6,50,40,40,-10,rd],[92,0,4,60,0,gd],[0,80,100,.8,-14,gd]]];
+const geo=a=>G[a].forEach((g,i)=>gid('s'+(i+1)).style.cssText=`left:${g[0]}vw;top:${g[1]}vh;width:${g[2]}vmin;height:${g[3]}vmin;transform:rotate(${g[4]}deg);background:${g[5]}`);
+
+/* ---------- engine ---------- */
+const AN=['Cover','I · Question','II · Picture','III · Number','IV · Practice','End'],GL=['●','○','□','△','◇','↺'];
+rail.innerHTML=AN.map((x,i)=>`<button data-a="${i}" aria-label="${x}">${GL[i]}<span>${x}</span></button>`).join('');
+rail.onclick=e=>{const b=e.target.closest('button');if(b)go(steps.findIndex(s=>scenes[s[0]].a==+b.dataset.a))};
+const steps=[];scenes.forEach((s,i)=>s.beats.forEach((_,b)=>steps.push([i,b])));
+let cur=-1,curS=-1;
+
+function show(n){
+  const[si,b]=steps[n],sc=scenes[si];
+  if(si!==curS){
+    curS=si;app.dataset.l=sc.l;st.style.setProperty('--c',sc.c);st.innerHTML='';
+    document.body.classList.toggle('dk',!!sc.dark);cap.classList.toggle('hero',!!sc.hero);
+    big.textContent=sc.n?String(parseInt(sc.n)).padStart(2,'0'):'';
+    kk.textContent=sc.k||AN[sc.a]+' · Chapter '+sc.n;tt.textContent=sc.t;ani(tt);
+    geo(sc.a);sc.init();
+  }
+  sc.upd(b);
+  tx.innerHTML=sc.beats[b];ani(tx);
+  dots.innerHTML=sc.beats.map((_,i)=>`<i class="${i<=b?'on':''}"></i>`).join('');
+  [...rail.children].forEach((r,i)=>r.classList.toggle('on',i==sc.a));
+  nxt.style.setProperty('--p',n/(steps.length-1));
+}
+function go(n){
+  n=Math.max(0,Math.min(steps.length-1,n));if(n===cur)return;
+  const sc=scenes[steps[n][0]],pa_=cur<0?-1:scenes[steps[cur][0]].a;
+  cur=n;
+  if(pa_>=0&&sc.a!==pa_){sw.classList.remove('on');void sw.offsetWidth;sw.classList.add('on');setTimeout(()=>show(n),560)}
+  else show(n);
+}
+
+/* ---------- input ---------- */
+nxt.onclick=()=>go(cur+1);gid('prev').onclick=()=>go(cur-1);
+nxt.onmousemove=e=>{const r=nxt.getBoundingClientRect();nxt.firstChild.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.25}px,${(e.clientY-r.top-r.height/2)*.25}px)`};
+nxt.onmouseleave=()=>nxt.firstChild.style.transform='';
+addEventListener('keydown',e=>{
+  if(e.target.matches('input')||(e.key===' '&&e.target.matches('button')))return;
+  const k=e.key;
+  if(k==='ArrowRight'||k===' '||k==='PageDown'){e.preventDefault();go(cur+1)}
+  else if(k==='ArrowLeft'||k==='PageUp'){e.preventDefault();go(cur-1)}
+  else if(k==='Home')go(0);else if(k==='End')go(steps.length-1);
+});
+let lock=0;
+addEventListener('wheel',e=>{
+  if(e.target.closest('.scroll,.code,.tw,input'))return;
+  const t=Date.now();if(t-lock<750||Math.abs(e.deltaY)<20)return;
+  lock=t;go(cur+(e.deltaY>0?1:-1));
+},{passive:true});
+let tx0=0,ty0=0;
+addEventListener('touchstart',e=>{tx0=e.touches[0].clientX;ty0=e.touches[0].clientY},{passive:true});
+addEventListener('touchend',e=>{
+  if(e.target.closest('.scroll,.code,.tw,input'))return;
+  const dx=e.changedTouches[0].clientX-tx0,dy=e.changedTouches[0].clientY-ty0;
+  if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy))go(cur+(dx<0?1:-1));
+},{passive:true});
+
+go(0);
+</script>
+</body>
+</html>
